@@ -1,0 +1,17 @@
+name: Simulador
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  matriz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Correr la matriz de pruebas y el plan B
+        run: python simulacion/sim_caso_e.py

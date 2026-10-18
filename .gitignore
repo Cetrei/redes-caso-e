@@ -1,0 +1,36 @@
+# Proyectos y exportaciones de GNS3 (van a Drive, no al repo)
+*.gns3
+*.gns3project
+*.gns3a
+project-files/
+*.gns3.backup
+
+# Imágenes y discos (licenciados o muy pesados)
+*.qcow2
+*.vmdk
+*.vdi
+*.img
+*.iso
+*.ova
+*.ovf
+*.bin
+*.image
+*.out
+*.lic
+
+# Capturas de tráfico grandes (las evidencias van como .png)
+*.pcap
+*.pcapng
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Sistema y editores
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+~$*

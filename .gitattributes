@@ -1,0 +1,7 @@
+# Texto con fin de línea LF: las configs se pegan igual en Cisco, FortiOS y Linux
+* text=auto eol=lf
+
+*.pdf binary
+*.png binary
+*.jpg binary
+*.docx binary

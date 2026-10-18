@@ -1,0 +1,11 @@
+! R-ISP — Simula Internet: redes externas A y B, estáticas hacia la empresa
+! Fuente del diseño: docs/especificacion.md. Estado: pendiente.
+! Orden de los bloques: base, interfaces, enrutamiento, seguridad.
+!
+! === 1. Base (hostname, usuarios, acceso) ===
+!
+! === 2. Interfaces ===
+!
+! === 3. Enrutamiento ===
+!
+! === 4. Seguridad ===
