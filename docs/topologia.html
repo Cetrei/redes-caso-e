@@ -1,0 +1,284 @@
+<title>Topología Caso E</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: plano de red de izquierda (afuera) a derecha (adentro); el FortiGate es la única pieza entre zonas */
+:root {
+  --bg: #f5f6f8;
+  --fg: #18202b;
+  --muted: #5b6676;
+  --link: #2b3442;
+  --node-bg: #ffffff;
+  --node-stroke: #c4ccd7;
+  --z-ext: #eceef2;   --z-ext-s: #bfc5cf;
+  --z-wan: #fbf1dc;   --z-wan-s: #dcb86a;
+  --z-lan: #e1efed;   --z-lan-s: #86bdb6;
+  --z-dmz: #f0e6f5;   --z-dmz-s: #bf9fd3;
+  --fw: #1f3a5f;      --fw-fg: #ffffff;
+  --ok: #1d7a46;      --ok-bg: #dcf1e4;
+  --deny: #b42318;    --deny-bg: #fbe3e0;
+  --rule: #dde2e9;
+  --f-display: "Barlow Semi Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10141a; --fg: #e6e9ee; --muted: #9aa4b2; --link: #c3cad5;
+    --node-bg: #18202a; --node-stroke: #354152;
+    --z-ext: #171c24; --z-ext-s: #343c49;
+    --z-wan: #29221a; --z-wan-s: #6e5829;
+    --z-lan: #13262a; --z-lan-s: #2f625c;
+    --z-dmz: #231a2b; --z-dmz-s: #5f4772;
+    --fw: #3c6ca6; --fw-fg: #ffffff;
+    --ok: #63d394; --ok-bg: #12301f;
+    --deny: #ff8b7b; --deny-bg: #3b1714;
+    --rule: #262e3a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10141a; --fg: #e6e9ee; --muted: #9aa4b2; --link: #c3cad5;
+  --node-bg: #18202a; --node-stroke: #354152;
+  --z-ext: #171c24; --z-ext-s: #343c49;
+  --z-wan: #29221a; --z-wan-s: #6e5829;
+  --z-lan: #13262a; --z-lan-s: #2f625c;
+  --z-dmz: #231a2b; --z-dmz-s: #5f4772;
+  --fw: #3c6ca6; --fw-fg: #ffffff;
+  --ok: #63d394; --ok-bg: #12301f;
+  --deny: #ff8b7b; --deny-bg: #3b1714;
+  --rule: #262e3a;
+  color-scheme: dark;
+}
+
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-inline: 20px; padding-block: 32px 48px; display: grid; gap: 28px; }
+
+header { display: grid; gap: 6px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(28px, 4vw, 40px); line-height: 1.1; margin: 0; text-wrap: balance; }
+.lede { margin: 0; max-width: 68ch; color: var(--muted); }
+
+figure { margin: 0; display: grid; gap: 12px; }
+.canvas { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--bg); }
+.canvas svg { display: block; width: 100%; min-width: 860px; height: auto; }
+figcaption { font-size: 13px; color: var(--muted); max-width: 80ch; }
+
+/* SVG */
+svg text { fill: var(--fg); }
+.z-ext { fill: var(--z-ext); stroke: var(--z-ext-s); }
+.z-wan { fill: var(--z-wan); stroke: var(--z-wan-s); }
+.z-lan { fill: var(--z-lan); stroke: var(--z-lan-s); }
+.z-dmz { fill: var(--z-dmz); stroke: var(--z-dmz-s); }
+.zt { font-family: var(--f-display); font-weight: 700; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; }
+.zs { font-family: var(--f-mono); font-size: 11px; fill: var(--muted) !important; }
+.wire { fill: none; stroke: var(--link); stroke-width: 1.6; }
+.node { fill: var(--node-bg); stroke: var(--node-stroke); stroke-width: 1.2; }
+.nk { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .1em; fill: var(--muted) !important; }
+.nn { font-family: var(--f-body); font-weight: 600; font-size: 14px; }
+.nd { font-family: var(--f-mono); font-size: 10.5px; fill: var(--muted) !important; }
+.fw { fill: var(--fw); }
+.fw-t { fill: var(--fw-fg) !important; }
+.lbl { font-family: var(--f-mono); font-size: 11px; }
+.if { font-family: var(--f-mono); font-size: 10px; fill: var(--muted) !important; }
+.pill-ok { fill: var(--ok-bg); stroke: var(--ok); }
+.pill-deny { fill: var(--deny-bg); stroke: var(--deny); }
+.t-ok { fill: var(--ok) !important; font-family: var(--f-mono); font-size: 10.5px; font-weight: 500; }
+.t-deny { fill: var(--deny) !important; font-family: var(--f-mono); font-size: 10.5px; font-weight: 500; }
+
+/* Leyenda y tabla */
+.below { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 28px; align-items: start; }
+@media (max-width: 820px) { .below { grid-template-columns: 1fr; } }
+h2 { font-family: var(--f-display); font-weight: 600; font-size: 20px; margin: 0 0 10px; }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 14px; }
+.legend li { display: flex; gap: 10px; align-items: center; }
+.sw { width: 18px; height: 12px; border-radius: 2px; border: 1px solid; flex: none; }
+.sw.ext { background: var(--z-ext); border-color: var(--z-ext-s); }
+.sw.wan { background: var(--z-wan); border-color: var(--z-wan-s); }
+.sw.lan { background: var(--z-lan); border-color: var(--z-lan-s); }
+.sw.dmz { background: var(--z-dmz); border-color: var(--z-dmz-s); }
+.sw.fw { background: var(--fw); border-color: var(--fw); }
+.sw.ok { background: var(--ok-bg); border-color: var(--ok); }
+.sw.deny { background: var(--deny-bg); border-color: var(--deny); }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+td.m { font-family: var(--f-mono); font-size: 12.5px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Redes Avanzadas I · EIF 101O · Caso E</div>
+    <h1>Topología de la DMZ corporativa</h1>
+    <p class="lede">Once nodos en cuatro zonas. El tráfico entre afuera, la LAN y la DMZ siempre cruza el FortiGate, que publica el servidor y bloquea el acceso a la LAN.</p>
+  </header>
+
+  <figure>
+    <div class="canvas">
+      <svg viewBox="0 0 1180 640" role="img" aria-label="Topología del Caso E: red externa con PC-EXT, PC-EXT-WEB y R-ISP; WAN pública con R-EDGE; FGT-01 en el centro; LAN interna con R-LAN, SW-LAN, PC-USER y PC-ADMIN; DMZ con SW-DMZ y SRV-DMZ. La política 1 permite DNS y HTTP hacia la DMZ y la política 5 deniega el acceso externo a la LAN.">
+        <!-- Zonas -->
+        <rect class="z-ext" x="16" y="24" width="320" height="592" rx="10"/>
+        <text class="zt" x="32" y="50">Red externa</text>
+        <text class="zs" x="32" y="67">Internet simulada · RFC 5737</text>
+
+        <rect class="z-wan" x="352" y="24" width="268" height="592" rx="10"/>
+        <text class="zt" x="368" y="50">WAN pública</text>
+        <text class="zs" x="368" y="67">203.0.113.16/29</text>
+        <text class="zs" x="368" y="82">2001:db8:105:ff01::/64</text>
+
+        <rect class="z-lan" x="860" y="24" width="304" height="276" rx="10"/>
+        <text class="zt" x="876" y="48">LAN interna</text>
+        <text class="zs" x="876" y="63">OSPF área 0 · detrás del NAT</text>
+
+        <rect class="z-dmz" x="860" y="340" width="304" height="276" rx="10"/>
+        <text class="zt" x="876" y="364">DMZ</text>
+        <text class="zs" x="876" y="381">10.50.1.32/28 · 2001:db8:105:30::/64</text>
+
+        <!-- Cables -->
+        <polyline class="wire" points="170,150 250,150 250,291"/>
+        <polyline class="wire" points="170,490 250,490 250,349"/>
+        <line class="wire" x1="308" y1="320" x2="422" y2="320"/>
+        <line class="wire" x1="550" y1="320" x2="670" y2="320"/>
+        <polyline class="wire" points="745,278 745,100 882,100"/>
+        <polyline class="wire" points="745,362 745,450 882,450"/>
+        <line class="wire" x1="940" y1="129" x2="940" y2="203"/>
+        <polyline class="wire" points="998,222 1013,222 1013,160 1028,160"/>
+        <polyline class="wire" points="998,242 1013,242 1013,255 1028,255"/>
+        <line class="wire" x1="998" y1="450" x2="1028" y2="450"/>
+
+        <!-- Etiquetas de enlaces -->
+        <text class="lbl" x="242" y="222" text-anchor="end">198.51.100.0/24</text>
+        <text class="if" x="258" y="284">Gi0/1</text>
+        <text class="lbl" x="242" y="422" text-anchor="end">192.0.2.0/24</text>
+        <text class="if" x="258" y="364">Gi0/2</text>
+
+        <text class="lbl" x="365" y="311" text-anchor="middle">203.0.113.0/30</text>
+        <text class="if" x="314" y="336">Gi0/0</text>
+        <text class="if" x="416" y="336" text-anchor="end">Gi0/0</text>
+
+        <text class="lbl" x="610" y="311" text-anchor="middle">.17 ↔ .18</text>
+        <text class="if" x="556" y="336">Gi0/1</text>
+        <text class="if" x="664" y="336" text-anchor="end">port1</text>
+
+        <text class="if" x="753" y="270">port2</text>
+        <text class="lbl" x="753" y="170">10.50.1.48/30</text>
+        <text class="if" x="753" y="185">tránsito</text>
+        <text class="if" x="876" y="92" text-anchor="end">Gi0/0</text>
+        <text class="if" x="948" y="162">Gi0/1</text>
+        <text class="if" x="948" y="176">802.1Q</text>
+
+        <text class="if" x="753" y="378">port3</text>
+
+        <!-- Políticas -->
+        <rect class="pill-deny" x="628" y="190" width="108" height="40" rx="5"/>
+        <text class="t-deny" x="682" y="206" text-anchor="middle">✗ pol. 5</text>
+        <text class="t-deny" x="682" y="221" text-anchor="middle">externo → LAN</text>
+
+        <rect class="pill-ok" x="628" y="392" width="108" height="40" rx="5"/>
+        <text class="t-ok" x="682" y="408" text-anchor="middle">✓ pol. 1</text>
+        <text class="t-ok" x="682" y="423" text-anchor="middle">DNS · HTTP</text>
+
+        <!-- Nodos: red externa -->
+        <rect class="node" x="30" y="121" width="140" height="58" rx="6"/>
+        <text class="nk" x="42" y="138">HOST</text>
+        <text class="nn" x="42" y="155">PC-EXT</text>
+        <text class="nd" x="42" y="170">198.51.100.10</text>
+
+        <rect class="node" x="30" y="461" width="140" height="58" rx="6"/>
+        <text class="nk" x="42" y="478">HOST · NAVEGADOR</text>
+        <text class="nn" x="42" y="495">PC-EXT-WEB</text>
+        <text class="nd" x="42" y="510">192.0.2.10</text>
+
+        <rect class="node" x="192" y="291" width="116" height="58" rx="6"/>
+        <text class="nk" x="204" y="308">ROUTER</text>
+        <text class="nn" x="204" y="325">R-ISP</text>
+        <text class="nd" x="204" y="340">simula Internet</text>
+
+        <!-- WAN -->
+        <rect class="node" x="422" y="291" width="128" height="58" rx="6"/>
+        <text class="nk" x="434" y="308">ROUTER · BORDE</text>
+        <text class="nn" x="434" y="325">R-EDGE</text>
+        <text class="nd" x="434" y="340">ACL-BORDE-IN</text>
+
+        <!-- FortiGate -->
+        <rect class="fw" x="670" y="278" width="150" height="84" rx="8"/>
+        <text class="nk fw-t" x="684" y="298">FIREWALL</text>
+        <text class="nn fw-t" x="684" y="317">FGT-01</text>
+        <text class="nd fw-t" x="684" y="334">VIP · SNAT · OSPF</text>
+        <text class="nd fw-t" x="684" y="349">políticas · logs</text>
+
+        <!-- LAN -->
+        <rect class="node" x="882" y="71" width="116" height="58" rx="6"/>
+        <text class="nk" x="894" y="88">ROUTER</text>
+        <text class="nn" x="894" y="105">R-LAN</text>
+        <text class="nd" x="894" y="120">ACL seg. · vty</text>
+
+        <rect class="node" x="882" y="203" width="116" height="58" rx="6"/>
+        <text class="nk" x="894" y="220">SWITCH</text>
+        <text class="nn" x="894" y="237">SW-LAN</text>
+        <text class="nd" x="894" y="252">VLAN 10 y 20</text>
+
+        <rect class="node" x="1028" y="131" width="128" height="58" rx="6"/>
+        <text class="nk" x="1040" y="148">HOST · VLAN 10</text>
+        <text class="nn" x="1040" y="165">PC-USER</text>
+        <text class="nd" x="1040" y="180">10.50.0.10</text>
+
+        <rect class="node" x="1028" y="226" width="128" height="58" rx="6"/>
+        <text class="nk" x="1040" y="243">HOST · VLAN 20</text>
+        <text class="nn" x="1040" y="260">PC-ADMIN</text>
+        <text class="nd" x="1040" y="275">10.50.1.10</text>
+
+        <!-- DMZ -->
+        <rect class="node" x="882" y="421" width="116" height="58" rx="6"/>
+        <text class="nk" x="894" y="438">SWITCH</text>
+        <text class="nn" x="894" y="455">SW-DMZ</text>
+        <text class="nd" x="894" y="470">segmento plano</text>
+
+        <rect class="node" x="1028" y="421" width="128" height="58" rx="6"/>
+        <text class="nk" x="1040" y="438">SERVIDOR</text>
+        <text class="nn" x="1040" y="455">SRV-DMZ</text>
+        <text class="nd" x="1040" y="470">10.50.1.34</text>
+
+        <text class="zs" x="876" y="520">bind9 · nginx · ssh</text>
+        <text class="lbl" x="876" y="540">www.g5.eif101o.test</text>
+        <text class="zs" x="876" y="560">VIP 203.0.113.20 → 10.50.1.34</text>
+        <text class="zs" x="876" y="578">IPv6 2001:db8:105:30::10 sin NAT</text>
+      </svg>
+    </div>
+    <figcaption>Lectura de izquierda a derecha, de afuera hacia adentro. Las etiquetas de cada cable indican la subred y las interfaces de cada extremo. Elaboración propia.</figcaption>
+  </figure>
+
+  <section class="below">
+    <div>
+      <h2>Leyenda</h2>
+      <ul class="legend">
+        <li><span class="sw ext"></span>Red externa: clientes de prueba y el ISP simulado</li>
+        <li><span class="sw wan"></span>WAN pública: segmento /29 donde vive el VIP</li>
+        <li><span class="sw lan"></span>LAN interna: usuarios y administración, nunca expuesta</li>
+        <li><span class="sw dmz"></span>DMZ: el servicio publicado</li>
+        <li><span class="sw fw"></span>FortiGate: único punto de paso entre zonas</li>
+        <li><span class="sw ok"></span>Política que permite</li>
+        <li><span class="sw deny"></span>Política que deniega</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Segmentos</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Segmento</th><th>IPv4</th><th>IPv6</th></tr></thead>
+          <tbody>
+            <tr><td>VLAN 10 Usuarios</td><td class="m">10.50.0.0/24</td><td class="m">2001:db8:105:10::/64</td></tr>
+            <tr><td>VLAN 20 Admin</td><td class="m">10.50.1.0/27</td><td class="m">2001:db8:105:20::/64</td></tr>
+            <tr><td>DMZ</td><td class="m">10.50.1.32/28</td><td class="m">2001:db8:105:30::/64</td></tr>
+            <tr><td>Tránsito FGT–R-LAN</td><td class="m">10.50.1.48/30</td><td class="m">2001:db8:105:ff00::/64</td></tr>
+            <tr><td>WAN pública</td><td class="m">203.0.113.16/29</td><td class="m">2001:db8:105:ff01::/64</td></tr>
+            <tr><td>Enlace ISP</td><td class="m">203.0.113.0/30</td><td class="m">2001:db8:ffff:1::/64</td></tr>
+            <tr><td>Red externa A / B</td><td class="m">198.51.100.0/24 · 192.0.2.0/24</td><td class="m">2001:db8:ffff:100::/64 · :200::/64</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>

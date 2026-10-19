@@ -455,6 +455,8 @@ redes-caso-e/
 ├── CONTRIBUTING.md        flujo de ramas, PR, revisión y publicación de versiones
 ├── docs/
 │   ├── especificacion.md  este documento
+│   ├── topologia.svg      diagrama de la topología (el que muestra el README)
+│   ├── topologia.html     el mismo diagrama con leyenda y tabla de segmentos
 │   └── enunciado-v3.pdf   instrucciones del profesor
 ├── configs/
 │   ├── R-ISP.txt

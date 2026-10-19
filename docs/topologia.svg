@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="640" viewBox="0 0 1180 640" role="img" aria-label="Topología del Caso E: red externa con PC-EXT, PC-EXT-WEB y R-ISP; WAN pública con R-EDGE; FGT-01 en el centro; LAN interna con R-LAN, SW-LAN, PC-USER y PC-ADMIN; DMZ con SW-DMZ y SRV-DMZ. La política 1 permite DNS y HTTP hacia la DMZ y la política 5 deniega el acceso externo a la LAN.">
+<style>
+text { fill: #18202b; }
+.z-ext { fill: #eceef2; stroke: #bfc5cf; }
+.z-wan { fill: #fbf1dc; stroke: #dcb86a; }
+.z-lan { fill: #e1efed; stroke: #86bdb6; }
+.z-dmz { fill: #f0e6f5; stroke: #bf9fd3; }
+.zt { font-family: "Barlow Semi Condensed", "Arial Narrow", "Segoe UI", Arial, sans-serif; font-weight: 700; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; }
+.zs { font-family: "IBM Plex Mono", Consolas, "Cascadia Mono", Menlo, monospace; font-size: 11px; fill: #5b6676; }
+.wire { fill: none; stroke: #2b3442; stroke-width: 1.6; }
+.node { fill: #ffffff; stroke: #c4ccd7; stroke-width: 1.2; }
+.nk { font-family: "IBM Plex Mono", Consolas, Menlo, monospace; font-size: 9.5px; letter-spacing: .1em; fill: #5b6676; }
+.nn { font-family: "IBM Plex Sans", "Segoe UI", Helvetica, Arial, sans-serif; font-weight: 600; font-size: 14px; }
+.nd { font-family: "IBM Plex Mono", Consolas, Menlo, monospace; font-size: 10.5px; fill: #5b6676; }
+.fw { fill: #1f3a5f; }
+.nk.fw-t, .nn.fw-t, .nd.fw-t { fill: #ffffff; }
+.lbl { font-family: "IBM Plex Mono", Consolas, Menlo, monospace; font-size: 11px; }
+.if { font-family: "IBM Plex Mono", Consolas, Menlo, monospace; font-size: 10px; fill: #5b6676; }
+.pill-ok { fill: #dcf1e4; stroke: #1d7a46; }
+.pill-deny { fill: #fbe3e0; stroke: #b42318; }
+.t-ok { fill: #1d7a46; font-family: "IBM Plex Mono", Consolas, Menlo, monospace; font-size: 10.5px; font-weight: 500; }
+.t-deny { fill: #b42318; font-family: "IBM Plex Mono", Consolas, Menlo, monospace; font-size: 10.5px; font-weight: 500; }
+</style>
+<rect x="0" y="0" width="1180" height="640" fill="#f5f6f8"/>
+        <!-- Zonas -->
+        <rect class="z-ext" x="16" y="24" width="320" height="592" rx="10"/>
+        <text class="zt" x="32" y="50">Red externa</text>
+        <text class="zs" x="32" y="67">Internet simulada · RFC 5737</text>
+
+        <rect class="z-wan" x="352" y="24" width="268" height="592" rx="10"/>
+        <text class="zt" x="368" y="50">WAN pública</text>
+        <text class="zs" x="368" y="67">203.0.113.16/29</text>
+        <text class="zs" x="368" y="82">2001:db8:105:ff01::/64</text>
+
+        <rect class="z-lan" x="860" y="24" width="304" height="276" rx="10"/>
+        <text class="zt" x="876" y="48">LAN interna</text>
+        <text class="zs" x="876" y="63">OSPF área 0 · detrás del NAT</text>
+
+        <rect class="z-dmz" x="860" y="340" width="304" height="276" rx="10"/>
+        <text class="zt" x="876" y="364">DMZ</text>
+        <text class="zs" x="876" y="381">10.50.1.32/28 · 2001:db8:105:30::/64</text>
+
+        <!-- Cables -->
+        <polyline class="wire" points="170,150 250,150 250,291"/>
+        <polyline class="wire" points="170,490 250,490 250,349"/>
+        <line class="wire" x1="308" y1="320" x2="422" y2="320"/>
+        <line class="wire" x1="550" y1="320" x2="670" y2="320"/>
+        <polyline class="wire" points="745,278 745,100 882,100"/>
+        <polyline class="wire" points="745,362 745,450 882,450"/>
+        <line class="wire" x1="940" y1="129" x2="940" y2="203"/>
+        <polyline class="wire" points="998,222 1013,222 1013,160 1028,160"/>
+        <polyline class="wire" points="998,242 1013,242 1013,255 1028,255"/>
+        <line class="wire" x1="998" y1="450" x2="1028" y2="450"/>
+
+        <!-- Etiquetas de enlaces -->
+        <text class="lbl" x="242" y="222" text-anchor="end">198.51.100.0/24</text>
+        <text class="if" x="258" y="284">Gi0/1</text>
+        <text class="lbl" x="242" y="422" text-anchor="end">192.0.2.0/24</text>
+        <text class="if" x="258" y="364">Gi0/2</text>
+
+        <text class="lbl" x="365" y="311" text-anchor="middle">203.0.113.0/30</text>
+        <text class="if" x="314" y="336">Gi0/0</text>
+        <text class="if" x="416" y="336" text-anchor="end">Gi0/0</text>
+
+        <text class="lbl" x="610" y="311" text-anchor="middle">.17 ↔ .18</text>
+        <text class="if" x="556" y="336">Gi0/1</text>
+        <text class="if" x="664" y="336" text-anchor="end">port1</text>
+
+        <text class="if" x="753" y="270">port2</text>
+        <text class="lbl" x="753" y="170">10.50.1.48/30</text>
+        <text class="if" x="753" y="185">tránsito</text>
+        <text class="if" x="876" y="92" text-anchor="end">Gi0/0</text>
+        <text class="if" x="948" y="162">Gi0/1</text>
+        <text class="if" x="948" y="176">802.1Q</text>
+
+        <text class="if" x="753" y="378">port3</text>
+
+        <!-- Políticas -->
+        <rect class="pill-deny" x="628" y="190" width="108" height="40" rx="5"/>
+        <text class="t-deny" x="682" y="206" text-anchor="middle">✗ pol. 5</text>
+        <text class="t-deny" x="682" y="221" text-anchor="middle">externo → LAN</text>
+
+        <rect class="pill-ok" x="628" y="392" width="108" height="40" rx="5"/>
+        <text class="t-ok" x="682" y="408" text-anchor="middle">✓ pol. 1</text>
+        <text class="t-ok" x="682" y="423" text-anchor="middle">DNS · HTTP</text>
+
+        <!-- Nodos: red externa -->
+        <rect class="node" x="30" y="121" width="140" height="58" rx="6"/>
+        <text class="nk" x="42" y="138">HOST</text>
+        <text class="nn" x="42" y="155">PC-EXT</text>
+        <text class="nd" x="42" y="170">198.51.100.10</text>
+
+        <rect class="node" x="30" y="461" width="140" height="58" rx="6"/>
+        <text class="nk" x="42" y="478">HOST · NAVEGADOR</text>
+        <text class="nn" x="42" y="495">PC-EXT-WEB</text>
+        <text class="nd" x="42" y="510">192.0.2.10</text>
+
+        <rect class="node" x="192" y="291" width="116" height="58" rx="6"/>
+        <text class="nk" x="204" y="308">ROUTER</text>
+        <text class="nn" x="204" y="325">R-ISP</text>
+        <text class="nd" x="204" y="340">simula Internet</text>
+
+        <!-- WAN -->
+        <rect class="node" x="422" y="291" width="128" height="58" rx="6"/>
+        <text class="nk" x="434" y="308">ROUTER · BORDE</text>
+        <text class="nn" x="434" y="325">R-EDGE</text>
+        <text class="nd" x="434" y="340">ACL-BORDE-IN</text>
+
+        <!-- FortiGate -->
+        <rect class="fw" x="670" y="278" width="150" height="84" rx="8"/>
+        <text class="nk fw-t" x="684" y="298">FIREWALL</text>
+        <text class="nn fw-t" x="684" y="317">FGT-01</text>
+        <text class="nd fw-t" x="684" y="334">VIP · SNAT · OSPF</text>
+        <text class="nd fw-t" x="684" y="349">políticas · logs</text>
+
+        <!-- LAN -->
+        <rect class="node" x="882" y="71" width="116" height="58" rx="6"/>
+        <text class="nk" x="894" y="88">ROUTER</text>
+        <text class="nn" x="894" y="105">R-LAN</text>
+        <text class="nd" x="894" y="120">ACL seg. · vty</text>
+
+        <rect class="node" x="882" y="203" width="116" height="58" rx="6"/>
+        <text class="nk" x="894" y="220">SWITCH</text>
+        <text class="nn" x="894" y="237">SW-LAN</text>
+        <text class="nd" x="894" y="252">VLAN 10 y 20</text>
+
+        <rect class="node" x="1028" y="131" width="128" height="58" rx="6"/>
+        <text class="nk" x="1040" y="148">HOST · VLAN 10</text>
+        <text class="nn" x="1040" y="165">PC-USER</text>
+        <text class="nd" x="1040" y="180">10.50.0.10</text>
+
+        <rect class="node" x="1028" y="226" width="128" height="58" rx="6"/>
+        <text class="nk" x="1040" y="243">HOST · VLAN 20</text>
+        <text class="nn" x="1040" y="260">PC-ADMIN</text>
+        <text class="nd" x="1040" y="275">10.50.1.10</text>
+
+        <!-- DMZ -->
+        <rect class="node" x="882" y="421" width="116" height="58" rx="6"/>
+        <text class="nk" x="894" y="438">SWITCH</text>
+        <text class="nn" x="894" y="455">SW-DMZ</text>
+        <text class="nd" x="894" y="470">segmento plano</text>
+
+        <rect class="node" x="1028" y="421" width="128" height="58" rx="6"/>
+        <text class="nk" x="1040" y="438">SERVIDOR</text>
+        <text class="nn" x="1040" y="455">SRV-DMZ</text>
+        <text class="nd" x="1040" y="470">10.50.1.34</text>
+
+        <text class="zs" x="876" y="520">bind9 · nginx · ssh</text>
+        <text class="lbl" x="876" y="540">www.g5.eif101o.test</text>
+        <text class="zs" x="876" y="560">VIP 203.0.113.20 → 10.50.1.34</text>
+        <text class="zs" x="876" y="578">IPv6 2001:db8:105:30::10 sin NAT</text>
+      </svg>
