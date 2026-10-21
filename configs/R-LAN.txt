@@ -12,14 +12,11 @@ username admin privilege 15 secret admin
 ipv6 unicast-routing
 !
 ! SSH: la clave se genera una sola vez y no aparece en el running-config.
+! Tarda unos segundos: pegá esta línea sola y esperá el aviso "SSH 2.0 has been enabled" antes de seguir.
 crypto key generate rsa modulus 2048
 ip ssh version 2
 !
-! Logs: buffer local y copia por syslog a PC-ADMIN (prueba E16).
 logging buffered 64000 informational
-logging source-interface GigabitEthernet0/1.20
-logging trap informational
-logging host 10.50.1.10
 !
 ! === 2. Interfaces ===
 interface GigabitEthernet0/0
@@ -63,6 +60,11 @@ interface GigabitEthernet0/2
 interface GigabitEthernet0/3
  description Sin uso
  shutdown
+!
+! Syslog a PC-ADMIN (prueba E16). Va después de las interfaces porque usa Gi0/1.20 como origen.
+logging source-interface GigabitEthernet0/1.20
+logging trap informational
+logging host 10.50.1.10
 !
 ! === 3. Enrutamiento ===
 ! OSPF área 0 con FGT-01. Las VLAN se anuncian como pasivas; la ruta por defecto llega del FGT (O*E2).
