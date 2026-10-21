@@ -1,0 +1,21 @@
+; Zona g5.eif101o.test — vista INTERNA (LAN y DMZ)
+; Desde adentro el VIP no es alcanzable sin hairpin NAT: se responde la IP real del servidor.
+; Al cambiar algo, subir el serial (AAAAMMDDNN) en las dos vistas.
+$TTL 300
+@       IN  SOA ns1.g5.eif101o.test. hostmaster.g5.eif101o.test. (
+                2026102001  ; serial
+                3600        ; refresh
+                600         ; retry
+                86400       ; expire
+                300 )       ; TTL negativo
+        IN  NS      ns1.g5.eif101o.test.
+
+ns1     IN  A       10.50.1.34
+ns1     IN  AAAA    2001:db8:105:30::10
+
+www     IN  A       10.50.1.34
+www     IN  AAAA    2001:db8:105:30::10
+
+; Nombres por familia, para mostrar cada una en el navegador
+v4      IN  A       10.50.1.34
+v6      IN  AAAA    2001:db8:105:30::10

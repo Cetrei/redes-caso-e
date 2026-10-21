@@ -18,6 +18,8 @@ Antes de configurar IPv6, verificá que el contenedor lo tenga habilitado (`sysc
 
 ### SRV-DMZ
 
+Usa la imagen `caso-e/srv-dmz`, que ya trae bind9, nginx y SSH configurados. Cómo construirla y crear la plantilla está en `servicios/README.md`.
+
 ```
 auto eth0
 iface eth0 inet static

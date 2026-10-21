@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caso E · Grupo 5</title>
+<!-- Sin fuentes ni recursos externos: el laboratorio no tiene salida a Internet. -->
+<style>
+  :root {
+    --bg: #f5f6f8; --fg: #18202b; --muted: #5b6676; --rule: #dde2e9;
+    --dmz: #f0e6f5; --dmz-s: #bf9fd3; --fw: #1f3a5f;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, Menlo, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--sans); line-height: 1.5; }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 20px; display: grid; gap: 28px; }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+  h1 { font-size: 34px; line-height: 1.15; margin: 4px 0 0; }
+  p { margin: 0; }
+  .conexion { background: var(--dmz); border: 1px solid var(--dmz-s); border-radius: 8px; padding: 20px; display: grid; gap: 14px; }
+  .conexion h2 { font-size: 15px; margin: 0; text-transform: uppercase; letter-spacing: .06em; }
+  dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; }
+  dt { color: var(--muted); }
+  dd { margin: 0; font-family: var(--mono); overflow-wrap: anywhere; }
+  .familia { display: inline-block; background: var(--fw); color: #fff; font-family: var(--mono); font-size: 13px; padding: 2px 8px; border-radius: 4px; }
+  ul { margin: 0; padding-left: 20px; }
+  footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--rule); padding-top: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="eyebrow">Redes Avanzadas I · EIF 101O · Universidad Nacional</p>
+    <h1>Grupo 5 · Los Arepísticos</h1>
+    <p>Caso E — DMZ corporativa protegida</p>
+  </header>
+
+  <section class="conexion">
+    <h2>Esta conexión</h2>
+    <dl>
+      <dt>Nombre pedido</dt>
+      <dd><!--# echo var="host" default="(sin nombre)" --></dd>
+      <dt>Tu dirección</dt>
+      <dd><!--# echo var="remote_addr" --></dd>
+      <dt>Familia</dt>
+      <dd><!--# if expr="$remote_addr = /:/" --><span class="familia">IPv6</span><!--# else --><span class="familia">IPv4</span><!--# endif --></dd>
+      <dt>Servidor</dt>
+      <dd>SRV-DMZ · <!--# echo var="server_addr" --></dd>
+    </dl>
+  </section>
+
+  <section>
+    <p>Este sitio se publica desde la DMZ a través del FortiGate. Desde afuera, en IPv4, llega por el VIP 203.0.113.20; en IPv6 llega directo a 2001:db8:105:30::10, sin NAT. Si ves tu dirección real arriba, el VIP no ocultó el origen.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Integrantes</p>
+    <ul>
+      <li>Integrante 1</li>
+      <li>Integrante 2</li>
+      <li>Integrante 3</li>
+      <li>Integrante 4</li>
+    </ul>
+  </section>
+
+  <footer>Zona g5.eif101o.test · www, v4 y v6 · Elaboración propia</footer>
+</main>
+</body>
+</html>

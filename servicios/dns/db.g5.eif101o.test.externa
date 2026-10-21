@@ -1,0 +1,21 @@
+; Zona g5.eif101o.test — vista EXTERNA (todo lo que no es la red interna)
+; En IPv4 se publica el VIP del FortiGate. En IPv6 no hay NAT: es la misma dirección que adentro.
+; Al cambiar algo, subir el serial (AAAAMMDDNN) en las dos vistas.
+$TTL 300
+@       IN  SOA ns1.g5.eif101o.test. hostmaster.g5.eif101o.test. (
+                2026102001  ; serial
+                3600        ; refresh
+                600         ; retry
+                86400       ; expire
+                300 )       ; TTL negativo
+        IN  NS      ns1.g5.eif101o.test.
+
+ns1     IN  A       203.0.113.20
+ns1     IN  AAAA    2001:db8:105:30::10
+
+www     IN  A       203.0.113.20
+www     IN  AAAA    2001:db8:105:30::10
+
+; Nombres por familia, para mostrar cada una en el navegador
+v4      IN  A       203.0.113.20
+v6      IN  AAAA    2001:db8:105:30::10
