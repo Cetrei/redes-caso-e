@@ -47,7 +47,7 @@ Una sola persona (el integrador) mantiene la maqueta oficial:
 | Equipo | Cómo |
 | --- | --- |
 | Routers IOSv | `show running-config` y copiar la salida al archivo de `configs/` |
-| FortiGate | `show` en la CLI (solo lo que no es por defecto) o respaldo desde la GUI. **Antes de commitear, borrá contraseñas y claves privadas** |
+| FortiGate | `show` en la CLI (solo lo que no es por defecto) o respaldo desde la GUI. Antes de commitear, borrá claves privadas y certificados |
 | Contenedores Docker | La red se edita en GNS3 (clic derecho → Edit network configuration) y se copia a `hosts/hosts.md` |
 | bind9 y nginx | Los archivos del volumen persistente de SRV-DMZ se copian a `servicios/` |
 
@@ -63,4 +63,6 @@ Todo problema real que les cueste más de unos minutos va a `bitacora.md`: sínt
 ## Qué no se sube nunca
 
 - Imágenes o discos (`.qcow2`, `.vmdk`, `.iso`, `.ova`, `.bin`) ni exportaciones de GNS3: el `.gitignore` ya los bloquea.
-- Licencias de Fortinet, contraseñas o claves privadas.
+- Licencias de Fortinet o claves privadas.
+
+Las credenciales de todos los equipos son las del laboratorio, `admin` / `admin`, y pueden quedar en los archivos de `configs/`.

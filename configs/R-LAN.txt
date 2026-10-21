@@ -1,11 +1,134 @@
 ! R-LAN — Router interno: subinterfaces VLAN 10/20, OSPFv2/OSPFv3, ACL-SEG-USUARIOS, ACL-VTY-ADMIN
-! Fuente del diseño: docs/especificacion.md. Estado: pendiente.
-! Orden de los bloques: base, interfaces, enrutamiento, seguridad.
+! Fuente del diseño: docs/especificacion.md. Imagen: Cisco IOSv 15.x.
+! Se pega en modo configuración (configure terminal).
 !
-! === 1. Base (hostname, usuarios, acceso) ===
+! === 1. Base ===
+hostname R-LAN
+no ip domain-lookup
+ip domain-name g5.eif101o.test
+service timestamps log datetime msec
+enable secret admin
+username admin privilege 15 secret admin
+ipv6 unicast-routing
+!
+! SSH: la clave se genera una sola vez y no aparece en el running-config.
+crypto key generate rsa modulus 2048
+ip ssh version 2
+!
+! Logs: buffer local y copia por syslog a PC-ADMIN (prueba E16).
+logging buffered 64000 informational
+logging source-interface GigabitEthernet0/1.20
+logging trap informational
+logging host 10.50.1.10
 !
 ! === 2. Interfaces ===
+interface GigabitEthernet0/0
+ description Transito hacia FGT-01 port2
+ ip address 10.50.1.50 255.255.255.252
+ ipv6 address FE80::2 link-local
+ ipv6 address 2001:DB8:105:FF00::2/64
+ ipv6 ospf 1 area 0
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description Troncal 802.1Q hacia SW-LAN puerto 0
+ no ip address
+ no shutdown
+!
+interface GigabitEthernet0/1.10
+ description VLAN 10 Usuarios
+ encapsulation dot1Q 10
+ ip address 10.50.0.1 255.255.255.0
+ ip access-group ACL-SEG-USUARIOS in
+ ipv6 address FE80::1 link-local
+ ! El /64 hace que el RA anuncie el prefijo: PC-USER se configura por SLAAC.
+ ipv6 address 2001:DB8:105:10::1/64
+ ipv6 traffic-filter ACL6-SEG-USUARIOS in
+ ipv6 ospf 1 area 0
+ ! Opcional si la imagen lo soporta (DNS por RA, RFC 8106):
+ ! ipv6 nd ra dns server 2001:DB8:105:30::10
+!
+interface GigabitEthernet0/1.20
+ description VLAN 20 Admin
+ encapsulation dot1Q 20
+ ip address 10.50.1.1 255.255.255.224
+ ipv6 address FE80::1 link-local
+ ipv6 address 2001:DB8:105:20::1/64
+ ipv6 ospf 1 area 0
+!
+interface GigabitEthernet0/2
+ description Sin uso
+ shutdown
+!
+interface GigabitEthernet0/3
+ description Sin uso
+ shutdown
 !
 ! === 3. Enrutamiento ===
+! OSPF área 0 con FGT-01. Las VLAN se anuncian como pasivas; la ruta por defecto llega del FGT (O*E2).
+router ospf 1
+ router-id 5.5.5.2
+ passive-interface GigabitEthernet0/1.10
+ passive-interface GigabitEthernet0/1.20
+ network 10.50.1.48 0.0.0.3 area 0
+ network 10.50.0.0 0.0.0.255 area 0
+ network 10.50.1.0 0.0.0.31 area 0
+!
+ipv6 router ospf 1
+ router-id 5.5.5.2
+ passive-interface GigabitEthernet0/1.10
+ passive-interface GigabitEthernet0/1.20
+!
+! Solo si el FortiGate no soporta default-information-originate en OSPFv3
+! (cambiar FE80::xxxx por la link-local real de FGT-01 port2):
+! ipv6 route ::/0 GigabitEthernet0/0 FE80::xxxx
 !
 ! === 4. Seguridad ===
+! ACL-SEG-USUARIOS: entrada en Gi0/1.10. Sin estado: las líneas 10 y 20 dejan volver las respuestas a Admin.
+ip access-list extended ACL-SEG-USUARIOS
+ remark Admin hace ping a Usuarios y recibe la respuesta
+ 10 permit icmp 10.50.0.0 0.0.0.255 10.50.1.0 0.0.0.31 echo-reply
+ remark Respuestas a conexiones TCP que inicia Admin
+ 20 permit tcp 10.50.0.0 0.0.0.255 10.50.1.0 0.0.0.31 established
+ remark Usuarios no inician nada hacia Administracion
+ 30 deny ip 10.50.0.0 0.0.0.255 10.50.1.0 0.0.0.31 log
+ remark Solo con el plan B (politica fusionada en el FGT):
+ remark 35 deny tcp 10.50.0.0 0.0.0.255 host 10.50.1.34 eq 22 log
+ remark El resto sigue al FortiGate
+ 40 permit ip any any
+!
+ipv6 access-list ACL6-SEG-USUARIOS
+ sequence 10 permit icmp 2001:DB8:105:10::/64 2001:DB8:105:20::/64 echo-reply
+ sequence 20 permit tcp 2001:DB8:105:10::/64 2001:DB8:105:20::/64 established
+ sequence 30 deny ipv6 2001:DB8:105:10::/64 2001:DB8:105:20::/64 log
+ remark Solo con el plan B:
+ remark sequence 35 deny tcp 2001:DB8:105:10::/64 host 2001:DB8:105:30::10 eq 22 log
+ sequence 40 permit ipv6 any any
+!
+! ACL-VTY-ADMIN: solo la VLAN 20 administra el router (prueba E12).
+ip access-list standard ACL-VTY-ADMIN
+ 10 permit 10.50.1.0 0.0.0.31
+ 20 deny any log
+ipv6 access-list ACL6-VTY-ADMIN
+ sequence 10 permit ipv6 2001:DB8:105:20::/64 any
+ sequence 20 deny ipv6 any any log
+!
+line con 0
+ logging synchronous
+line vty 0 4
+ access-class ACL-VTY-ADMIN in
+ ipv6 access-class ACL6-VTY-ADMIN in
+ login local
+ transport input ssh
+!
+end
+!
+! ------------------------------------------------------------------
+! Verificación
+! ------------------------------------------------------------------
+!   show ip ospf neighbor · show ipv6 ospf neighbor         (R01)
+!   show ip route · show ipv6 route                         (R02)
+!   show ip access-lists ACL-SEG-USUARIOS                   (E07 línea 30, E08 línea 10)
+!   show ip access-lists ACL-VTY-ADMIN                      (E12 línea 20)
+!   show ipv6 interface GigabitEthernet0/1.10               (link-local y prefijo anunciado)
+! F02: interface GigabitEthernet0/0 -> shutdown, observar, luego no shutdown

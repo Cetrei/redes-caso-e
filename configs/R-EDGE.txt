@@ -1,11 +1,101 @@
 ! R-EDGE — Borde de la empresa: ACL-BORDE-IN, estáticas, vty sin acceso (solo consola)
-! Fuente del diseño: docs/especificacion.md. Estado: pendiente.
-! Orden de los bloques: base, interfaces, enrutamiento, seguridad.
+! Fuente del diseño: docs/especificacion.md. Imagen: Cisco IOSv 15.x.
+! Se pega en modo configuración (configure terminal).
 !
-! === 1. Base (hostname, usuarios, acceso) ===
+! === 1. Base ===
+hostname R-EDGE
+no ip domain-lookup
+service timestamps log datetime msec
+enable secret admin
+ipv6 unicast-routing
+! Está fuera del NAT: los logs quedan en el buffer local (show logging), sin syslog a la LAN.
+logging buffered 64000 informational
 !
 ! === 2. Interfaces ===
+interface GigabitEthernet0/0
+ description Hacia R-ISP Gi0/0 (enlace ISP)
+ ip address 203.0.113.2 255.255.255.252
+ ip access-group ACL-BORDE-IN in
+ ipv6 address FE80::2 link-local
+ ipv6 address 2001:DB8:FFFF:1::2/64
+ ipv6 traffic-filter ACL6-BORDE-IN in
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description WAN publica hacia FGT-01 port1
+ ip address 203.0.113.17 255.255.255.248
+ ipv6 address FE80::1 link-local
+ ipv6 address 2001:DB8:105:FF01::1/64
+ no shutdown
+!
+interface GigabitEthernet0/2
+ description Sin uso
+ shutdown
+!
+interface GigabitEthernet0/3
+ description Sin uso
+ shutdown
 !
 ! === 3. Enrutamiento ===
+ip route 0.0.0.0 0.0.0.0 203.0.113.1
+ipv6 route ::/0 2001:DB8:FFFF:1::1
+! El /48 de la empresa se enruta completo hasta el FortiGate (sin NAT66).
+ipv6 route 2001:DB8:105::/48 2001:DB8:105:FF01::2
 !
 ! === 4. Seguridad ===
+! ACL-BORDE-IN: la "línea 10" del documento son las entradas 10 a 13, y la "línea 30" son las 30 a 33.
+ip access-list extended ACL-BORDE-IN
+ remark Anti-spoofing: rangos privados no pueden venir de Internet
+ 10 deny ip 10.0.0.0 0.255.255.255 any log
+ 11 deny ip 172.16.0.0 0.15.255.255 any log
+ 12 deny ip 192.168.0.0 0.0.255.255 any log
+ 13 deny ip 127.0.0.0 0.255.255.255 any log
+ remark Anti-spoofing: nadie de afuera usa el prefijo propio
+ 20 deny ip 203.0.113.16 0.0.0.7 any log
+ remark Nadie gestiona el borde desde Internet
+ 30 deny tcp any host 203.0.113.2 eq 22 log
+ 31 deny tcp any host 203.0.113.2 eq telnet log
+ 32 deny tcp any host 203.0.113.17 eq 22 log
+ 33 deny tcp any host 203.0.113.17 eq telnet log
+ remark El FortiGate decide el resto
+ 40 permit ip any any
+!
+ipv6 access-list ACL6-BORDE-IN
+ remark Anti-spoofing: el prefijo propio y ULA no pueden venir de Internet
+ sequence 10 deny ipv6 2001:DB8:105::/48 any log
+ sequence 11 deny ipv6 FC00::/7 any log
+ remark Nadie gestiona el borde desde Internet
+ sequence 30 deny tcp any host 2001:DB8:FFFF:1::2 eq 22 log
+ sequence 31 deny tcp any host 2001:DB8:FFFF:1::2 eq telnet log
+ sequence 32 deny tcp any host 2001:DB8:105:FF01::1 eq 22 log
+ sequence 33 deny tcp any host 2001:DB8:105:FF01::1 eq telnet log
+ remark El FortiGate decide el resto (incluye Neighbor Discovery)
+ sequence 40 permit ipv6 any any
+!
+! Gestión solo por consola: las vty niegan todo.
+ip access-list standard ACL-VTY-NINGUNO
+ 10 deny any log
+ipv6 access-list ACL6-VTY-NINGUNO
+ sequence 10 deny ipv6 any any log
+!
+line con 0
+ logging synchronous
+line vty 0 4
+ access-class ACL-VTY-NINGUNO in
+ ipv6 access-class ACL6-VTY-NINGUNO in
+ transport input none
+!
+end
+!
+! ------------------------------------------------------------------
+! Cambios temporales para pruebas (aplicar, probar y quitar)
+! ------------------------------------------------------------------
+! E02b — ruta filtrada hacia la LAN (junto con la de R-ISP):
+!   ip route 10.50.0.0 255.255.0.0 203.0.113.18
+!   Quitar: no ip route 10.50.0.0 255.255.0.0 203.0.113.18
+!
+! Verificación:
+!   show ip route · show ipv6 route
+!   show ip access-lists ACL-BORDE-IN       (E10: contador de la entrada 10)
+!   show ipv6 access-list ACL6-BORDE-IN
+!   show logging                            (líneas %SEC-6-IPACCESSLOGP)

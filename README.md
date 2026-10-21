@@ -14,6 +14,19 @@ El FortiGate es el único punto de paso entre zonas: la política 1 publica DNS 
 | Entrega Parte I (PDF) | 31 de octubre |
 | Defensa Parte II | 4 de noviembre |
 
+## Credenciales del laboratorio
+
+Todos los equipos usan **`admin` / `admin`**.
+
+| Equipo | Usuario | Contraseña | Acceso |
+| --- | --- | --- | --- |
+| R-ISP | — | `admin` (enable) | Solo consola de GNS3 |
+| R-EDGE | — | `admin` (enable) | Solo consola de GNS3 |
+| R-LAN | `admin` | `admin` (también enable) | Consola, o SSH desde la VLAN 20 |
+| FGT-01 | `admin` | `admin` | Consola, o GUI/SSH desde la VLAN 20 (10.50.1.49) |
+
+En la primera entrada, el FortiGate pide cambiar la contraseña. Si la versión no acepta `admin`, anoten acá cuál usaron para que todo el grupo use la misma.
+
 ## Qué hay en el repo
 
 El repo guarda **solo texto**. La maqueta de GNS3 no se versiona acá: tiene discos binarios e imágenes con licencia de Cisco y Fortinet que no se pueden distribuir.

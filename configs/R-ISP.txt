@@ -1,11 +1,66 @@
 ! R-ISP — Simula Internet: redes externas A y B, estáticas hacia la empresa
-! Fuente del diseño: docs/especificacion.md. Estado: pendiente.
-! Orden de los bloques: base, interfaces, enrutamiento, seguridad.
+! Fuente del diseño: docs/especificacion.md. Imagen: Cisco IOSv 15.x.
+! Se pega en modo configuración (configure terminal).
 !
-! === 1. Base (hostname, usuarios, acceso) ===
+! === 1. Base ===
+hostname R-ISP
+no ip domain-lookup
+service timestamps log datetime msec
+enable secret admin
+ipv6 unicast-routing
+logging buffered 64000 informational
 !
 ! === 2. Interfaces ===
+interface GigabitEthernet0/0
+ description Enlace ISP hacia R-EDGE Gi0/0
+ ip address 203.0.113.1 255.255.255.252
+ ipv6 address FE80::1 link-local
+ ipv6 address 2001:DB8:FFFF:1::1/64
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description Red externa A (PC-EXT)
+ ip address 198.51.100.1 255.255.255.0
+ ipv6 address FE80::1 link-local
+ ipv6 address 2001:DB8:FFFF:100::1/64
+ no shutdown
+!
+interface GigabitEthernet0/2
+ description Red externa B (PC-EXT-WEB)
+ ip address 192.0.2.1 255.255.255.0
+ ipv6 address FE80::1 link-local
+ ipv6 address 2001:DB8:FFFF:200::1/64
+ no shutdown
+!
+interface GigabitEthernet0/3
+ description Sin uso
+ shutdown
 !
 ! === 3. Enrutamiento ===
+! Solo conoce lo público de la empresa. Nunca tiene ruta a 10.50.0.0/16 (prueba E02).
+ip route 203.0.113.16 255.255.255.248 203.0.113.2
+ipv6 route 2001:DB8:105::/48 2001:DB8:FFFF:1::2
 !
 ! === 4. Seguridad ===
+! Equipo del "proveedor": se gestiona solo por consola.
+line con 0
+ logging synchronous
+line vty 0 4
+ transport input none
+!
+end
+!
+! ------------------------------------------------------------------
+! Cambios temporales para pruebas (aplicar, probar y quitar)
+! ------------------------------------------------------------------
+! E10 — origen falsificado:
+!   interface Loopback99
+!    ip address 10.99.99.99 255.255.255.255
+!   (exec) ping 203.0.113.20 source Loopback99
+!   Quitar: no interface Loopback99
+!
+! E02b — ruta filtrada hacia la LAN (junto con la de R-EDGE):
+!   ip route 10.50.0.0 255.255.0.0 203.0.113.2
+!   Quitar: no ip route 10.50.0.0 255.255.0.0 203.0.113.2
+!
+! Verificación: show ip route · show ipv6 route · show ipv6 interface brief
