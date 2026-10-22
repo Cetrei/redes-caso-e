@@ -1,6 +1,8 @@
 # Topologia del Caso E como datos. Fuente: docs/especificacion.md (Inventario y Cableado).
 # Para otro escenario o mas hosts se edita este archivo; el motor (gns3ctl.py) no cambia.
 proyecto: casoE_dev
+# Licencia de prueba del FortiGate (3 politicas, 3 rutas): true usa configs/FGT-01-planB.conf y activa la linea 35 de las ACL de R-LAN.
+plan_b: true
 servidor: http://127.0.0.1:3080          # API del servidor GNS3 2.2.61 (la VM del profesor)
 
 # alias -> nombre de la plantilla en GNS3
@@ -22,7 +24,7 @@ nodos:
   PC-EXT:     {plantilla: cliente,   x: -400, y: -400, red: hosts/hosts.md}
   PC-EXT-WEB: {plantilla: navegador, x: -400, y: -200, red: hosts/hosts.md}
   R-EDGE:     {plantilla: router,    x: 0,    y: -300, config: configs/R-EDGE.txt}
-  FGT-01:     {plantilla: fortigate, x: 200,  y: -300, config: configs/FGT-01.conf}
+  FGT-01:     {plantilla: fortigate, x: 200,  y: -300, config: configs/FGT-01.conf, config_plan_b: configs/FGT-01-planB.conf}
   R-LAN:      {plantilla: router,    x: 400,  y: -300, config: configs/R-LAN.txt}
   SW-DMZ:     {plantilla: switch,    x: 200,  y: -100, puertos: [{n: 0, tipo: access, vlan: 1}, {n: 1, tipo: access, vlan: 1}]}
   SRV-DMZ:    {plantilla: servidor,  x: 200,  y: 100,  red: hosts/hosts.md}

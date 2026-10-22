@@ -9,7 +9,7 @@ Es idempotente: se puede repetir cualquier subcomando sin duplicar nada.
   imagen      construye caso-e/srv-dmz en la VM (SSH) y crea su plantilla Docker
   construir   crea proyecto, nodos, switches, enlaces, configs de routers y red de los contenedores
   iniciar     enciende todos los nodos        detener   los apaga
-  fortigate   pega configs/FGT-01.conf por la consola telnet del FortiGate (ya encendido)
+  fortigate   pega configs/FGT-01.conf (o FGT-01-planB.conf si plan_b: true) por la consola telnet del FortiGate
   estado      lista nodos, estado y puerto de consola
   destruir    borra el proyecto
 """
@@ -86,6 +86,8 @@ def config_router(ruta):
         if s.startswith("crypto key generate"):
             exec_.append(s)
             continue
+        if CFG.get("plan_b"):   # plan B: se activan las lineas 35 de las ACL de usuarios, que el archivo trae como remark
+            linea = re.sub(r"^(\s*)remark ((?:sequence )?35 )", r"\1\2", linea)
         salida.append(linea.rstrip())
         if s == "end":
             break
@@ -250,7 +252,10 @@ def fortigate(_):
             break
         else:
             c.enviar("")
-    lineas = [l.rstrip() for l in (RAIZ / CFG["nodos"]["FGT-01"]["config"]).read_text(encoding="utf-8").splitlines()
+    d = CFG["nodos"]["FGT-01"]
+    archivo = d["config_plan_b"] if CFG.get("plan_b") else d["config"]
+    print(f"usando {archivo}")
+    lineas = [l.rstrip() for l in (RAIZ / archivo).read_text(encoding="utf-8").splitlines()
               if l.strip() and not l.lstrip().startswith("#")]
     print(f"pegando {len(lineas)} lineas en FGT-01 (consola {n['console']})")
     for l in lineas:
