@@ -1,0 +1,50 @@
+# Topologia del Caso E como datos. Fuente: docs/especificacion.md (Inventario y Cableado).
+# Para otro escenario o mas hosts se edita este archivo; el motor (gns3ctl.py) no cambia.
+proyecto: casoE_dev
+servidor: http://127.0.0.1:3080          # API del servidor GNS3 2.2.61 (la VM del profesor)
+
+# alias -> nombre de la plantilla en GNS3
+plantillas:
+  router: "c7200-15.2-4.M7-256MB"       # la OVA no trae IOSv: los routers son Dynamips c7200
+  fortigate: "FortiGate 8.0.0 (admin:Fortinet.2026)"
+  switch: "Ethernet switch"
+  cliente: "Cliente-caso-e"             # la crea `imagen`: Alpine con dig, curl, ssh y sin udhcpc al arrancar
+  admin: "Ubuntu Docker Guest"          # decision pendiente: PC-ADMIN con terminal, navegador y syslog
+  navegador: "webterm"
+  servidor: "SRV-DMZ-img"           # la crea el subcomando `imagen`
+
+# El c7200 no tiene Gi0/0 a Gi0/3 como el IOSv. Se usan 4 PA-GE en los slots 1 a 4 y el motor
+# traduce GigabitEthernet0/N a GigabitEthernet(N+1)/0 al enviar la configuracion y al cablear.
+dynamips_slots: {slot1: PA-GE, slot2: PA-GE, slot3: PA-GE, slot4: PA-GE}
+
+nodos:
+  R-ISP:      {plantilla: router,    x: -200, y: -300, config: configs/R-ISP.txt}
+  PC-EXT:     {plantilla: cliente,   x: -400, y: -400, red: hosts/hosts.md}
+  PC-EXT-WEB: {plantilla: navegador, x: -400, y: -200, red: hosts/hosts.md}
+  R-EDGE:     {plantilla: router,    x: 0,    y: -300, config: configs/R-EDGE.txt}
+  FGT-01:     {plantilla: fortigate, x: 200,  y: -300, config: configs/FGT-01.conf}
+  R-LAN:      {plantilla: router,    x: 400,  y: -300, config: configs/R-LAN.txt}
+  SW-DMZ:     {plantilla: switch,    x: 200,  y: -100, puertos: [{n: 0, tipo: access, vlan: 1}, {n: 1, tipo: access, vlan: 1}]}
+  SRV-DMZ:    {plantilla: servidor,  x: 200,  y: 100,  red: hosts/hosts.md}
+  SW-LAN:     {plantilla: switch,    x: 400,  y: -100, puertos: [{n: 0, tipo: dot1q, vlan: 1}, {n: 1, tipo: access, vlan: 10}, {n: 2, tipo: access, vlan: 20}]}
+  PC-USER:    {plantilla: cliente,   x: 300,  y: 100,  red: hosts/hosts.md}
+  PC-ADMIN:   {plantilla: admin,     x: 500,  y: 100,  red: hosts/hosts.md}
+
+# Cableado: igual a la tabla de la especificacion. Nombres de puerto de la especificacion:
+# Gi0/N (router), portN (FortiGate), ethN (contenedor), pN (switch de GNS3).
+enlaces:
+  - [R-ISP,  Gi0/0, R-EDGE,     Gi0/0]
+  - [R-ISP,  Gi0/1, PC-EXT,     eth0]
+  - [R-ISP,  Gi0/2, PC-EXT-WEB, eth0]
+  - [R-EDGE, Gi0/1, FGT-01,     port1]
+  - [FGT-01, port2, R-LAN,      Gi0/0]
+  - [FGT-01, port3, SW-DMZ,     p0]
+  - [SW-DMZ, p1,    SRV-DMZ,    eth0]
+  - [R-LAN,  Gi0/1, SW-LAN,     p0]
+  - [SW-LAN, p1,    PC-USER,    eth0]
+  - [SW-LAN, p2,    PC-ADMIN,   eth0]
+
+# Acceso a la consola del FortiGate (solo para `fortigate`).
+fortigate:
+  usuario: admin
+  clave: Fortinet.2026
