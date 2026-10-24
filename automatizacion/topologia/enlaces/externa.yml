@@ -1,0 +1,5 @@
+# Red externa: ISP simulado, clientes externos y la salida hacia el borde.
+# Cada linea es un cable: [equipo, puerto, equipo, puerto]. Puertos: Gi0/N (router), portN (FortiGate), ethN (contenedor), pN (switch de GNS3).
+- [R-ISP, Gi0/0, R-EDGE, Gi0/0]
+- [R-ISP, Gi0/1, PC-EXT, eth0]
+- [R-ISP, Gi0/2, PC-EXT-WEB, eth0]

@@ -1,0 +1,5 @@
+# SRV-DMZ. Tabla de inventario y cableado: docs/especificacion.md
+plantilla: servidor
+x: 200
+y: 100
+red: hosts/hosts.md

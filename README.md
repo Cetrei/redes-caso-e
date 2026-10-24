@@ -34,6 +34,7 @@ El repo guarda **solo texto**. La maqueta de GNS3 no se versiona acá: tiene dis
 | Carpeta | Contenido |
 | --- | --- |
 | `docs/` | [Especificación de la topología](docs/especificacion.md) (la fuente de la verdad del diseño), el diagrama de la topología (SVG y HTML) y el enunciado del profesor |
+| `automatizacion/` | `gns3ctl.py` arma la maqueta en GNS3 desde archivos de texto: [guía y estructura](automatizacion/README.md) |
 | `configs/` | Configuración de cada router, del FortiGate y de los switches |
 | `hosts/` | Direccionamiento y red de cada contenedor Docker |
 | `servicios/` | bind9 (DNS) y nginx (web) de SRV-DMZ |

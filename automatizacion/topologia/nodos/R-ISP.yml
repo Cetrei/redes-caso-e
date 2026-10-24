@@ -1,0 +1,5 @@
+# R-ISP. Tabla de inventario y cableado: docs/especificacion.md
+plantilla: router
+x: -200
+y: -300
+config: configs/R-ISP.txt

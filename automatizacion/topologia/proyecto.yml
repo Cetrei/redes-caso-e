@@ -1,0 +1,39 @@
+# Parametros globales de la maqueta del Caso E. Fuente: docs/especificacion.md.
+# Un equipo = un archivo en nodos/. Los cables van en enlaces/, un archivo por segmento.
+# Guia para agregar, quitar o mover equipos: automatizacion/README.md
+proyecto: casoE_dev
+# Licencia de prueba del FortiGate (3 politicas, 3 rutas): true usa configs/FGT-01-planB.conf y activa la linea 35 de las ACL de R-LAN.
+plan_b: true
+servidor: http://127.0.0.1:3080          # API del servidor GNS3 2.2.61 (la VM del profesor)
+
+# alias -> nombre de la plantilla en GNS3
+plantillas:
+  router: "c7200-15.2-4.M7-256MB"       # la OVA no trae IOSv: los routers son Dynamips c7200
+  fortigate: "FortiGate 8.0.0 (admin:Fortinet.2026)"
+  switch: "Ethernet switch"
+  cliente: "Cliente-caso-e"             # la crea `imagen`: Alpine con dig, curl, ssh y sin udhcpc al arrancar
+  admin: "Ubuntu Docker Guest"          # decision pendiente: PC-ADMIN con terminal, navegador y syslog
+  navegador: "webterm"
+  servidor: "SRV-DMZ-img"           # la crea el subcomando `imagen`
+
+# alias de plantilla -> tipo de nodo de GNS3. Permite validar puertos sin tener GNS3 encendido (`validar`).
+# Si agregas un alias nuevo, agrega aca su tipo; los tipos validos son los modulos de maqueta/tipos/.
+tipos: {router: dynamips, fortigate: qemu, switch: ethernet_switch, cliente: docker, admin: docker, navegador: docker, servidor: docker}
+
+# El c7200 no tiene Gi0/0 a Gi0/3 como el IOSv. Se usan 4 PA-GE en los slots 1 a 4 y el motor
+# traduce GigabitEthernet0/N a GigabitEthernet(N+1)/0 al enviar la configuracion y al cablear.
+dynamips_slots: {slot1: PA-GE, slot2: PA-GE, slot3: PA-GE, slot4: PA-GE}
+
+# Acceso al CLI del FortiGate (comando `fortigate`).
+fortigate:
+  nodo: FGT-01
+  usuario: admin
+  clave: Fortinet.2026
+
+# Imagenes Docker que construye `imagen` dentro de la VM (ruta relativa a la raiz del repo).
+imagenes:
+  - {etiqueta: caso-e/srv-dmz, ruta: servicios, plantilla: SRV-DMZ-img}
+  - {etiqueta: caso-e/cliente, ruta: servicios/cliente, plantilla: Cliente-caso-e}
+
+# SSH a la VM de GNS3 (solo para `imagen`).
+ssh: {host: 127.0.0.1, puerto: 2222, usuario: gns3, clave: gns3}

@@ -1,0 +1,5 @@
+# R-LAN. Tabla de inventario y cableado: docs/especificacion.md
+plantilla: router
+x: 400
+y: -300
+config: configs/R-LAN.txt

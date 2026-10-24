@@ -1,0 +1,5 @@
+# Todo cable que toca al FortiGate: WAN (port1), LAN (port2) y DMZ (port3).
+# Cada linea es un cable: [equipo, puerto, equipo, puerto]. Puertos: Gi0/N (router), portN (FortiGate), ethN (contenedor), pN (switch de GNS3).
+- [R-EDGE, Gi0/1, FGT-01, port1]
+- [FGT-01, port2, R-LAN, Gi0/0]
+- [FGT-01, port3, SW-DMZ, p0]

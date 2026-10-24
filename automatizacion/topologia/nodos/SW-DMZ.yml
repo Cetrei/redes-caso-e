@@ -1,0 +1,7 @@
+# SW-DMZ. Tabla de inventario y cableado: docs/especificacion.md
+plantilla: switch
+x: 200
+y: -100
+puertos:
+  - {n: 0, tipo: access, vlan: 1}
+  - {n: 1, tipo: access, vlan: 1}

@@ -1,0 +1,6 @@
+# FGT-01. Tabla de inventario y cableado: docs/especificacion.md
+plantilla: fortigate
+x: 200
+y: -300
+config: configs/FGT-01.conf
+config_plan_b: configs/FGT-01-planB.conf
