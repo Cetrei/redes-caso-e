@@ -27,9 +27,17 @@ automatizacion/
 │   ├── proyecto.yml        servidor, plantillas, tipos, FortiGate, imagenes Docker
 │   ├── nodos/<EQUIPO>.yml  un archivo por equipo: plantilla, x, y, config o red
 │   └── enlaces/<segmento>.yml   los cables, un archivo por segmento
-└── maqueta/                EL MOTOR (casi nunca se toca)
-    ├── tipos/              un modulo por tipo de nodo: dynamips, qemu, docker, switch
-    └── comandos/           un modulo por subcomando
+├── maqueta/                EL MOTOR (casi nunca se toca)
+│   ├── modelo.py           los datos de topologia/ como dataclasses (Proyecto, Nodo, Cable)
+│   ├── repositorio.py      lee topologia/ y los archivos del repo
+│   ├── validacion.py       las reglas de `validar`, una por metodo
+│   ├── errores.py          todos los errores esperados cuelgan de ErrorMaqueta
+│   ├── gns3.py, ssh.py, consola.py   los bordes: API REST de GNS3, SSH a la VM, telnet al FortiGate
+│   ├── aplicacion.py       arma el motor y le da a cada subcomando sus servicios
+│   ├── tipos/              un modulo por tipo de nodo: dynamips, qemu, docker, switch
+│   ├── servicios/          el trabajo real: construir, ciclo de vida, posiciones, imagenes, FortiGate, licencia
+│   └── comandos/           un modulo por subcomando, delgado: llama a un servicio
+└── tests/                  pruebas con dobles en memoria, sin GNS3 ni red
 ```
 
 Regla de oro: **agregar, quitar o mover un equipo es tocar archivos de `topologia/`, no código**. El nombre del archivo es el nombre del equipo en GNS3.
@@ -58,9 +66,13 @@ Dos formas de acomodar:
 
 **Cambiar la config de un equipo:** se edita su archivo de `configs/`, como siempre, y `construir` (routers) o `fortigate` la aplican.
 
-**Un tipo de equipo nuevo** (por ejemplo VPCS): creá `maqueta/tipos/vpcs.py` con `puerto()` y `preparar()` (mirá `qemu.py`, el más corto), registralo en `maqueta/tipos/__init__.py` y agregá su alias en `proyecto.yml` (`plantillas` y `tipos`).
+**Un tipo de equipo nuevo** (por ejemplo VPCS): creá `maqueta/tipos/vpcs.py` con una subclase de `TipoNodo` que defina `clave`, `puerto()` y `preparar()` (mirá `docker.py`, uno de los más cortos) y agregá su alias en `proyecto.yml` (`plantillas` y `tipos`). No hay nada que registrar: el motor encuentra el módulo solo.
 
-**Un subcomando nuevo:** creá su módulo en `maqueta/comandos/` con un diccionario `COMANDOS` y agregalo a `MODULOS` en `comandos/__init__.py`.
+**Un subcomando nuevo:** creá su módulo en `maqueta/comandos/` con una subclase de `Comando` que defina `nombre`, `ayuda` y `ejecutar()` (mirá `validar.py`). Tampoco hay lista que mantener; `orden` fija su lugar en la ayuda. La lógica va en un servicio de `maqueta/servicios/`, no en el comando.
+
+## Pruebas
+
+Desde `automatizacion/`: `python3 -m unittest discover -s tests -t .`. Usan un GNS3 y un FortiGate falsos en memoria, así que corren en menos de un segundo, sin VM y sin credenciales. Corrélas antes del PR si tocaste algo de `maqueta/`.
 
 ## Para que los merges no sean un caos
 

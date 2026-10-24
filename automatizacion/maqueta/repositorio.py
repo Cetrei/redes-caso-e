@@ -1,0 +1,157 @@
+"""Acceso al disco: topologia/ (YAML) y los archivos que esta referencia (configs, hosts.md).
+
+Es el unico modulo que lee o escribe archivos del repo. `cargar` traduce el YAML al modelo de dominio y
+rechaza lo que no se puede ni interpretar; las reglas de coherencia las aplica `validacion`.
+"""
+from __future__ import annotations
+
+import re
+from pathlib import Path
+from typing import Any
+
+import yaml
+
+from .errores import ErrorTopologia
+from .modelo import ConfigFortigate, ConfigSsh, Enlace, Imagen, Nodo, Proyecto, PuertoSwitch
+
+
+def _entero(valor: Any) -> int | None:
+    return valor if isinstance(valor, int) and not isinstance(valor, bool) else None
+
+
+def _texto(valor: Any) -> str | None:
+    return None if valor is None else str(valor)
+
+
+def _mapa_texto(valor: Any, clave: str) -> dict[str, str]:
+    if valor is None:
+        return {}
+    if not isinstance(valor, dict):
+        raise ErrorTopologia(f"proyecto.yml > {clave}: debe ser un mapa")
+    return {str(k): str(v) for k, v in valor.items()}
+
+
+def _seccion(datos: dict, clave: str, campos: tuple[str, ...]) -> dict | None:
+    """Mapa de una seccion opcional de proyecto.yml; si existe, exige todos sus campos."""
+    valor = datos.get(clave)
+    if valor is None:
+        return None
+    if not isinstance(valor, dict):
+        raise ErrorTopologia(f"proyecto.yml > {clave}: debe ser un mapa")
+    for campo in campos:
+        if campo not in valor:
+            raise ErrorTopologia(f"proyecto.yml > {clave}: falta '{campo}'")
+    return valor
+
+
+class Repositorio:
+    """La carpeta automatizacion/ y la raiz del repo que la contiene."""
+
+    def __init__(self, base: Path):
+        self.base = base                 # automatizacion/
+        self.raiz = base.parent          # raiz del repo
+        self._dir = base / "topologia"
+
+    @property
+    def servicios(self) -> Path:
+        return self.raiz / "servicios"
+
+    def existe(self, ruta: str) -> bool:
+        return (self.raiz / ruta).exists()
+
+    def leer(self, ruta: str) -> str:
+        try:
+            return (self.raiz / ruta).read_text(encoding="utf-8")
+        except OSError as e:
+            raise ErrorTopologia(f"no pude leer {ruta}: {e.strerror or e}") from e
+
+    def cargar(self) -> Proyecto:
+        ruta = self._dir / "proyecto.yml"
+        if not ruta.exists():
+            raise ErrorTopologia(f"Falta {ruta}")
+        datos = self._yaml(ruta) or {}
+        if not isinstance(datos, dict):
+            raise ErrorTopologia("proyecto.yml: debe ser un mapa")
+        for clave in ("proyecto", "servidor"):
+            if not datos.get(clave):
+                raise ErrorTopologia(f"proyecto.yml: falta '{clave}'")
+        fg = _seccion(datos, "fortigate", ("nodo", "usuario", "clave"))
+        ssh = _seccion(datos, "ssh", ("host", "puerto", "usuario", "clave"))
+        imagenes = datos.get("imagenes") or []
+        if not isinstance(imagenes, list):
+            raise ErrorTopologia("proyecto.yml > imagenes: debe ser una lista")
+        return Proyecto(
+            nombre=str(datos["proyecto"]),
+            servidor=str(datos["servidor"]),
+            plan_b=bool(datos.get("plan_b", False)),
+            plantillas=_mapa_texto(datos.get("plantillas"), "plantillas"),
+            tipos=_mapa_texto(datos.get("tipos"), "tipos"),
+            dynamips_slots=_mapa_texto(datos.get("dynamips_slots"), "dynamips_slots"),
+            fortigate=None if fg is None else ConfigFortigate(
+                nodo=str(fg["nodo"]), usuario=str(fg["usuario"]), clave=str(fg["clave"]),
+                puerto_internet=str(fg.get("puerto_internet", "port4"))),
+            imagenes=tuple(self._imagen(i) for i in imagenes),
+            ssh=None if ssh is None else ConfigSsh(
+                host=str(ssh["host"]), puerto=int(ssh["puerto"]), usuario=str(ssh["usuario"]), clave=str(ssh["clave"])),
+            nodos={n.nombre: n for n in self._nodos()},
+            enlaces=tuple(self._enlaces()),
+        )
+
+    def actualizar_posicion(self, nombre: str, x: int, y: int) -> None:
+        """Reescribe x e y en el archivo del equipo sin tocar sus comentarios ni el resto."""
+        ruta = self._dir / "nodos" / f"{nombre}.yml"
+        texto = ruta.read_text(encoding="utf-8")
+        texto = re.sub(r"(?m)^x: .*$", f"x: {x}", texto, count=1)
+        texto = re.sub(r"(?m)^y: .*$", f"y: {y}", texto, count=1)
+        ruta.write_text(texto, encoding="utf-8")
+
+    # lectura de los archivos de topologia/
+
+    def _yaml(self, ruta: Path) -> Any:
+        try:
+            return yaml.safe_load(ruta.read_text(encoding="utf-8"))
+        except yaml.YAMLError as e:
+            raise ErrorTopologia(f"{ruta.relative_to(self.raiz)}: YAML invalido: {e}") from e
+
+    @staticmethod
+    def _imagen(d: Any) -> Imagen:
+        if not isinstance(d, dict) or not {"etiqueta", "ruta", "plantilla"} <= d.keys():
+            raise ErrorTopologia(f"proyecto.yml > imagenes: cada una necesita etiqueta, ruta y plantilla, no {d!r}")
+        return Imagen(str(d["etiqueta"]), str(d["ruta"]), str(d["plantilla"]))
+
+    def _nodos(self) -> list[Nodo]:
+        return [self._nodo(f) for f in sorted((self._dir / "nodos").glob("*.yml"))]
+
+    def _nodo(self, archivo: Path) -> Nodo:
+        d = self._yaml(archivo) or {}
+        if not isinstance(d, dict):
+            raise ErrorTopologia(f"nodos/{archivo.name}: debe ser un mapa con plantilla, x, y...")
+        puertos = d.get("puertos") or []
+        if not isinstance(puertos, list):
+            raise ErrorTopologia(f"nodos/{archivo.name}: 'puertos' debe ser una lista")
+        return Nodo(
+            nombre=archivo.stem,                       # el nombre del equipo es el nombre del archivo
+            plantilla=_texto(d.get("plantilla")),
+            x=_entero(d.get("x")),
+            y=_entero(d.get("y")),
+            config=_texto(d.get("config")),
+            config_plan_b=_texto(d.get("config_plan_b")),
+            red=_texto(d.get("red")),
+            puertos=tuple(self._puerto_switch(archivo, i, p) for i, p in enumerate(puertos)),
+        )
+
+    @staticmethod
+    def _puerto_switch(archivo: Path, i: int, p: Any) -> PuertoSwitch:
+        if not isinstance(p, dict) or _entero(p.get("n")) is None or _entero(p.get("vlan")) is None or "tipo" not in p:
+            raise ErrorTopologia(f"nodos/{archivo.name}: puertos[{i}] debe ser {{n, tipo, vlan}}, no {p!r}")
+        return PuertoSwitch(p["n"], str(p["tipo"]), p["vlan"])
+
+    def _enlaces(self) -> list[Enlace]:
+        res = []
+        for f in sorted((self._dir / "enlaces").glob("*.yml")):
+            lista = self._yaml(f) or []
+            for cable in lista if isinstance(lista, list) else [lista]:
+                if not (isinstance(cable, list) and len(cable) == 4):
+                    raise ErrorTopologia(f"enlaces/{f.name}: cada cable es [equipo, puerto, equipo, puerto], no {cable!r}")
+                res.append(Enlace(*(str(x) for x in cable)))
+        return res

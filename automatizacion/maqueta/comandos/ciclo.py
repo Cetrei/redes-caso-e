@@ -1,29 +1,40 @@
 """iniciar, detener, estado y destruir: el ciclo de vida de los nodos del proyecto."""
-from ..api import http, nodos, proyecto
+from __future__ import annotations
+
+from .base import Comando
 
 
-def cambiar(accion):
-    def f(_):
-        pid = proyecto()
-        http("POST", f"/projects/{pid}/nodes/{accion}", {})
-        print(f"nodos: {accion} enviado")
-    return f
+class Iniciar(Comando):
+    nombre = "iniciar"
+    ayuda = "enciende todos los nodos"
+    orden = 50
+
+    def ejecutar(self, app, args):
+        app.ciclo().cambiar("start")
 
 
-def estado(_):
-    pid = proyecto()
-    for n in sorted(nodos(pid).values(), key=lambda n: n["name"]):
-        print(f"{n['name']:<12}{n['node_type']:<16}{n['status']:<9}consola {n.get('console_host', '')}:{n.get('console', '-')}")
+class Detener(Comando):
+    nombre = "detener"
+    ayuda = "apaga todos los nodos"
+    orden = 51
+
+    def ejecutar(self, app, args):
+        app.ciclo().cambiar("stop")
 
 
-def destruir(_):
-    http("DELETE", f"/projects/{proyecto()}")
-    print("proyecto borrado")
+class Estado(Comando):
+    nombre = "estado"
+    ayuda = "lista nodos, estado y puerto de consola"
+    orden = 52
+
+    def ejecutar(self, app, args):
+        app.ciclo().estado()
 
 
-COMANDOS = {
-    "iniciar": (cambiar("start"), "enciende todos los nodos", None),
-    "detener": (cambiar("stop"), "apaga todos los nodos", None),
-    "estado": (estado, "lista nodos, estado y puerto de consola", None),
-    "destruir": (destruir, "borra el proyecto (el FortiGate pierde su licencia de evaluacion)", None),
-}
+class Destruir(Comando):
+    nombre = "destruir"
+    ayuda = "borra el proyecto (el FortiGate pierde su licencia de evaluacion)"
+    orden = 53
+
+    def ejecutar(self, app, args):
+        app.ciclo().destruir()

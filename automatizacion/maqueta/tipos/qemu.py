@@ -1,16 +1,19 @@
-"""Nodos QEMU (FortiGate): puertos portN. Su configuracion se pega por consola con el comando `fortigate`."""
+"""Nodos QEMU (el FortiGate): puertos portN. Su configuracion se pega por consola con el subcomando `fortigate`."""
+from __future__ import annotations
+
 import re
-from ..config import ErrorTopologia
 
-EJEMPLO = "port1"
-
-
-def puerto(nombre):
-    m = re.fullmatch(r"port(\d+)", nombre)
-    if not m:
-        raise ErrorTopologia(f"puerto '{nombre}' invalido para el FortiGate (se espera como {EJEMPLO})")
-    return int(m.group(1)) - 1, 0
+from ..modelo import Puerto
+from .base import TipoNodo
 
 
-def preparar(ctx, nombre, d, n):
-    pass
+class Qemu(TipoNodo):
+    clave = "qemu"
+    ejemplo = "port1"
+    descripcion = "el FortiGate"
+
+    def puerto(self, nombre: str) -> Puerto:
+        m = re.fullmatch(r"port(\d+)", nombre)
+        if not m:
+            raise self.puerto_invalido(nombre)
+        return Puerto(int(m.group(1)) - 1, 0)

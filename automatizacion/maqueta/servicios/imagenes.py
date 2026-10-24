@@ -1,0 +1,35 @@
+"""imagen: construye en la VM las imagenes Docker de proyecto.yml > imagenes y crea sus plantillas en GNS3."""
+from __future__ import annotations
+
+from typing import Callable
+
+from ..gns3 import ClienteGns3
+from ..modelo import ConfigSsh, Proyecto
+from ..repositorio import Repositorio
+from ..ssh import CanalVm
+
+DESTINO = "/home/gns3/servicios"
+
+
+class ConstructorImagenes:
+    def __init__(self, gns3: ClienteGns3, proyecto: Proyecto, repositorio: Repositorio,
+                 abrir_canal: Callable[[ConfigSsh], CanalVm], salida: Callable[[str], None]):
+        self._gns3 = gns3
+        self._p = proyecto
+        self._repo = repositorio
+        self._abrir_canal = abrir_canal
+        self._salida = salida
+
+    def construir(self) -> None:
+        canal = self._abrir_canal(self._p.ssh_requerido())
+        try:
+            canal.subir_arbol(self._repo.servicios, DESTINO)
+            for im in self._p.imagenes:
+                self._salida(canal.ejecutar(f"cd /home/gns3 && docker build -t {im.etiqueta} {im.ruta} 2>&1 | tail -15", 900))
+        finally:
+            canal.cerrar()
+        existentes = self._gns3.plantillas()
+        for im in self._p.imagenes:
+            if im.plantilla not in existentes:
+                self._gns3.crear_plantilla_docker(im.plantilla, im.etiqueta)
+                self._salida(f"plantilla {im.plantilla} creada")
