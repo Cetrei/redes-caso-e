@@ -268,7 +268,8 @@ El syslog no va a SRV-DMZ: es el servidor expuesto, y si alguien lo compromete p
 
 La licencia de prueba permanente de FortiOS (7.2.1 en adelante) limita las políticas de firewall. Medido en el FGT-01 con FortiOS 8.0.0: acepta 3 políticas y rechaza la cuarta con "reached the maximum number of entries". Las cuatro rutas estáticas (dos IPv4 y dos IPv6) y las tres interfaces del diseño se aplicaron sin error. El diseño normal usa 6 políticas, así que se reduce a esto:
 
-1. Las políticas 1 y 3 se fusionan en la 1, DNS-HTTP-A-DMZ: port1 y port2 hacia port3, solo DNS y HTTP, con el VIP y la IP real del servidor como destino. Una política admite varias interfaces de origen.
+1. Las políticas 1 y 3 se fusionan en la 1, DNS-HTTP-A-DMZ: port1 y port2 hacia port3, solo DNS y HTTP, con la IP real del servidor como destino. Una política admite varias interfaces de origen.
+   FortiOS no deja mezclar un VIP con un objeto normal en el destino de una política (probado en el FGT-01: "entry not found in datasource"), ni crear un VIP cuya IP externa sea igual a la mapeada. Por eso el plan B activa `central-nat`: el VIP VIP-SRV-DMZ solo hace el DNAT de 203.0.113.20 hacia 10.50.1.34 y la política evalúa el tráfico ya traducido, así un mismo objeto de destino sirve a los externos (por el VIP) y a los usuarios (directo a la IP real, como indica la zona DNS interna).
 2. La política 2 (ADMIN-A-DMZ) queda igual, así que el SSH sigue siendo exclusivo de Administración y lo hace cumplir el firewall.
 3. Las políticas 5 y 6 se fusionan en la 3, DENY-A-LAN: port1 y port3 hacia port2, denegar todo, con log.
 4. La salida a Internet (política 4) se elimina porque el caso no la exige.
@@ -276,7 +277,7 @@ La licencia de prueba permanente de FortiOS (7.2.1 en adelante) limita las polí
 
 Las ACL de los routers no cambian. Con el plan B, el externo hacia la LAN (E01) y la DMZ hacia la LAN (E09) los registra la política 3, y la política 1 atiende el DNS y el HTTP de los usuarios (E06). El SSH externo (E03), el SSH de usuarios al servidor (E05) y el servidor hacia Internet (E14) caen en la denegación implícita, que sigue registrada. El simulador verifica este plan por separado.
 
-Cambiar de plan es una línea: `plan_b` en `automatizacion/topologia/proyecto.yml`.
+Cambiar de plan es una línea: `plan_b` en `automatizacion/topologia/proyecto.yml` (queda en `true` porque el límite de 3 políticas está medido en este FortiGate).
 
 ## ACL de router
 

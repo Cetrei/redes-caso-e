@@ -39,7 +39,7 @@ Desde esta carpeta:
 
 ## Plan A y plan B del FortiGate
 
-`fortigate` pega `configs/FGT-01.conf` (plan A, seis políticas). La licencia de evaluación solo admite tres: si FortiOS rechaza alguna, pega `configs/FGT-01-planB.conf` y lo avisa. Para ir directo al plan B, pon `plan_b: true` en `topologia/proyecto.yml`.
+`fortigate` pega `configs/FGT-01-planB.conf` (plan B, tres políticas), porque la licencia de evaluación solo admite tres (`plan_b: true` en `topologia/proyecto.yml`). Con `plan_b: false` pega `configs/FGT-01.conf` (plan A, seis políticas) y, si FortiOS rechaza alguna, cae al plan B y lo avisa. El plan B usa central NAT para que una sola política cubra a los externos (por el VIP) y a los usuarios (por la IP real).
 
 ## Licenciar el FortiGate
 

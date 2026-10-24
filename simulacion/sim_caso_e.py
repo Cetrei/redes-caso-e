@@ -244,6 +244,7 @@ class Fgt(Node):
         super().__init__(name, "fgt")
         self.allow, self.trusted, self.vips, self.policies = {}, [], [], []
         self.sessions, self.logs, self.localin_denied = [], [], []
+        self.central_nat = False
         self.listen = {("tcp", 443), ("tcp", 22)}
 
     def process(self, p, ing):
@@ -271,7 +272,7 @@ class Fgt(Node):
                 continue
             if not in_objs(p.src, pol.src):
                 continue
-            dst_ok = any(o is vip for o in pol.dst if isinstance(o, Vip)) if vip else in_objs(p.dst, pol.dst)
+            dst_ok = in_objs(p.dst, pol.dst) if (self.central_nat or not vip) else any(o is vip for o in pol.dst if isinstance(o, Vip))
             if not dst_ok or not svc_match(pol.svc, p):
                 continue
             pol.hits += 1
@@ -544,8 +545,9 @@ def build(plan_b=False):
         Policy(6, "DENY-DMZ-A-LAN", "port3", "port2", ALL, ALL, ["ALL"], "deny"),
     ]
     if plan_b:
+        fgt.central_nat = True
         fgt.policies = [
-            Policy(1, "DNS-HTTP-A-DMZ", ("port1", "port2"), "port3", ALL, [vip] + SRV, ["DNS", "HTTP"], "accept"),
+            Policy(1, "DNS-HTTP-A-DMZ", ("port1", "port2"), "port3", ALL, SRV, ["DNS", "HTTP"], "accept"),
             fgt.policies[1],
             Policy(3, "DENY-A-LAN", ("port1", "port3"), "port2", ALL, ALL, ["ALL"], "deny"),
         ]
