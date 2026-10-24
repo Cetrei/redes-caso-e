@@ -14,9 +14,9 @@ Desde esta carpeta:
 ./gns3ctl.py validar        # revisa topologia/ sin tocar GNS3
 ./gns3ctl.py construir      # crea proyecto, equipos, configs y cables
 ./gns3ctl.py iniciar        # enciende los nodos (el FortiGate tarda 2 a 3 minutos)
-./gns3ctl.py fortigate      # pega la config del FortiGate
+./gns3ctl.py fortigate      # pega la config del FortiGate (y avisa de cada línea que FortiOS rechace)
 ./gns3ctl.py licenciar      # activa la licencia de evaluación del FortiGate
-./gns3ctl.py posiciones     # aplica x e y de cada equipo al lienzo
+./gns3ctl.py posiciones     # aplica x e y de cada equipo y dibuja zonas y notas en el lienzo
 ./gns3ctl.py --help
 ```
 
@@ -27,6 +27,19 @@ Desde esta carpeta:
 - La config de cada equipo está en `configs/`.
 - Para guardar en el repo lo que moviste en GNS3: `./gns3ctl.py posiciones --guardar`.
 - `construir` solo agrega: lo que quites de los archivos se borra a mano en GNS3.
+
+## Zonas y notas del lienzo
+
+`posiciones` también dibuja lo que está en `topologia/zonas.yml` y `topologia/notas.yml`. Se repite sin duplicar: crea lo nuevo, actualiza lo que cambió y retira lo que quitaste del archivo. Si la GUI ya estaba abierta, los dibujos aparecen solos; si no, cierra y reabre el proyecto.
+
+- Una zona es una caja con título: `{nombre, x, y, ancho, alto, tono, lineas}`. `nombre` no se repite y `lineas` es una lista opcional de textos debajo del título.
+- Una nota es un texto suelto: `{texto, x, y}`. Con `ancho` y `alto` juntos se dibuja dentro de una caja. Admite `tono`, `tam` (tamaño de letra, 10 por defecto) y `negrita`. `\n` separa renglones.
+- Los tonos son `neutro`, `gris`, `ambar`, `verde`, `violeta`, `rojo` y `exito`.
+- Las notas se identifican por su orden en el archivo: al insertar una en medio, las siguientes se redibujan.
+
+## Plan A y plan B del FortiGate
+
+`fortigate` pega `configs/FGT-01.conf` (plan A, seis políticas). La licencia de evaluación solo admite tres: si FortiOS rechaza alguna, pega `configs/FGT-01-planB.conf` y lo avisa. Para ir directo al plan B, pon `plan_b: true` en `topologia/proyecto.yml`.
 
 ## Licenciar el FortiGate
 

@@ -10,3 +10,4 @@ class Construir(Comando):
 
     def ejecutar(self, app, args):
         app.constructor().construir()
+        app.dibujos().aplicar()

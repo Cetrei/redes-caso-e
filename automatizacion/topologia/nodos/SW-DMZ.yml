@@ -1,6 +1,6 @@
 plantilla: switch
-x: 200
-y: -100
+x: 530
+y: 180
 puertos:
   - {n: 0, tipo: access, vlan: 1}
   - {n: 1, tipo: access, vlan: 1}

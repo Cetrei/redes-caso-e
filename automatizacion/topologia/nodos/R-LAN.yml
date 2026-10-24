@@ -1,4 +1,4 @@
 plantilla: router
-x: 400
-y: -300
+x: 530
+y: -350
 config: configs/R-LAN.txt

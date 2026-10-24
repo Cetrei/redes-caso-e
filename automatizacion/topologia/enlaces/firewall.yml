@@ -1,3 +1,3 @@
-- [R-EDGE, Gi0/1, FGT-01, port1]
-- [FGT-01, port2, R-LAN, Gi0/0]
-- [FGT-01, port3, SW-DMZ, p0]
+- [ R-EDGE, Gi0/1, FGT-01, port1 ]
+- [ FGT-01, port2, R-LAN, Gi0/0 ]
+- [ FGT-01, port3, SW-DMZ, p0 ]

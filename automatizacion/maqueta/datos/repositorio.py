@@ -6,6 +6,7 @@ from typing import Any
 
 import yaml
 
+from maqueta.datos.anotaciones import leer_notas, leer_zonas
 from maqueta.nucleo.errores import ErrorTopologia
 from maqueta.nucleo.modelo import ConfigFortigate, ConfigSsh, Enlace, Imagen, Nodo, Proyecto, PuertoSwitch
 
@@ -71,6 +72,8 @@ class Repositorio:
             ssh=self._ssh(datos),
             nodos={n.nombre: n for n in self._nodos()},
             enlaces=tuple(self._enlaces()),
+            zonas=leer_zonas(self._opcional("zonas.yml")),
+            notas=leer_notas(self._opcional("notas.yml")),
         )
 
     def actualizar_posicion(self, nombre: str, x: int, y: int) -> None:
@@ -79,6 +82,10 @@ class Repositorio:
         texto = re.sub(r"(?m)^x: .*$", f"x: {x}", texto, count=1)
         texto = re.sub(r"(?m)^y: .*$", f"y: {y}", texto, count=1)
         ruta.write_text(texto, encoding="utf-8")
+
+    def _opcional(self, nombre: str) -> Any:
+        ruta = self._dir / nombre
+        return self._yaml(ruta) if ruta.exists() else None
 
     def _datos_proyecto(self) -> dict:
         ruta = self._dir / "proyecto.yml"

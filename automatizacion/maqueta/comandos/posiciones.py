@@ -5,7 +5,7 @@ from maqueta.comandos.base import Comando
 
 class Posiciones(Comando):
     nombre = "posiciones"
-    ayuda = "aplica x,y de nodos/ al lienzo de GNS3 (--guardar hace lo contrario)"
+    ayuda = "aplica x,y de nodos/ y dibuja zonas y notas en el lienzo de GNS3 (--guardar: GNS3 a nodos/)"
     orden = 40
 
     def argumentos(self, parser):
@@ -14,4 +14,8 @@ class Posiciones(Comando):
 
     def ejecutar(self, app, args):
         servicio = app.posiciones()
-        servicio.guardar() if args.guardar else servicio.aplicar()
+        if args.guardar:
+            servicio.guardar()
+            return
+        servicio.aplicar()
+        app.dibujos().aplicar()

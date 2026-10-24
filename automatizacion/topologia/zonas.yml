@@ -1,0 +1,4 @@
+- {nombre: RED EXTERNA, x: -920, y: -470, ancho: 510, alto: 940, tono: gris, lineas: ["Internet simulada · RFC 5737"]}
+- {nombre: WAN PÚBLICA, x: -380, y: -470, ancho: 430, alto: 940, tono: ambar, lineas: ["203.0.113.16/29", "2001:db8:105:ff01::/64"]}
+- {nombre: LAN INTERNA, x: 430, y: -470, ancho: 490, alto: 440, tono: verde, lineas: ["OSPF área 0 · detrás del NAT"]}
+- {nombre: DMZ, x: 430, y: 30, ancho: 490, alto: 440, tono: violeta, lineas: ["10.50.1.32/28 · 2001:db8:105:30::/64"]}

@@ -1,4 +1,4 @@
 plantilla: router
-x: -200
-y: -300
+x: -580
+y: -30
 config: configs/R-ISP.txt

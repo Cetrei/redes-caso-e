@@ -19,6 +19,7 @@ class Gns3Falso:
         self.proyectos: dict[str, dict] = {}
         self.nodos: dict[str, dict[str, dict]] = {}
         self.enlaces: dict[str, list[dict]] = {}
+        self.dibujos: dict[str, dict[str, dict]] = {}
         self.archivos: dict[tuple[str, str, str], bytes] = {}
         self.plantillas_creadas: list[dict] = []
         self.llamadas: list[tuple[str, str, object]] = []
@@ -43,6 +44,10 @@ class Gns3Falso:
             ("POST", p + r"/nodes/(?P<nid>[^/]+)/files/(?P<archivo>.+)", self._archivo),
             ("GET", p + r"/links", lambda c: self.enlaces[c.ruta["pid"]]),
             ("POST", p + r"/links", self._enlace),
+            ("GET", p + r"/drawings", lambda c: list(self.dibujos[c.ruta["pid"]].values())),
+            ("POST", p + r"/drawings", self._crear_dibujo),
+            ("PUT", p + r"/drawings/(?P<did>[^/]+)", self._actualizar_dibujo),
+            ("DELETE", p + r"/drawings/(?P<did>[^/]+)", lambda c: self.dibujos[c.ruta["pid"]].pop(c.ruta["did"])),
         ]
 
     def solicitar(self, metodo: str, ruta: str, cuerpo: Any = None) -> Any:
@@ -81,12 +86,12 @@ class Gns3Falso:
     def _crear_proyecto(self, c: Llamada) -> dict:
         pid = self._id("p")
         self.proyectos[pid] = {"name": c.cuerpo["name"]}
-        self.nodos[pid], self.enlaces[pid] = {}, []
+        self.nodos[pid], self.enlaces[pid], self.dibujos[pid] = {}, [], {}
         return {"project_id": pid, "name": c.cuerpo["name"]}
 
     def _borrar_proyecto(self, c: Llamada) -> None:
         pid = c.ruta["pid"]
-        del self.proyectos[pid], self.nodos[pid], self.enlaces[pid]
+        del self.proyectos[pid], self.nodos[pid], self.enlaces[pid], self.dibujos[pid]
 
     def _crear_plantilla(self, c: Llamada) -> dict:
         self.plantillas_creadas.append(c.cuerpo)
@@ -124,3 +129,13 @@ class Gns3Falso:
 
     def _enlace(self, c: Llamada) -> None:
         self.enlaces[c.ruta["pid"]].append({"link_id": self._id("l"), "nodes": c.cuerpo["nodes"]})
+
+    def _crear_dibujo(self, c: Llamada) -> dict:
+        did = self._id("d")
+        self.dibujos[c.ruta["pid"]][did] = {"drawing_id": did, **c.cuerpo}
+        return dict(self.dibujos[c.ruta["pid"]][did])
+
+    def _actualizar_dibujo(self, c: Llamada) -> dict:
+        dibujo = self.dibujos[c.ruta["pid"]][c.ruta["did"]]
+        dibujo.update(c.cuerpo)
+        return dict(dibujo)

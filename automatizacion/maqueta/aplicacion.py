@@ -15,6 +15,7 @@ from maqueta.datos.secretos import AlmacenSecretos
 from maqueta.nucleo.modelo import ConfigSsh, Proyecto
 from maqueta.servicios.ciclo import CicloVida
 from maqueta.servicios.constructor import Constructor
+from maqueta.servicios.dibujos import Dibujos
 from maqueta.servicios.entorno import Entorno
 from maqueta.servicios.fortigate import PegadorConfigFortigate
 from maqueta.servicios.imagenes import ConstructorImagenes
@@ -75,6 +76,9 @@ class Aplicacion:
 
     def posiciones(self) -> Posiciones:
         return Posiciones(self.entorno)
+
+    def dibujos(self) -> Dibujos:
+        return Dibujos(self.entorno)
 
     def imagenes(self) -> ConstructorImagenes:
         return ConstructorImagenes(self.entorno, self.adaptadores.fabrica_canal)

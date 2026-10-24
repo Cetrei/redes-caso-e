@@ -1,14 +1,20 @@
 from __future__ import annotations
 
 import json
+import re
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any, Mapping, NamedTuple, Protocol
+from xml.sax.saxutils import unescape
 
+from maqueta.nucleo.dibujo import Dibujo
 from maqueta.nucleo.errores import ErrorGns3
 from maqueta.nucleo.modelo import Puerto
+
+_MARCA = re.compile(r"""data-maqueta=(["'])(.*?)\1""")
+_ENTIDADES = {"&quot;": '"', "&apos;": "'"}
 
 
 class Transporte(Protocol):
@@ -89,6 +95,30 @@ class NodoGns3:
         return self.estado == "started"
 
 
+@dataclass(frozen=True)
+class DibujoGns3:
+    drawing_id: str
+    clave: str | None
+    svg: str
+    x: int
+    y: int
+    z: int
+
+    @classmethod
+    def desde_json(cls, d: Mapping[str, Any]) -> DibujoGns3:
+        svg = d.get("svg") or ""
+        marca = _MARCA.search(svg)
+        clave = unescape(marca.group(2), _ENTIDADES) if marca else None
+        return cls(d["drawing_id"], clave, svg, d.get("x", 0), d.get("y", 0), d.get("z", 0))
+
+    def difiere(self, otro: Dibujo) -> bool:
+        return (self.svg, self.x, self.y, self.z) != (otro.svg, otro.x, otro.y, otro.z)
+
+
+def _cuerpo_dibujo(d: Dibujo) -> dict[str, Any]:
+    return {"svg": d.svg, "x": d.x, "y": d.y, "z": d.z}
+
+
 class ClienteGns3:
     def __init__(self, transporte: Transporte, nombre_proyecto: str):
         self._t = transporte
@@ -152,3 +182,15 @@ class ClienteGns3:
     def conectar(self, pid: str, a: tuple[str, Puerto], b: tuple[str, Puerto]) -> None:
         self._t.solicitar("POST", f"/projects/{pid}/links", cuerpo={"nodes": [
             {"node_id": nid, "adapter_number": p.adaptador, "port_number": p.numero} for nid, p in (a, b)]})
+
+    def dibujos(self, pid: str) -> list[DibujoGns3]:
+        return [DibujoGns3.desde_json(d) for d in self._t.solicitar("GET", f"/projects/{pid}/drawings")]
+
+    def crear_dibujo(self, pid: str, dibujo: Dibujo) -> None:
+        self._t.solicitar("POST", f"/projects/{pid}/drawings", cuerpo=_cuerpo_dibujo(dibujo))
+
+    def actualizar_dibujo(self, pid: str, drawing_id: str, dibujo: Dibujo) -> None:
+        self._t.solicitar("PUT", f"/projects/{pid}/drawings/{drawing_id}", cuerpo=_cuerpo_dibujo(dibujo))
+
+    def borrar_dibujo(self, pid: str, drawing_id: str) -> None:
+        self._t.solicitar("DELETE", f"/projects/{pid}/drawings/{drawing_id}")

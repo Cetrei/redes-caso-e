@@ -61,6 +61,29 @@ class Enlace:
 
 
 @dataclass(frozen=True)
+class Zona:
+    nombre: str
+    x: int
+    y: int
+    ancho: int
+    alto: int
+    tono: str
+    lineas: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class Nota:
+    texto: str
+    x: int
+    y: int
+    tono: str = "neutro"
+    ancho: int | None = None
+    alto: int | None = None
+    tam: int = 10
+    negrita: bool = False
+
+
+@dataclass(frozen=True)
 class ConfigFortigate:
     nodo: str
     usuario: str
@@ -96,6 +119,8 @@ class Proyecto:
     ssh: ConfigSsh | None = None
     nodos: Mapping[str, Nodo] = field(default_factory=dict)
     enlaces: tuple[Enlace, ...] = ()
+    zonas: tuple[Zona, ...] = ()
+    notas: tuple[Nota, ...] = ()
 
     def __post_init__(self) -> None:
         for campo in ("plantillas", "tipos", "dynamips_slots", "nodos"):
