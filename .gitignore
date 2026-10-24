@@ -34,3 +34,6 @@ desktop.ini
 .vscode/
 .idea/
 ~$*
+
+# Credenciales locales (FortiCloud)
+automatizacion/secretos.yml

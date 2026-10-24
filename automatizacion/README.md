@@ -12,6 +12,7 @@ Con la VM de GNS3 arrancada (`gns3vm/start-gns3vm.sh`), desde esta carpeta:
 ./gns3ctl.py iniciar        # enciende los nodos (el FortiGate tarda 2 a 3 minutos)
 ./gns3ctl.py fortigate      # pega la config del FortiGate por su consola
 ./gns3ctl.py posiciones     # aplica x,y de cada equipo al lienzo
+./gns3ctl.py licenciar      # activa la licencia de evaluacion del FortiGate (ver abajo)
 ./gns3ctl.py --help         # lista completa
 ```
 
@@ -68,3 +69,12 @@ Dos formas de acomodar:
 - `proyecto.yml` solo cambia cuando hay un alias de plantilla nuevo. Si dos PR agregan una línea ahí, el conflicto es de una línea: quedate con las dos.
 - Corré `./gns3ctl.py validar` antes de abrir el PR: detecta plantillas inexistentes, puertos repetidos o mal escritos, equipos sin cable y archivos de config que no existen. `construir` lo corre solo.
 - No muevas equipos ajenos sin motivo: con `posiciones --guardar`, revisá `git status` y commiteá solo los tuyos.
+
+## Licencia del FortiGate
+
+Un FortiGate-VM recién desplegado queda en `License Status: Invalid` y, según la documentación de Fortinet, en ese estado las políticas de firewall no funcionan. La licencia de evaluación permanente se pide con una cuenta gratuita de FortiCloud (una copia por cuenta, 1 CPU, 2 GB, 3 interfaces, 3 políticas y 3 rutas). `./gns3ctl.py licenciar` lo hace solo:
+
+1. Copiá `secretos.ejemplo.yml` como `secretos.yml`, poné tu correo y clave de FortiCloud (sin espacios ni `?`) y protegelo con `chmod 600 secretos.yml`. Ese archivo está en `.gitignore`: **nunca se sube**.
+2. Con la maqueta encendida, corré `./gns3ctl.py licenciar`. Conecta un nodo NAT temporal al puerto libre del FortiGate, pide la licencia, espera el reinicio, verifica `Valid` y retira el NAT.
+
+La licencia queda ligada a esa instancia del FortiGate: no corras `destruir` después de activarla.
