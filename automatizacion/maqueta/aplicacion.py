@@ -96,7 +96,7 @@ class Aplicacion:
         return PegadorConfigFortigate(self.entorno)
 
     def activador_licencia(self) -> ActivadorLicencia:
-        return ActivadorLicencia(self.entorno, AlmacenSecretos(self.repositorio.base / "secretos.yml", self.salida))
+        return ActivadorLicencia(self.entorno, AlmacenSecretos(self.repositorio.base / ".env", self.salida))
 
     def abrir_sesion_fortigate(self, puerto: int) -> SesionFortigate:
         a = self.adaptadores

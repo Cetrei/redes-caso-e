@@ -41,7 +41,7 @@ class ErrorConexionConsola(ErrorConsola):
 
 
 class ErrorSecretos(ErrorMaqueta):
-    """secretos.yml falta o esta incompleto."""
+    """.env falta o esta incompleto."""
 
 
 class ErrorVm(ErrorMaqueta):

@@ -20,7 +20,7 @@ class Fortigate(_ConNodo):
 
 class Licenciar(_ConNodo):
     nombre = "licenciar"
-    ayuda = "activa la licencia de evaluacion del FortiGate con la cuenta de secretos.yml"
+    ayuda = "activa la licencia de evaluacion del FortiGate con la cuenta de .env"
     orden = 70
 
     def ejecutar(self, app, args):

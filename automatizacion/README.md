@@ -1,95 +1,42 @@
 # Automatización de la maqueta
 
-`gns3ctl.py` arma la maqueta en GNS3 a partir de archivos de texto, sin tocar la interfaz gráfica. Sigue la regla del repo: **el archivo manda**. Para cambiar la maqueta se edita un archivo de `topologia/` (o una config de `configs/`) y se aplica; nunca al revés.
+`gns3ctl.py` arma la maqueta en GNS3 desde los archivos de `topologia/` y `configs/`. Se edita el archivo y se aplica.
+
+## Requisitos
+
+La VM de GNS3 arrancada (`gns3vm/start-gns3vm.sh`) y `uv`, o Python 3.10+ con `pyyaml` y `paramiko`.
 
 ## Uso
 
-Con la VM de GNS3 arrancada (`gns3vm/start-gns3vm.sh`), desde esta carpeta:
+Desde esta carpeta:
 
 ```
 ./gns3ctl.py validar        # revisa topologia/ sin tocar GNS3
-./gns3ctl.py construir      # crea proyecto, equipos, configs y cables (se puede repetir)
+./gns3ctl.py construir      # crea proyecto, equipos, configs y cables
 ./gns3ctl.py iniciar        # enciende los nodos (el FortiGate tarda 2 a 3 minutos)
-./gns3ctl.py fortigate      # pega la config del FortiGate por su consola
-./gns3ctl.py posiciones     # aplica x,y de cada equipo al lienzo
-./gns3ctl.py licenciar      # activa la licencia de evaluacion del FortiGate (ver abajo)
-./gns3ctl.py --help         # lista completa
+./gns3ctl.py fortigate      # pega la config del FortiGate
+./gns3ctl.py licenciar      # activa la licencia de evaluación del FortiGate
+./gns3ctl.py posiciones     # aplica x e y de cada equipo al lienzo
+./gns3ctl.py --help
 ```
 
-Necesita `uv` (instala solo pyyaml y paramiko) o un Python 3.10+ con esos dos paquetes.
+## Cambiar la maqueta
 
-## Estructura
+- Un equipo es un archivo en `topologia/nodos/<EQUIPO>.yml`. Su posición es el `x` e `y` del archivo.
+- Los cables van en `topologia/enlaces/`, un archivo por segmento.
+- La config de cada equipo está en `configs/`.
+- Para guardar en el repo lo que moviste en GNS3: `./gns3ctl.py posiciones --guardar`.
+- `construir` solo agrega: lo que quites de los archivos se borra a mano en GNS3.
 
-```
-automatizacion/
-├── gns3ctl.py              entrada: solo arma los subcomandos
-├── topologia/              LOS DATOS (lo que cambia el grupo)
-│   ├── proyecto.yml        servidor, plantillas, tipos, FortiGate, imagenes Docker
-│   ├── nodos/<EQUIPO>.yml  un archivo por equipo: plantilla, x, y, config o red
-│   └── enlaces/<segmento>.yml   los cables, un archivo por segmento
-├── maqueta/                EL MOTOR (casi nunca se toca)
-│   ├── modelo.py           los datos de topologia/ como dataclasses (Proyecto, Nodo, Cable)
-│   ├── repositorio.py      lee topologia/ y los archivos del repo
-│   ├── validacion.py       las reglas de `validar`, una por metodo
-│   ├── errores.py          todos los errores esperados cuelgan de ErrorMaqueta
-│   ├── gns3.py, ssh.py, consola.py   los bordes: API REST de GNS3, SSH a la VM, telnet al FortiGate
-│   ├── aplicacion.py       arma el motor y le da a cada subcomando sus servicios
-│   ├── entorno.py          lo que comparten los servicios (GNS3, proyecto, reloj, salida) en un solo objeto
-│   ├── tipos/              un modulo por tipo de nodo: dynamips, qemu, docker, switch
-│   ├── servicios/          el trabajo real: construir, ciclo de vida, posiciones, imagenes, FortiGate, licencia
-│   └── comandos/           un modulo por subcomando, delgado: llama a un servicio
-└── tests/                  pruebas con dobles en memoria, sin GNS3 ni red
-```
+## Licenciar el FortiGate
 
-Regla de oro: **agregar, quitar o mover un equipo es tocar archivos de `topologia/`, no código**. El nombre del archivo es el nombre del equipo en GNS3.
+1. `cp .env.example .env`, llena tu cuenta de FortiCloud y `chmod 600 .env`. El `.env` no se sube al repo.
+2. Con la maqueta encendida: `./gns3ctl.py licenciar`.
 
-## Dónde queda cada cosa en el lienzo
-
-La posición de un equipo es el `x` e `y` de su archivo en `topologia/nodos/`. Son píxeles del lienzo de GNS3: el `(0, 0)` es el centro, `x` crece hacia la derecha e `y` hacia abajo. Los cables se dibujan solos como líneas rectas entre los dos equipos.
-
-La maqueta usa filas separadas por 200 px: arriba (`y: -300`) el camino de afuera hacia adentro (R-ISP, R-EDGE, FGT-01, R-LAN, de izquierda a derecha); los clientes externos a la izquierda; los switches en `y: -100` y los hosts en `y: 100`. Usá múltiplos de 100 para que todo quede alineado.
-
-Dos formas de acomodar:
-- Editás `x` e `y` en el archivo y corrés `./gns3ctl.py posiciones` (repo → GNS3).
-- Arrastrás los equipos en la interfaz de GNS3 y corrés `./gns3ctl.py posiciones --guardar` (GNS3 → repo). Después hacé commit solo de los archivos que moviste.
-
-## Recetas
-
-**Agregar un equipo** (por ejemplo un segundo cliente en la DMZ):
-1. Copiá `topologia/nodos/PC-USER.yml` como `topologia/nodos/PC-DMZ2.yml` y cambiá `x`, `y` y la plantilla si hace falta.
-2. Si es un contenedor, agregá su bloque `### PC-DMZ2` en `hosts/hosts.md`. Si es un router, su config va en `configs/` y el archivo del nodo la nombra con `config:`.
-3. Agregá su cable en el archivo de `topologia/enlaces/` que corresponda (`[SW-DMZ, p2, PC-DMZ2, eth0]`).
-4. `./gns3ctl.py validar`, después `construir` e `iniciar`.
-
-**Quitar un equipo:** borrá su archivo de `nodos/` y sus líneas de `enlaces/`. `construir` solo agrega, así que el nodo viejo hay que borrarlo a mano en GNS3.
-
-**Cambiar un cable:** editá la línea en `enlaces/`. El cable viejo también se borra a mano en GNS3.
-
-**Cambiar la config de un equipo:** se edita su archivo de `configs/`, como siempre, y `construir` (routers) o `fortigate` la aplican.
-
-**Un tipo de equipo nuevo** (por ejemplo VPCS): creá `maqueta/tipos/vpcs.py` con una subclase de `TipoNodo` que defina `clave`, `puerto()` y `preparar()` (mirá `docker.py`, uno de los más cortos) y agregá su alias en `proyecto.yml` (`plantillas` y `tipos`). No hay nada que registrar: el motor encuentra el módulo solo.
-
-**Un subcomando nuevo:** creá su módulo en `maqueta/comandos/` con una subclase de `Comando` que defina `nombre`, `ayuda` y `ejecutar()` (mirá `validar.py`). Tampoco hay lista que mantener; `orden` fija su lugar en la ayuda. La lógica va en un servicio de `maqueta/servicios/`, no en el comando.
+La licencia queda ligada a esa instancia: no corras `destruir` después.
 
 ## Pruebas
 
-Desde `automatizacion/`: `python3 -m unittest discover -s tests -t .`. Usan un GNS3 y un FortiGate falsos en memoria, así que corren en menos de un segundo, sin VM y sin credenciales. Corrélas antes del PR si tocaste algo de `maqueta/`.
-
-`tests/test_limites.py` hace cumplir el estilo del código: un archivo no pasa de 300 líneas, una función no pasa de 25 y no recibe más de 3 argumentos (sin contar `self`). Si una función necesita más datos, se agrupan en un tipo (dataclass) en vez de alargar la firma.
-
-## Para que los merges no sean un caos
-
-- Un equipo, un archivo. Dos personas que tocan equipos distintos nunca chocan.
-- Los cables van por segmento (`externa`, `firewall`, `dmz`, `lan`). Si agregás una zona nueva, creá su propio archivo en `enlaces/`.
-- `proyecto.yml` solo cambia cuando hay un alias de plantilla nuevo. Si dos PR agregan una línea ahí, el conflicto es de una línea: quedate con las dos.
-- Corré `./gns3ctl.py validar` antes de abrir el PR: detecta plantillas inexistentes, puertos repetidos o mal escritos, equipos sin cable y archivos de config que no existen. `construir` lo corre solo.
-- No muevas equipos ajenos sin motivo: con `posiciones --guardar`, revisá `git status` y commiteá solo los tuyos.
-
-## Licencia del FortiGate
-
-Un FortiGate-VM recién desplegado queda en `License Status: Invalid` y, según la documentación de Fortinet, en ese estado las políticas de firewall no funcionan. La licencia de evaluación permanente se pide con una cuenta gratuita de FortiCloud (una copia por cuenta, 1 CPU, 2 GB, 3 interfaces, 3 políticas y 3 rutas). `./gns3ctl.py licenciar` lo hace solo:
-
-1. Copiá `secretos.ejemplo.yml` como `secretos.yml`, poné tu correo y clave de FortiCloud (sin espacios ni `?`) y protegelo con `chmod 600 secretos.yml`. Ese archivo está en `.gitignore`: **nunca se sube**.
-2. Con la maqueta encendida, corré `./gns3ctl.py licenciar`. Conecta un nodo NAT temporal al puerto libre del FortiGate, pide la licencia, espera el reinicio, verifica `Valid` y retira el NAT.
-
-La licencia queda ligada a esa instancia del FortiGate: no corras `destruir` después de activarla.
+```
+python3 -m unittest discover -s tests -t .
+```

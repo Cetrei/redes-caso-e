@@ -1,4 +1,4 @@
-"""licenciar: activa la licencia de evaluacion permanente del FortiGate con la cuenta FortiCloud de secretos.yml.
+"""licenciar: activa la licencia de evaluacion permanente del FortiGate con la cuenta FortiCloud de .env.
 
 Sin esa licencia el FortiGate dice 'License Status: Invalid' y, segun la documentacion de Fortinet, no
 aplica politicas. El flujo: darle salida a internet con un NAT temporal de GNS3, pedir la licencia, esperar

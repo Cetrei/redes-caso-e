@@ -1,11 +1,9 @@
-"""secretos.yml: la cuenta de FortiCloud. Vive fuera de git (ver .gitignore); plantilla: secretos.ejemplo.yml."""
+"""La cuenta de FortiCloud, leida de automatizacion/.env (fuera de git; plantilla: .env.example)."""
 from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
-
-import yaml
 
 from .errores import ErrorSecretos
 
@@ -19,19 +17,38 @@ class CredencialesForticloud:
         return f"CredencialesForticloud(correo={self.correo!r}, clave='***')"
 
 
+def leer_env(texto: str) -> dict[str, str]:
+    """NOMBRE=valor por linea; ignora vacias y comentarios; quita comillas que envuelven el valor."""
+    valores: dict[str, str] = {}
+    for linea in texto.splitlines():
+        nombre, separador, valor = linea.strip().partition("=")
+        if separador and not nombre.startswith("#"):
+            valores[nombre.strip()] = _sin_comillas(valor.strip())
+    return valores
+
+
+def _sin_comillas(valor: str) -> str:
+    if len(valor) >= 2 and valor[0] == valor[-1] and valor[0] in "\"'":
+        return valor[1:-1]
+    return valor
+
+
 class AlmacenSecretos:
     def __init__(self, ruta: Path, salida: Callable[[str], None]):
         self._ruta = ruta
         self._salida = salida
 
     def forticloud(self) -> CredencialesForticloud:
+        valores = self._leer()
+        correo, clave = valores.get("FORTICLOUD_CORREO", ""), valores.get("FORTICLOUD_CLAVE", "")
+        if "@" not in correo or not clave:
+            raise ErrorSecretos(f"{self._ruta.name}: llena FORTICLOUD_CORREO y FORTICLOUD_CLAVE con los datos de tu cuenta de FortiCloud.")
+        return CredencialesForticloud(correo, clave)
+
+    def _leer(self) -> dict[str, str]:
         ruta = self._ruta
         if not ruta.exists():
-            raise ErrorSecretos(f"Falta automatizacion/{ruta.name}. Copia secretos.ejemplo.yml como secretos.yml y pon tu correo y clave de FortiCloud.")
+            raise ErrorSecretos(f"Falta automatizacion/{ruta.name}. Copia .env.example como {ruta.name} y llena tu correo y clave de FortiCloud.")
         if ruta.stat().st_mode & 0o077:
             self._salida(f"aviso: {ruta.name} es legible por otros usuarios; conviene: chmod 600 {ruta}")
-        cf = (yaml.safe_load(ruta.read_text(encoding="utf-8")) or {}).get("forticloud") or {}
-        correo, clave = str(cf.get("correo") or ""), str(cf.get("clave") or "")
-        if "@" not in correo or not clave or "tu_correo" in correo or clave == "tu_clave_de_forticloud":
-            raise ErrorSecretos(f"{ruta.name}: llena forticloud.correo y forticloud.clave con los datos de tu cuenta de FortiCloud.")
-        return CredencialesForticloud(correo, clave)
+        return leer_env(ruta.read_text(encoding="utf-8"))

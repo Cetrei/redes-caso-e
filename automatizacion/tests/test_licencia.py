@@ -68,9 +68,9 @@ class Licencia(unittest.TestCase):
             self.activar()
 
     def test_sin_secretos_no_toca_gns3(self):
-        self.e.borrar("automatizacion/secretos.yml")
+        self.e.borrar("automatizacion/.env")
         self.e.gns3.llamadas.clear()
-        with self.assertRaisesRegex(ErrorSecretos, "Falta automatizacion/secretos.yml"):
+        with self.assertRaisesRegex(ErrorSecretos, "Falta automatizacion/.env"):
             self.activar()
         self.assertEqual(self.e.gns3.llamadas, [])
 

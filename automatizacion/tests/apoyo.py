@@ -56,7 +56,7 @@ ssh: {host: 127.0.0.1, puerto: 2222, usuario: gns3, clave: gns3}
         "plantilla: switch\nx: 0\ny: 100\npuertos:\n  - {n: 0, tipo: access, vlan: 1}\n  - {n: 1, tipo: access, vlan: 1}\n"),
     "automatizacion/topologia/nodos/PC.yml": "plantilla: cliente\nx: 200\ny: 100\nred: hosts/hosts.md\n",
     "automatizacion/topologia/enlaces/red.yml": "- [R1, Gi0/1, FGT-01, port1]\n- [FGT-01, port2, SW, p0]\n- [SW, p1, PC, eth0]\n",
-    "automatizacion/secretos.yml": "forticloud:\n  correo: alumno@ejemplo.com\n  clave: ClaveSecreta1\n",
+    "automatizacion/.env": "FORTICLOUD_CORREO=alumno@ejemplo.com\nFORTICLOUD_CLAVE=ClaveSecreta1\n",
     "configs/R1.txt": (
         "!\nhostname R1\ninterface GigabitEthernet0/1\n ip address 10.0.0.1 255.255.255.0\n"
         "crypto key generate rsa modulus 2048\nip access-list extended USUARIOS\n remark 35 permit tcp any any\nend\nquedo fuera\n"),
@@ -77,7 +77,7 @@ class Escenario:
         self.base = self.raiz / "automatizacion"
         for ruta, texto in ARCHIVOS.items():
             self.escribir(ruta, texto)
-        os.chmod(self.base / "secretos.yml", 0o600)
+        os.chmod(self.base / ".env", 0o600)
         self.salida: list[str] = []
         self.gns3 = Gns3Falso(PLANTILLAS)
         self.reloj = RelojFalso()
