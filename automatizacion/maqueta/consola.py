@@ -1,9 +1,3 @@
-"""Consola telnet de los nodos de GNS3 (telnetlib ya no existe en Python 3.13+).
-
-`Conexion` es el seam con el socket: la real es `ConexionTcp`, las pruebas usan una que responde con guion.
-`Consola` pone encima lo que no depende del socket: filtrar la negociacion telnet, acumular lo recibido y
-esperar patrones con un plazo medido por el `Reloj`.
-"""
 from __future__ import annotations
 
 import re
@@ -19,7 +13,6 @@ _WILL, _WONT, _DO, _DONT = 251, 252, 253, 254
 
 class Conexion(Protocol):
     def leer(self, timeout: float) -> bytes | None:
-        """Bytes recibidos, o None si no llego nada en `timeout` segundos."""
         ...
 
     def enviar(self, datos: bytes) -> None: ...
@@ -50,7 +43,6 @@ class Consola:
         self.buffer = ""
 
     def leer(self, timeout: float) -> bool:
-        """Lee lo que haya durante `timeout` y lo suma a `buffer`. False si no llego nada."""
         datos = self._c.leer(timeout)
         if datos is None:
             return False
@@ -58,7 +50,6 @@ class Consola:
         return True
 
     def esperar(self, patrones: Sequence[str], timeout: float = 120) -> str | None:
-        """Espera a que `buffer` coincida con alguno de los patrones. Devuelve el patron (y vacia el buffer) o None."""
         fin = self._reloj.ahora() + timeout
         while self._reloj.ahora() < fin:
             for p in patrones:
@@ -75,7 +66,6 @@ class Consola:
         self.buffer = ""
 
     def _sin_negociacion(self, datos: bytes) -> str:
-        """Quita las secuencias IAC rechazando toda opcion que proponga el nodo."""
         out, i = bytearray(), 0
         while i < len(datos):
             if datos[i] == _IAC and i + 2 < len(datos):

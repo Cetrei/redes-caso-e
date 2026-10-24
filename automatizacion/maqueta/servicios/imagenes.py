@@ -1,4 +1,3 @@
-"""imagen: construye en la VM las imagenes Docker de proyecto.yml > imagenes y crea sus plantillas en GNS3."""
 from __future__ import annotations
 
 from typing import Callable

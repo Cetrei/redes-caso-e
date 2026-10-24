@@ -1,4 +1,3 @@
-"""construir: crea proyecto, equipos, configs iniciales y cables."""
 from __future__ import annotations
 
 from .base import Comando

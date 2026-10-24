@@ -1,4 +1,3 @@
-"""Linea de comandos: arma los subcomandos desde el registro y traduce los errores esperados a un mensaje corto."""
 from __future__ import annotations
 
 import argparse
@@ -30,7 +29,6 @@ def crear_parser(comandos: Sequence[Comando]) -> argparse.ArgumentParser:
 
 
 def main(base: Path, argv: Sequence[str] | None = None, app: Aplicacion | None = None) -> int:
-    """Corre un subcomando. Devuelve el codigo de salida: 0 si termino bien, 1 si hubo un error esperado."""
     args = crear_parser(descubrir()).parse_args(argv)
     app = app or Aplicacion.crear(base)
     try:

@@ -1,4 +1,3 @@
-"""Contenedores Docker: puertos ethN y su /etc/network/interfaces tomado de hosts/hosts.md."""
 from __future__ import annotations
 
 import re

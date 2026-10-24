@@ -25,7 +25,7 @@ class Construccion(unittest.TestCase):
         self.construir()
         g = self.e.gns3
         ids = {n["name"]: n["node_id"] for n in g.nodos[g.pid()].values()}
-        esperado = {frozenset({(ids["R1"], 2, 0), (ids["FGT-01"], 0, 0)}),    # Gi0/1 es el slot 2, port1 es el adaptador 0
+        esperado = {frozenset({(ids["R1"], 2, 0), (ids["FGT-01"], 0, 0)}),
                     frozenset({(ids["FGT-01"], 1, 0), (ids["SW"], 0, 0)}),
                     frozenset({(ids["SW"], 0, 1), (ids["PC"], 0, 0)})}
         real = {frozenset((n["node_id"], n["adapter_number"], n["port_number"]) for n in e["nodes"]) for e in g.enlaces[g.pid()]}
@@ -73,7 +73,6 @@ class Construccion(unittest.TestCase):
         self.assertEqual(self.e.gns3.llamadas, [])
 
     def test_avisa_si_gns3_creo_otro_tipo_que_el_declarado(self):
-        # un equipo sin cables, para que la declaracion equivocada no choque antes con la validacion de puertos
         ruta = "automatizacion/topologia/proyecto.yml"
         self.e.reemplazar(ruta, "cliente: CL}", "cliente: CL, extra: CL}")
         self.e.reemplazar(ruta, "cliente: docker}", "cliente: docker, extra: ethernet_switch}")

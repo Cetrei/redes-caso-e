@@ -1,9 +1,3 @@
-"""Cliente de la API REST de GNS3 2.2.
-
-Dos piezas: `Transporte`, que es el seam con la red (el real habla HTTP, las pruebas usan uno en memoria),
-y `ClienteGns3`, que traduce el vocabulario de la maqueta (proyecto, nodo, cable) a llamadas REST y las
-respuestas JSON a `NodoGns3`. Ningun otro modulo conoce rutas ni JSON de la API.
-"""
 from __future__ import annotations
 
 import json
@@ -19,11 +13,9 @@ from .modelo import Puerto
 
 class Transporte(Protocol):
     def solicitar(self, metodo: str, ruta: str, cuerpo: Any = None) -> Any:
-        """Una llamada a la API. `cuerpo` se envia como JSON. Devuelve el JSON o el texto de la respuesta."""
         ...
 
     def subir(self, ruta: str, contenido: bytes) -> None:
-        """POST de un archivo tal cual, sin JSON."""
         ...
 
 
@@ -54,8 +46,6 @@ class TransporteHttp:
 
 
 class Extremo(NamedTuple):
-    """Un lado de un cable en GNS3."""
-
     node_id: str
     adaptador: int
     numero: int
@@ -63,8 +53,6 @@ class Extremo(NamedTuple):
 
 @dataclass(frozen=True)
 class NuevoNodo:
-    """Lo que hace falta para crear un nodo: de que plantilla, como se llama y donde cae en el lienzo."""
-
     plantilla: str
     nombre: str
     x: int
@@ -73,16 +61,12 @@ class NuevoNodo:
 
 @dataclass(frozen=True)
 class Archivo:
-    """Un archivo que se escribe dentro de un nodo."""
-
     ruta: str
     contenido: bytes
 
 
 @dataclass(frozen=True)
 class NodoGns3:
-    """Un nodo tal como existe en el proyecto de GNS3."""
-
     node_id: str
     nombre: str
     tipo: str
@@ -106,16 +90,11 @@ class NodoGns3:
 
 
 class ClienteGns3:
-    """Operaciones sobre un proyecto de GNS3 identificado por su nombre."""
-
     def __init__(self, transporte: Transporte, nombre_proyecto: str):
         self._t = transporte
         self._nombre = nombre_proyecto
 
-    # proyecto
-
     def abrir_proyecto(self, crear: bool = False) -> str:
-        """Devuelve el id del proyecto, abriendolo si estaba cerrado. Con `crear` lo crea si no existe."""
         for p in self._t.solicitar("GET", "/projects"):
             if p["name"] == self._nombre:
                 if p["status"] != "opened":
@@ -127,8 +106,6 @@ class ClienteGns3:
 
     def borrar_proyecto(self, pid: str) -> None:
         self._t.solicitar("DELETE", f"/projects/{pid}")
-
-    # plantillas
 
     def plantillas(self) -> set[str]:
         return {t["name"] for t in self._t.solicitar("GET", "/templates")}
@@ -144,13 +121,10 @@ class ClienteGns3:
             "name": nombre, "template_type": "docker", "image": imagen, "adapters": 1, "console_type": "telnet",
             "start_command": "", "compute_id": "local", "category": "guest", "symbol": ":/symbols/docker_guest.svg"})
 
-    # nodos
-
     def nodos(self, pid: str) -> dict[str, NodoGns3]:
         return {n["name"]: NodoGns3.desde_json(n) for n in self._t.solicitar("GET", f"/projects/{pid}/nodes")}
 
     def crear_nodo(self, pid: str, nuevo: NuevoNodo) -> NodoGns3:
-        """Crea un nodo desde una plantilla (por nombre) y le pone su nombre."""
         tid = self.plantilla_id(nuevo.plantilla)
         n = self._t.solicitar("POST", f"/projects/{pid}/templates/{tid}", {"x": nuevo.x, "y": nuevo.y, "compute_id": "local"})
         self._t.solicitar("PUT", f"/projects/{pid}/nodes/{n['node_id']}", {"name": nuevo.nombre})
@@ -160,7 +134,6 @@ class ClienteGns3:
         self._t.solicitar("PUT", f"/projects/{pid}/nodes/{node_id}", cuerpo=dict(campos))
 
     def escribir_archivo(self, pid: str, node_id: str, archivo: Archivo) -> None:
-        """Escribe un archivo dentro del nodo (startup-config de un router, interfaces de un contenedor)."""
         self._t.subir(f"/projects/{pid}/nodes/{node_id}/files/{archivo.ruta}", archivo.contenido)
 
     def iniciar_nodo(self, pid: str, node_id: str) -> None:
@@ -170,10 +143,7 @@ class ClienteGns3:
         self._t.solicitar("DELETE", f"/projects/{pid}/nodes/{node_id}")
 
     def accion_nodos(self, pid: str, accion: str) -> None:
-        """`start` o `stop` sobre todos los nodos del proyecto."""
         self._t.solicitar("POST", f"/projects/{pid}/nodes/{accion}", cuerpo={})
-
-    # cables
 
     def enlaces(self, pid: str) -> set[frozenset[Extremo]]:
         return {frozenset(Extremo(n["node_id"], n["adapter_number"], n["port_number"]) for n in l["nodes"])

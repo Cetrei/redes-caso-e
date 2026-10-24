@@ -1,4 +1,3 @@
-"""iniciar, detener, estado y destruir: el ciclo de vida de los nodos del proyecto."""
 from __future__ import annotations
 
 from ..entorno import Entorno
@@ -10,7 +9,6 @@ class CicloVida:
         self._salida = entorno.salida
 
     def cambiar(self, accion: str) -> None:
-        """`start` o `stop` sobre todos los nodos."""
         self._gns3.accion_nodos(self._gns3.abrir_proyecto(), accion)
         self._salida(f"nodos: {accion} enviado")
 

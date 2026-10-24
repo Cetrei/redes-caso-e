@@ -1,8 +1,3 @@
-"""Acceso al disco: topologia/ (YAML) y los archivos que esta referencia (configs, hosts.md).
-
-Es el unico modulo que lee o escribe archivos del repo. `cargar` traduce el YAML al modelo de dominio y
-rechaza lo que no se puede ni interpretar; las reglas de coherencia las aplica `validacion`.
-"""
 from __future__ import annotations
 
 import re
@@ -32,7 +27,6 @@ def _mapa_texto(valor: Any, clave: str) -> dict[str, str]:
 
 
 def _seccion(datos: dict, clave: str, campos: tuple[str, ...]) -> dict | None:
-    """Mapa de una seccion opcional de proyecto.yml; si existe, exige todos sus campos."""
     valor = datos.get(clave)
     if valor is None:
         return None
@@ -45,11 +39,9 @@ def _seccion(datos: dict, clave: str, campos: tuple[str, ...]) -> dict | None:
 
 
 class Repositorio:
-    """La carpeta automatizacion/ y la raiz del repo que la contiene."""
-
     def __init__(self, base: Path):
-        self.base = base                 # automatizacion/
-        self.raiz = base.parent          # raiz del repo
+        self.base = base
+        self.raiz = base.parent
         self._dir = base / "topologia"
 
     @property
@@ -82,17 +74,13 @@ class Repositorio:
         )
 
     def actualizar_posicion(self, nombre: str, x: int, y: int) -> None:
-        """Reescribe x e y en el archivo del equipo sin tocar sus comentarios ni el resto."""
         ruta = self._dir / "nodos" / f"{nombre}.yml"
         texto = ruta.read_text(encoding="utf-8")
         texto = re.sub(r"(?m)^x: .*$", f"x: {x}", texto, count=1)
         texto = re.sub(r"(?m)^y: .*$", f"y: {y}", texto, count=1)
         ruta.write_text(texto, encoding="utf-8")
 
-    # lectura de los archivos de topologia/
-
     def _datos_proyecto(self) -> dict:
-        """El mapa de proyecto.yml, ya comprobado que existe, es un mapa y trae lo indispensable."""
         ruta = self._dir / "proyecto.yml"
         if not ruta.exists():
             raise ErrorTopologia(f"Falta {ruta}")
@@ -148,7 +136,7 @@ class Repositorio:
         if not isinstance(puertos, list):
             raise ErrorTopologia(f"nodos/{archivo.name}: 'puertos' debe ser una lista")
         return Nodo(
-            nombre=archivo.stem,                       # el nombre del equipo es el nombre del archivo
+            nombre=archivo.stem,
             plantilla=_texto(d.get("plantilla")),
             x=_entero(d.get("x")),
             y=_entero(d.get("y")),

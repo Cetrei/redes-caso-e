@@ -1,4 +1,3 @@
-"""imagen: construye las imagenes Docker en la VM."""
 from __future__ import annotations
 
 from .base import Comando

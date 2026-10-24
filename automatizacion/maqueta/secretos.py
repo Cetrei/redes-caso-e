@@ -1,4 +1,3 @@
-"""La cuenta de FortiCloud, leida de automatizacion/.env (fuera de git; plantilla: .env.example)."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -13,12 +12,11 @@ class CredencialesForticloud:
     correo: str
     clave: str
 
-    def __repr__(self) -> str:        # la clave nunca sale en trazas ni en logs
+    def __repr__(self) -> str:
         return f"CredencialesForticloud(correo={self.correo!r}, clave='***')"
 
 
 def leer_env(texto: str) -> dict[str, str]:
-    """NOMBRE=valor por linea; ignora vacias y comentarios; quita comillas que envuelven el valor."""
     valores: dict[str, str] = {}
     for linea in texto.splitlines():
         nombre, separador, valor = linea.strip().partition("=")

@@ -1,4 +1,3 @@
-"""fortigate: pega la configuracion del FortiGate por su consola telnet."""
 from __future__ import annotations
 
 from ..entorno import Entorno

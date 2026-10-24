@@ -1,5 +1,3 @@
-"""Dobles de prueba compartidos: un repo de juguete en una carpeta temporal y una Aplicacion con todos los bordes
-falsos (GNS3 en memoria, consola de FortiGate con guion, canal SSH que anota, reloj que no espera)."""
 from __future__ import annotations
 
 import os
@@ -69,8 +67,6 @@ ssh: {host: 127.0.0.1, puerto: 2222, usuario: gns3, clave: gns3}
 
 
 class Escenario:
-    """Un repo de juguete valido en una carpeta temporal, con todos los dobles ya conectados a una Aplicacion."""
-
     def __init__(self) -> None:
         self._tmp = tempfile.TemporaryDirectory()
         self.raiz = Path(self._tmp.name)
@@ -113,7 +109,6 @@ class Escenario:
         (self.raiz / ruta).unlink()
 
     def recargar(self):
-        """La misma Aplicacion sobre los archivos actuales (el proyecto y el entorno se cargan una sola vez)."""
         for dato in ("proyecto", "gns3", "entorno"):
             self.app.__dict__.pop(dato, None)
         return self.app

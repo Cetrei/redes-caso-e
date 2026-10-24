@@ -1,4 +1,3 @@
-"""Un servidor GNS3 en memoria que entiende las llamadas REST que usa el motor (el segundo adaptador de Transporte)."""
 from __future__ import annotations
 
 import re
@@ -8,8 +7,6 @@ from typing import Any
 
 @dataclass
 class Llamada:
-    """Lo que recibe el manejador de una ruta: el cuerpo JSON o el archivo crudo, y las partes de la ruta."""
-
     ruta: dict[str, str]
     cuerpo: Any = None
     crudo: bytes | None = None
@@ -48,8 +45,6 @@ class Gns3Falso:
             ("POST", p + r"/links", self._enlace),
         ]
 
-    # el Transporte
-
     def solicitar(self, metodo: str, ruta: str, cuerpo: Any = None) -> Any:
         return self._despachar(metodo, ruta, Llamada({}, cuerpo=cuerpo))
 
@@ -64,8 +59,6 @@ class Gns3Falso:
                 return manejador(llamada)
         raise AssertionError(f"el GNS3 falso no conoce {metodo} {ruta}")
 
-    # utilidades para las pruebas
-
     def pid(self) -> str:
         return next(iter(self.proyectos))
 
@@ -77,8 +70,6 @@ class Gns3Falso:
 
     def archivo(self, nombre: str, ruta: str) -> bytes:
         return self.archivos[(self.pid(), self.nodo(nombre)["node_id"], ruta)]
-
-    # rutas
 
     def _id(self, prefijo: str) -> str:
         self._n += 1

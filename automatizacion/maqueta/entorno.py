@@ -1,8 +1,3 @@
-"""Lo que comparten todos los servicios: los bordes ya conectados y los datos cargados una sola vez.
-
-Un servicio recibe un `Entorno` en vez de una lista de piezas sueltas. Asi su constructor queda en uno o dos
-argumentos, y agregar un borde nuevo no obliga a tocar la firma de cada servicio.
-"""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -24,4 +19,4 @@ class Entorno:
     tipos: RegistroTipos
     reloj: Reloj
     salida: Callable[[str], None]
-    sesion_fortigate: Callable[[int], SesionFortigate]      # puerto de consola -> sesion ya conectada
+    sesion_fortigate: Callable[[int], SesionFortigate]

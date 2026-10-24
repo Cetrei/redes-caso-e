@@ -1,4 +1,3 @@
-"""fortigate y licenciar: lo que se hace por la consola del FortiGate."""
 from __future__ import annotations
 
 from .base import Comando

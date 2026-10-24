@@ -1,4 +1,3 @@
-"""Switch Ethernet de GNS3: puertos pN y modo/VLAN de cada uno (clave `puertos` del archivo del equipo)."""
 from __future__ import annotations
 
 import re

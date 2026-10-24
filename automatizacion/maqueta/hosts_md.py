@@ -1,9 +1,7 @@
-"""Lectura de hosts/hosts.md: la red de cada contenedor."""
 from __future__ import annotations
 
 
 def bloques(texto: str) -> dict[str, str]:
-    """Devuelve {equipo: /etc/network/interfaces}: el primer bloque ``` bajo cada encabezado '### NOMBRE'."""
     res: dict[str, str] = {}
     actual, dentro, buf = None, False, []
     for linea in texto.splitlines():

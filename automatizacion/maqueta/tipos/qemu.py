@@ -1,4 +1,3 @@
-"""Nodos QEMU (el FortiGate): puertos portN. Su configuracion se pega por consola con el subcomando `fortigate`."""
 from __future__ import annotations
 
 import re

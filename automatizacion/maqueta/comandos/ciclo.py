@@ -1,4 +1,3 @@
-"""iniciar, detener, estado y destruir: el ciclo de vida de los nodos del proyecto."""
 from __future__ import annotations
 
 from .base import Comando

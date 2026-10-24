@@ -1,4 +1,3 @@
-"""Un reloj que no espera: dormir solo adelanta la hora, asi que una espera de 8 minutos dura microsegundos."""
 from __future__ import annotations
 
 

@@ -1,8 +1,3 @@
-"""Raiz de composicion: el unico lugar que decide que adaptadores reales usa cada servicio.
-
-Los comandos piden aca el servicio que necesitan y no saben de HTTP, telnet ni SSH. Las pruebas arman una
-Aplicacion con transporte, conexion, canal y reloj falsos y ejercitan los mismos servicios.
-"""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -31,18 +26,15 @@ from .validacion import Validador
 
 @dataclass(frozen=True)
 class Adaptadores:
-    """Los bordes con el mundo de afuera. Las pruebas ponen dobles en memoria en cada uno."""
-
     reloj: Reloj
     salida: Callable[[str], None]
-    fabrica_transporte: Callable[[str], Transporte]      # servidor -> transporte hacia la API de GNS3
-    fabrica_conexion: Callable[[int], Conexion]          # puerto de consola -> conexion telnet
-    fabrica_canal: Callable[[ConfigSsh], CanalVm]        # datos SSH -> canal hacia la VM
+    fabrica_transporte: Callable[[str], Transporte]
+    fabrica_conexion: Callable[[int], Conexion]
+    fabrica_canal: Callable[[ConfigSsh], CanalVm]
     tipos: RegistroTipos
 
     @classmethod
     def reales(cls, salida: Callable[[str], None] = print) -> Adaptadores:
-        """HTTP, telnet y SSH de verdad."""
         return cls(RelojReal(), salida, TransporteHttp, ConexionTcp, CanalSsh, registro_por_defecto())
 
 
@@ -53,14 +45,11 @@ class Aplicacion:
 
     @classmethod
     def crear(cls, base: Path, salida: Callable[[str], None] = print) -> Aplicacion:
-        """La aplicacion de verdad: disco, HTTP, telnet y SSH reales."""
         return cls(Repositorio(base), Adaptadores.reales(salida))
 
     @property
     def salida(self) -> Callable[[str], None]:
         return self.adaptadores.salida
-
-    # datos que se cargan una sola vez
 
     @cached_property
     def proyecto(self) -> Proyecto:
@@ -74,8 +63,6 @@ class Aplicacion:
     def entorno(self) -> Entorno:
         a = self.adaptadores
         return Entorno(self.gns3, self.proyecto, self.repositorio, a.tipos, a.reloj, a.salida, self.abrir_sesion_fortigate)
-
-    # servicios
 
     def validador(self) -> Validador:
         return Validador(self.proyecto, self.repositorio, self.adaptadores.tipos)

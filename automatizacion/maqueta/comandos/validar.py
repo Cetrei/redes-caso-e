@@ -1,4 +1,3 @@
-"""validar: revisa topologia/ sin tocar GNS3."""
 from __future__ import annotations
 
 from ..errores import ErrorMaqueta

@@ -1,18 +1,15 @@
-"""Una consola de FortiGate con guion: login, `get system status`, ping y `execute vm-license`."""
 from __future__ import annotations
 
 from .reloj_falso import RelojFalso
 
 
 class EstadoFortigate:
-    """Lo que sobrevive entre conexiones a la consola (la licencia, el reinicio)."""
-
     def __init__(self, licencia: str = "Invalid", clave: str = "Fortinet.2026", internet: bool = True):
         self.licencia = licencia
         self.clave = clave
         self.internet = internet
-        self.rechazos = 0                  # conexiones que fallan porque el equipo esta reiniciando
-        self.recibido: list[str] = []      # toda linea que llego, de cualquier conexion
+        self.rechazos = 0
+        self.recibido: list[str] = []
 
 
 class ConexionFortigate:
@@ -24,7 +21,6 @@ class ConexionFortigate:
         self._confirmando = False
 
     def leer(self, timeout: float) -> bytes | None:
-        """Todo lo que haya llegado desde la ultima lectura, como en un socket de verdad."""
         if self._cola:
             datos, self._cola = b"".join(self._cola), []
             return datos
@@ -33,7 +29,7 @@ class ConexionFortigate:
 
     def enviar(self, datos: bytes) -> None:
         linea = datos.decode(errors="ignore").strip("\r")
-        if datos[:1] == b"\xff":           # respuesta de negociacion telnet: no es un comando
+        if datos[:1] == b"\xff":
             return
         self._estado.recibido.append(linea)
         if self._fase == "sesion":

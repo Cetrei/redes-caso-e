@@ -1,4 +1,3 @@
-"""Sesion de CLI del FortiGate sobre su consola: inicio de sesion y los comandos que usan `fortigate` y `licenciar`."""
 from __future__ import annotations
 
 import re
@@ -19,9 +18,6 @@ class SesionFortigate:
         self._reloj = reloj
 
     def iniciar(self, espera: float = 240, estricto: bool = True) -> bool:
-        """Inicia sesion. True si llega al prompt.
-
-        Con estricto=False una clave incorrecta devuelve False en vez de lanzar ErrorConsola."""
         self._c.enviar("")
         for _ in range(8):
             r = self._c.esperar([r"login:", r"Password:", r"New Password:", _PROMPT, r"Login incorrect"], espera)
@@ -41,8 +37,6 @@ class SesionFortigate:
                 self._c.enviar("")
         return False
 
-    # envio de comandos
-
     def enviar(self, texto: str) -> None:
         self._c.enviar(texto)
 
@@ -55,7 +49,6 @@ class SesionFortigate:
             self._reloj.dormir(pausa)
 
     def pegar(self, lineas: Sequence[str]) -> None:
-        """Pega una configuracion larga, dejando respirar a la consola entre linea y linea."""
         for l in lineas:
             self._c.enviar(l)
             self._reloj.dormir(0.15)
@@ -70,7 +63,6 @@ class SesionFortigate:
         return [l for l in self._c.buffer.splitlines() if l.strip()][-n:]
 
     def ejecutar(self, comando: str, espera: float = 0.0, leer: float = 1.0) -> str:
-        """Manda un comando, espera `espera` s, lee `leer` s y devuelve lo recibido desde el comando."""
         self._c.limpiar()
         self._c.enviar(comando)
         if espera:
@@ -78,10 +70,7 @@ class SesionFortigate:
         self._c.leer(leer)
         return self._c.buffer
 
-    # comandos con nombre
-
     def salida_estandar(self) -> None:
-        """Sin paginacion, para que `get system status` y `ping` impriman completos."""
         self.enviar_lineas(["config system console", "set output standard", "end"])
 
     def estado_licencia(self) -> str | None:

@@ -1,9 +1,3 @@
-"""Contrato de los tipos de nodo y su registro.
-
-Un tipo de nodo sabe dos cosas de GNS3: como se llaman sus puertos (`puerto`) y que hay que dejar listo en
-el nodo recien creado (`preparar`). Para soportar un tipo nuevo se crea un modulo en este paquete con una
-subclase de TipoNodo; `descubrir` la encuentra sola.
-"""
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -22,8 +16,6 @@ if TYPE_CHECKING:
 
 @dataclass
 class ContextoPreparacion:
-    """Lo que un tipo necesita para preparar un nodo, y donde deja sus avisos para el final de `construir`."""
-
     pid: str
     entorno: Entorno
     avisos: list[str] = field(default_factory=list)
@@ -46,35 +38,31 @@ class ContextoPreparacion:
         return self.entorno.salida
 
     def escribir(self, creado: NodoGns3, ruta: str, contenido: bytes) -> None:
-        """Escribe un archivo dentro del nodo recien creado."""
         self.gns3.escribir_archivo(self.pid, creado.node_id, Archivo(ruta, contenido))
 
     def bloque_red(self, ruta: str, equipo: str) -> str | None:
-        """Contenido de /etc/network/interfaces de `equipo` segun `ruta` (hosts.md), leyendo el archivo una sola vez."""
         if ruta not in self._redes:
             self._redes[ruta] = hosts_md.bloques(self.repositorio.leer(ruta))
         return self._redes[ruta].get(equipo)
 
 
 class TipoNodo(ABC):
-    clave: ClassVar[str]          # valor de node_type en GNS3 y de proyecto.yml > tipos
-    ejemplo: ClassVar[str]        # un nombre de puerto valido, para los mensajes de error
-    descripcion: ClassVar[str]    # "un router", "el FortiGate"...
+    clave: ClassVar[str]
+    ejemplo: ClassVar[str]
+    descripcion: ClassVar[str]
 
     @abstractmethod
     def puerto(self, nombre: str) -> Puerto:
-        """Nombre de puerto de la especificacion -> (adaptador, puerto) de GNS3. ErrorTopologia si no es valido."""
+        pass
 
     def preparar(self, ctx: ContextoPreparacion, nodo: Nodo, creado: NodoGns3) -> None:
-        """Propiedades y archivos del nodo recien creado. Por defecto no hay nada que hacer."""
+        pass
 
     def puerto_invalido(self, nombre: str) -> ErrorTopologia:
         return ErrorTopologia(f"puerto '{nombre}' invalido para {self.descripcion} (se espera como {self.ejemplo})")
 
 
 class RegistroTipos:
-    """Los tipos de nodo disponibles, por clave."""
-
     def __init__(self, tipos: Iterable[TipoNodo]):
         self._por_clave = {t.clave: t for t in sorted(tipos, key=lambda t: t.clave)}
 

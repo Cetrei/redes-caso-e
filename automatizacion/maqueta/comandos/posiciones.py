@@ -1,4 +1,3 @@
-"""posiciones: sincroniza x,y de nodos/ con el lienzo de GNS3, en un sentido o en el otro."""
 from __future__ import annotations
 
 from .base import Comando

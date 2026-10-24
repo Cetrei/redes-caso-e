@@ -1,4 +1,3 @@
-"""construir: crea el proyecto, los equipos, su configuracion inicial y los cables. Idempotente."""
 from __future__ import annotations
 
 from ..entorno import Entorno
@@ -18,7 +17,6 @@ class Constructor:
         self._validador = validador
 
     def construir(self) -> str:
-        """Arma la maqueta en GNS3 y devuelve el id del proyecto. Repetirlo no duplica nada."""
         informe = self._validador.validar()
         if not informe.ok:
             raise ErrorValidacion(informe.errores)

@@ -1,6 +1,3 @@
-"""posiciones: la posicion de cada equipo en el lienzo de GNS3 es x e y de su archivo en nodos/.
-
-`aplicar` lleva el repo a GNS3; `guardar` copia lo que moviste en la GUI de vuelta a los archivos."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -19,7 +16,6 @@ class Movimiento:
 
 
 def diferencias(proyecto: Proyecto, en_gns3: Mapping[str, NodoGns3]) -> list[Movimiento]:
-    """Equipos cuya posicion en GNS3 difiere de la de su archivo. Los que aun no existen en GNS3 se ignoran."""
     return [Movimiento(nodo.nombre, (nodo.x, nodo.y), (n.x, n.y))
             for nodo in proyecto.nodos.values()
             if (n := en_gns3.get(nodo.nombre)) is not None and (n.x, n.y) != (nodo.x, nodo.y)]

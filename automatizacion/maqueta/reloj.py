@@ -1,4 +1,3 @@
-"""El tiempo como dependencia: las esperas largas (arranque del FortiGate, reinicio por licencia) se prueban sin esperar."""
 from __future__ import annotations
 
 import time

@@ -1,8 +1,3 @@
-"""Las reglas de tamano del codigo, comprobadas en cada corrida: si alguien las rompe, esta prueba lo dice.
-
-Un archivo no pasa de 300 lineas, una funcion no pasa de 25 y no recibe mas de 3 argumentos (sin contar self
-ni cls). Si una funcion necesita mas datos, se agrupan en un tipo (dataclass) en vez de alargar la firma.
-"""
 import ast
 import unittest
 from pathlib import Path

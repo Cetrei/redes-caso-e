@@ -1,7 +1,3 @@
-"""SSH a la VM de GNS3, solo para construir las imagenes Docker.
-
-`CanalVm` es el seam: el real usa paramiko (importado al abrirlo, asi el resto del motor no lo exige).
-"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -13,7 +9,6 @@ from .modelo import ConfigSsh
 
 class CanalVm(Protocol):
     def subir_arbol(self, origen: Path, destino: str) -> None:
-        """Copia todos los archivos de `origen` (menos .gitkeep) a `destino` en la VM, creando las carpetas."""
         ...
 
     def ejecutar(self, comando: str, timeout: int = 900) -> str: ...
@@ -59,5 +54,5 @@ class CanalSsh:
     def _mkdir(sftp, ruta: str) -> None:
         try:
             sftp.mkdir(ruta)
-        except OSError:                  # ya existe
+        except OSError:
             pass

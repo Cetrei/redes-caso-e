@@ -1,9 +1,3 @@
-"""licenciar: activa la licencia de evaluacion permanente del FortiGate con la cuenta FortiCloud de .env.
-
-Sin esa licencia el FortiGate dice 'License Status: Invalid' y, segun la documentacion de Fortinet, no
-aplica politicas. El flujo: darle salida a internet con un NAT temporal de GNS3, pedir la licencia, esperar
-el reinicio, verificar `Valid` y retirar el NAT.
-"""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -21,8 +15,6 @@ _ESPERA_REINICIO = 480
 
 @dataclass
 class _Corrida:
-    """Lo que `activar` va descubriendo del FortiGate: su nodo, el puerto con salida y la sesion abierta."""
-
     nombre: str
     puerto: str
     adaptador: int
@@ -71,7 +63,6 @@ class ActivadorLicencia:
         return _Corrida(nombre, puerto, adaptador, pid, nodos, sesion)
 
     def _dar_internet(self, c: _Corrida) -> NodoGns3:
-        """Enlaza un NAT de GNS3 al puerto libre, lo pone en DHCP y comprueba que sale a internet."""
         nat = self._nat_temporal(c)
         self._e.gns3.iniciar_nodo(c.pid, nat.node_id)
         c.sesion.enviar_lineas(["config system interface", f"edit {c.puerto}", "set mode dhcp", "set allowaccess ping",
@@ -84,7 +75,6 @@ class ActivadorLicencia:
         return nat
 
     def _nat_temporal(self, c: _Corrida) -> NodoGns3:
-        """El nodo NAT de GNS3 enlazado al puerto libre del FortiGate; lo reutiliza si ya existe."""
         if NAT in c.nodos:
             return c.nodos[NAT]
         nat = self._e.gns3.crear_nodo(c.pid, NuevoNodo("NAT", NAT, c.fgt.x, c.fgt.y - 150))
@@ -110,7 +100,6 @@ class ActivadorLicencia:
             raise ErrorEstado("La licencia no quedo Valid. Revisa en el FortiGate: get system status y diagnose debug vm-print-license")
 
     def _esperar_reinicio(self, c: _Corrida) -> str | None:
-        """Reintenta entrar cada 25 s hasta que la licencia figure Valid o se agote el plazo. Deja en `c` la sesion nueva."""
         estado, fin = None, self._e.reloj.ahora() + _ESPERA_REINICIO
         while self._e.reloj.ahora() < fin and estado != "Valid":
             self._e.reloj.dormir(25)
@@ -120,11 +109,10 @@ class ActivadorLicencia:
                     otra.salida_estandar()
                     estado, c.sesion = otra.estado_licencia(), otra
             except (OSError, ErrorConexionConsola):
-                pass                      # el FortiGate aun reinicia: se reintenta
+                pass
         return estado
 
     def _retirar_nat(self, c: _Corrida, nat: NodoGns3) -> None:
-        """El puerto vuelve a quedar sin uso y se quita el NAT temporal."""
         c.sesion.enviar_lineas(["config system interface", f"edit {c.puerto}", "set mode static", "set ip 0.0.0.0 0.0.0.0",
                                 "unset allowaccess", "set status down", "next", "end"])
         self._e.gns3.borrar_nodo(c.pid, nat.node_id)

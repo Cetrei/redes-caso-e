@@ -1,8 +1,3 @@
-"""Reglas de coherencia de topologia/, una por metodo. Revisa sin tocar GNS3.
-
-`validar` la corre el grupo antes de cada PR y `construir` la corre sola: si hay errores, se detiene.
-Los errores impiden construir; los avisos solo informan.
-"""
 from __future__ import annotations
 
 from dataclasses import dataclass

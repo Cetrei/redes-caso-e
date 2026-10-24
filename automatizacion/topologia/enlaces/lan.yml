@@ -1,5 +1,3 @@
-# LAN interna: R-LAN, su switch y los usuarios.
-# Cada linea es un cable: [equipo, puerto, equipo, puerto]. Puertos: Gi0/N (router), portN (FortiGate), ethN (contenedor), pN (switch de GNS3).
 - [R-LAN, Gi0/1, SW-LAN, p0]
 - [SW-LAN, p1, PC-USER, eth0]
 - [SW-LAN, p2, PC-ADMIN, eth0]
