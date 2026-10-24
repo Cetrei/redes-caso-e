@@ -3,8 +3,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from maqueta.errores import ErrorSecretos
-from maqueta.secretos import AlmacenSecretos, leer_env
+from maqueta.datos.secretos import AlmacenSecretos, leer_env
+from maqueta.nucleo.errores import ErrorSecretos
 
 
 class LeerEnvTest(unittest.TestCase):

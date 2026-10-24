@@ -4,8 +4,8 @@ import re
 import socket
 from typing import Protocol, Sequence
 
-from .errores import ErrorConexionConsola
-from .reloj import Reloj
+from maqueta.bordes.reloj import Reloj
+from maqueta.nucleo.errores import ErrorConexionConsola
 
 _IAC = 255
 _WILL, _WONT, _DO, _DONT = 251, 252, 253, 254

@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from . import hosts_md
-from .errores import ErrorTopologia
-from .modelo import Proyecto
-from .repositorio import Repositorio
-from .tipos import RegistroTipos
+from maqueta.datos import hosts_md
+from maqueta.datos.repositorio import Repositorio
+from maqueta.nucleo.errores import ErrorTopologia
+from maqueta.nucleo.modelo import Proyecto
+from maqueta.tipos import RegistroTipos
 
 
 @dataclass(frozen=True)

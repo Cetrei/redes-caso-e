@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Mapping, NamedTuple
 
-from .errores import ErrorTopologia
+from maqueta.nucleo.errores import ErrorTopologia
 
 
 class Puerto(NamedTuple):

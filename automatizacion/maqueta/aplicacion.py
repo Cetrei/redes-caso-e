@@ -5,23 +5,23 @@ from functools import cached_property
 from pathlib import Path
 from typing import Callable
 
-from .consola import Conexion, ConexionTcp, Consola
-from .entorno import Entorno
-from .fortigate_cli import SesionFortigate
-from .gns3 import ClienteGns3, Transporte, TransporteHttp
-from .modelo import ConfigSsh, Proyecto
-from .reloj import Reloj, RelojReal
-from .repositorio import Repositorio
-from .secretos import AlmacenSecretos
-from .servicios.ciclo import CicloVida
-from .servicios.constructor import Constructor
-from .servicios.fortigate import PegadorConfigFortigate
-from .servicios.imagenes import ConstructorImagenes
-from .servicios.licencia import ActivadorLicencia
-from .servicios.posiciones import Posiciones
-from .ssh import CanalSsh, CanalVm
-from .tipos import RegistroTipos, registro_por_defecto
-from .validacion import Validador
+from maqueta.bordes.consola import Conexion, ConexionTcp, Consola
+from maqueta.bordes.fortigate_cli import SesionFortigate
+from maqueta.bordes.gns3 import ClienteGns3, Transporte, TransporteHttp
+from maqueta.bordes.reloj import Reloj, RelojReal
+from maqueta.bordes.ssh import CanalSsh, CanalVm
+from maqueta.datos.repositorio import Repositorio
+from maqueta.datos.secretos import AlmacenSecretos
+from maqueta.nucleo.modelo import ConfigSsh, Proyecto
+from maqueta.servicios.ciclo import CicloVida
+from maqueta.servicios.constructor import Constructor
+from maqueta.servicios.entorno import Entorno
+from maqueta.servicios.fortigate import PegadorConfigFortigate
+from maqueta.servicios.imagenes import ConstructorImagenes
+from maqueta.servicios.licencia import ActivadorLicencia
+from maqueta.servicios.posiciones import Posiciones
+from maqueta.servicios.validacion import Validador
+from maqueta.tipos import registro_por_defecto, RegistroTipos
 
 
 @dataclass(frozen=True)

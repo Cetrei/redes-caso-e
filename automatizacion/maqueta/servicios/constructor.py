@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from ..entorno import Entorno
-from ..errores import ErrorValidacion
-from ..gns3 import Extremo, NuevoNodo
-from ..tipos import ContextoPreparacion
-from ..validacion import Validador
+from maqueta.bordes.gns3 import Extremo, NuevoNodo
+from maqueta.nucleo.errores import ErrorValidacion
+from maqueta.servicios.entorno import Entorno
+from maqueta.servicios.validacion import Validador
+from maqueta.tipos import ContextoPreparacion
 
 
 class Constructor:

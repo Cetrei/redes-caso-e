@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import sys
 
-from ..registro import descubrir
-from .base import ContextoPreparacion, RegistroTipos, TipoNodo
+from maqueta.nucleo.registro import descubrir
+from maqueta.tipos.base import ContextoPreparacion, RegistroTipos, TipoNodo
 
 __all__ = ["ContextoPreparacion", "RegistroTipos", "TipoNodo", "registro_por_defecto"]
 

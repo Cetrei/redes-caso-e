@@ -1,6 +1,6 @@
 import unittest
 
-from .apoyo import Escenario
+from tests.dobles.escenario import Escenario
 
 
 class Validacion(unittest.TestCase):

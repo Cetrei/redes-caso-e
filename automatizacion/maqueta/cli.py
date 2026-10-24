@@ -5,14 +5,13 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from .aplicacion import Aplicacion
-from .comandos import Comando, descubrir
-from .errores import ErrorMaqueta, ErrorTopologia
+from maqueta.aplicacion import Aplicacion
+from maqueta.comandos import Comando, descubrir
+from maqueta.nucleo.errores import ErrorMaqueta, ErrorTopologia
 
 DESCRIPCION = """Arma y opera la maqueta del Caso E en un servidor GNS3 2.2 a partir de los archivos de topologia/.
 
 Es idempotente: se puede repetir cualquier subcomando sin duplicar nada.
-Estructura y como agregar, quitar o mover equipos: automatizacion/README.md
 """
 
 

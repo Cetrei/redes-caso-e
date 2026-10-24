@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Callable
 
-from ..entorno import Entorno
-from ..modelo import ConfigSsh
-from ..ssh import CanalVm
+from maqueta.bordes.ssh import CanalVm
+from maqueta.nucleo.modelo import ConfigSsh
+from maqueta.servicios.entorno import Entorno
 
 DESTINO = "/home/gns3/servicios"
 

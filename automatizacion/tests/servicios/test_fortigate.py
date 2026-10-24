@@ -1,8 +1,8 @@
 import unittest
 
-from maqueta.errores import ErrorEstado, ErrorTopologia
+from maqueta.nucleo.errores import ErrorEstado, ErrorTopologia
 
-from .apoyo import Escenario
+from tests.dobles.escenario import Escenario
 
 
 class PegarConfig(unittest.TestCase):

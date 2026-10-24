@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import re
 
-from ..modelo import Puerto
-from .base import TipoNodo
+from maqueta.nucleo.modelo import Puerto
+from maqueta.tipos.base import TipoNodo
 
 
 class Qemu(TipoNodo):

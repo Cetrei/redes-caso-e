@@ -7,8 +7,8 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any, Mapping, NamedTuple, Protocol
 
-from .errores import ErrorGns3
-from .modelo import Puerto
+from maqueta.nucleo.errores import ErrorGns3
+from maqueta.nucleo.modelo import Puerto
 
 
 class Transporte(Protocol):

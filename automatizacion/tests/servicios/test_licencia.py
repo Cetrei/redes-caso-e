@@ -1,8 +1,8 @@
 import unittest
 
-from maqueta.errores import ErrorEstado, ErrorSecretos
+from maqueta.nucleo.errores import ErrorEstado, ErrorSecretos
 
-from .apoyo import Escenario
+from tests.dobles.escenario import Escenario
 
 
 class Licencia(unittest.TestCase):

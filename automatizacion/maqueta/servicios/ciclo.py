@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..entorno import Entorno
+from maqueta.servicios.entorno import Entorno
 
 
 class CicloVida:

@@ -3,12 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable
 
-from .fortigate_cli import SesionFortigate
-from .gns3 import ClienteGns3
-from .modelo import Proyecto
-from .reloj import Reloj
-from .repositorio import Repositorio
-from .tipos import RegistroTipos
+from maqueta.bordes.fortigate_cli import SesionFortigate
+from maqueta.bordes.gns3 import ClienteGns3
+from maqueta.bordes.reloj import Reloj
+from maqueta.datos.repositorio import Repositorio
+from maqueta.nucleo.modelo import Proyecto
+from maqueta.tipos import RegistroTipos
 
 
 @dataclass(frozen=True)

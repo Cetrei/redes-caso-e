@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from ..errores import ErrorMaqueta
-from .base import Comando
+from maqueta.comandos.base import Comando
+from maqueta.nucleo.errores import ErrorMaqueta
 
 
 class Validar(Comando):

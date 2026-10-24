@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ..entorno import Entorno
-from ..errores import ErrorConexionConsola, ErrorConsola, ErrorEstado
-from ..fortigate_cli import SesionFortigate
-from ..gns3 import NodoGns3, NuevoNodo
-from ..modelo import Puerto
-from ..secretos import AlmacenSecretos, CredencialesForticloud
+from maqueta.bordes.fortigate_cli import SesionFortigate
+from maqueta.bordes.gns3 import NodoGns3, NuevoNodo
+from maqueta.datos.secretos import AlmacenSecretos, CredencialesForticloud
+from maqueta.nucleo.errores import ErrorConexionConsola, ErrorConsola, ErrorEstado
+from maqueta.nucleo.modelo import Puerto
+from maqueta.servicios.entorno import Entorno
 
 NAT = "NAT-licencia"
 _ESPERA_REINICIO = 480

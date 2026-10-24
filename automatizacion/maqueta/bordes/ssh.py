@@ -3,8 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Protocol
 
-from .errores import ErrorVm
-from .modelo import ConfigSsh
+from maqueta.nucleo.errores import ErrorVm
+from maqueta.nucleo.modelo import ConfigSsh
 
 
 class CanalVm(Protocol):

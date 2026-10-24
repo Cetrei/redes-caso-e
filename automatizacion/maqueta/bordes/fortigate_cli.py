@@ -3,10 +3,10 @@ from __future__ import annotations
 import re
 from typing import Sequence
 
-from .consola import Consola
-from .errores import ErrorConsola
-from .modelo import ConfigFortigate
-from .reloj import Reloj
+from maqueta.bordes.consola import Consola
+from maqueta.bordes.reloj import Reloj
+from maqueta.nucleo.errores import ErrorConsola
+from maqueta.nucleo.modelo import ConfigFortigate
 
 _PROMPT = r"[#$] $"
 

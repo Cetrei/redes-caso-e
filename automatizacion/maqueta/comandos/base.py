@@ -4,7 +4,7 @@ import argparse
 from abc import ABC, abstractmethod
 from typing import ClassVar
 
-from ..aplicacion import Aplicacion
+from maqueta.aplicacion import Aplicacion
 
 
 class Comando(ABC):

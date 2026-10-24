@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import sys
 
-from ..registro import descubrir as _descubrir
-from .base import Comando
+from maqueta.comandos.base import Comando
+from maqueta.nucleo.registro import descubrir as _descubrir
 
 __all__ = ["Comando", "descubrir"]
 

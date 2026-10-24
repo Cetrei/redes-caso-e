@@ -6,8 +6,8 @@ from typing import Any
 
 import yaml
 
-from .errores import ErrorTopologia
-from .modelo import ConfigFortigate, ConfigSsh, Enlace, Imagen, Nodo, Proyecto, PuertoSwitch
+from maqueta.nucleo.errores import ErrorTopologia
+from maqueta.nucleo.modelo import ConfigFortigate, ConfigSsh, Enlace, Imagen, Nodo, Proyecto, PuertoSwitch
 
 
 def _entero(valor: Any) -> int | None:

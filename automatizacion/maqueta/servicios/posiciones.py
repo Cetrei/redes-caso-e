@@ -3,9 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Mapping
 
-from ..entorno import Entorno
-from ..gns3 import NodoGns3
-from ..modelo import Proyecto
+from maqueta.bordes.gns3 import NodoGns3
+from maqueta.nucleo.modelo import Proyecto
+from maqueta.servicios.entorno import Entorno
 
 
 @dataclass(frozen=True)

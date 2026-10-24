@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .base import Comando
+from maqueta.comandos.base import Comando
 
 
 class Iniciar(Comando):

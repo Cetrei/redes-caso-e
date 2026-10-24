@@ -1,7 +1,7 @@
 import unittest
 
-from maqueta.errores import ErrorTopologia
-from maqueta.modelo import Puerto
+from maqueta.nucleo.errores import ErrorTopologia
+from maqueta.nucleo.modelo import Puerto
 from maqueta.tipos import registro_por_defecto
 from maqueta.tipos.dynamips import configuracion_arranque
 

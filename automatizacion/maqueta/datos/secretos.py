@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
-from .errores import ErrorSecretos
+from maqueta.nucleo.errores import ErrorSecretos
 
 
 @dataclass(frozen=True)

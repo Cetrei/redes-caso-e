@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .reloj_falso import RelojFalso
+from tests.dobles.reloj_falso import RelojFalso
 
 
 class EstadoFortigate:

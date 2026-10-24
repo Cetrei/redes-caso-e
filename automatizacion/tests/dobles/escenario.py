@@ -5,13 +5,13 @@ import tempfile
 from pathlib import Path
 
 from maqueta.aplicacion import Adaptadores, Aplicacion
-from maqueta.errores import ErrorConexionConsola
-from maqueta.repositorio import Repositorio
+from maqueta.datos.repositorio import Repositorio
+from maqueta.nucleo.errores import ErrorConexionConsola
 from maqueta.tipos import registro_por_defecto
 
-from .fortigate_falso import ConexionFortigate, EstadoFortigate
-from .gns3_falso import Gns3Falso
-from .reloj_falso import RelojFalso
+from tests.dobles.fortigate_falso import ConexionFortigate, EstadoFortigate
+from tests.dobles.gns3_falso import Gns3Falso
+from tests.dobles.reloj_falso import RelojFalso
 
 
 class CanalFalso:

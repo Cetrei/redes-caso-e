@@ -1,8 +1,8 @@
 import unittest
 
-from maqueta.errores import ErrorGns3, ErrorValidacion
+from maqueta.nucleo.errores import ErrorGns3, ErrorValidacion
 
-from .apoyo import Escenario
+from tests.dobles.escenario import Escenario
 
 
 class Construccion(unittest.TestCase):

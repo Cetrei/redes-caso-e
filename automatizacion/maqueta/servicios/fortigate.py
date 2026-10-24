@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from ..entorno import Entorno
-from ..errores import ErrorConsola, ErrorEstado, ErrorTopologia
+from maqueta.nucleo.errores import ErrorConsola, ErrorEstado, ErrorTopologia
+from maqueta.servicios.entorno import Entorno
 
 
 class PegadorConfigFortigate:

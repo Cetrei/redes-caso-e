@@ -4,14 +4,14 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Callable, ClassVar, Iterable
 
-from .. import hosts_md
-from ..errores import ErrorTopologia
-from ..gns3 import Archivo, ClienteGns3, NodoGns3
-from ..modelo import Nodo, Proyecto, Puerto
-from ..repositorio import Repositorio
+from maqueta.bordes.gns3 import Archivo, ClienteGns3, NodoGns3
+from maqueta.datos import hosts_md
+from maqueta.datos.repositorio import Repositorio
+from maqueta.nucleo.errores import ErrorTopologia
+from maqueta.nucleo.modelo import Nodo, Proyecto, Puerto
 
 if TYPE_CHECKING:
-    from ..entorno import Entorno
+    from maqueta.servicios.entorno import Entorno
 
 
 @dataclass

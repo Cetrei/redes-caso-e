@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import re
 
-from ..gns3 import NodoGns3
-from ..modelo import Nodo, Puerto
-from .base import ContextoPreparacion, TipoNodo
+from maqueta.bordes.gns3 import NodoGns3
+from maqueta.nucleo.modelo import Nodo, Puerto
+from maqueta.tipos.base import ContextoPreparacion, TipoNodo
 
 
 class SwitchEthernet(TipoNodo):

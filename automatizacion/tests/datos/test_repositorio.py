@@ -1,10 +1,10 @@
 import dataclasses
 import unittest
 
-from maqueta.errores import ErrorTopologia
-from maqueta.hosts_md import bloques
+from maqueta.datos.hosts_md import bloques
+from maqueta.nucleo.errores import ErrorTopologia
 
-from .apoyo import Escenario
+from tests.dobles.escenario import Escenario
 
 
 class CargaDeTopologia(unittest.TestCase):
