@@ -7,7 +7,7 @@ from maqueta.nucleo.modelo import Nodo, Puerto
 from maqueta.tipos.base import ContextoPreparacion, TipoNodo
 
 
-def configuracion_arranque(texto: str, plan_b: bool) -> tuple[str, list[str]]:
+def configuracion_arranque(texto: str) -> tuple[str, list[str]]:
     salida, comandos_exec = [], []
     for linea in texto.splitlines():
         s = linea.strip()
@@ -16,8 +16,6 @@ def configuracion_arranque(texto: str, plan_b: bool) -> tuple[str, list[str]]:
         if s.startswith("crypto key generate"):
             comandos_exec.append(s)
             continue
-        if plan_b:
-            linea = re.sub(r"^(\s*)remark ((?:sequence )?35 )", r"\1\2", linea)
         salida.append(linea.rstrip())
         if s == "end":
             break
@@ -41,7 +39,7 @@ class Dynamips(TipoNodo):
         ctx.gns3.actualizar_nodo(ctx.pid, creado.node_id, {"properties": dict(ctx.proyecto.dynamips_slots)})
         if not nodo.config:
             return
-        config, comandos_exec = configuracion_arranque(ctx.repositorio.leer(nodo.config), ctx.proyecto.plan_b)
+        config, comandos_exec = configuracion_arranque(ctx.repositorio.leer(nodo.config))
         ctx.avisos += [f"{nodo.nombre}: ejecutar por consola ya encendido: {c}" for c in comandos_exec]
         ctx.escribir(creado, f"configs/i{creado.propiedades['dynamips_id']}_startup-config.cfg", config.encode())
         ctx.salida(f"config de {nodo.nombre} escrita desde {nodo.config}")

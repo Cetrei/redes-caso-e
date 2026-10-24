@@ -1,5 +1,5 @@
 proyecto: casoE_dev
-plan_b: true
+plan_b: false
 servidor: http://127.0.0.1:3080
 
 plantillas:

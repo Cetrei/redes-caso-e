@@ -1,6 +1,6 @@
 import unittest
 
-from maqueta.nucleo.errores import ErrorEstado, ErrorSecretos
+from maqueta.nucleo.errores import ErrorConsola, ErrorEstado, ErrorSecretos
 
 from tests.dobles.escenario import Escenario
 
@@ -63,6 +63,13 @@ class Licencia(unittest.TestCase):
             self.activar()
         self.assertNotIn("execute vm-license", self.e.fortigate.recibido)
 
+    def test_espera_a_que_el_dhcp_del_nat_responda(self):
+        self.e.fortigate.pings_perdidos = 2
+        self.encender()
+        self.activar()
+        self.assertEqual(self.e.fortigate.licencia, "Valid")
+        self.assertIn("salida a internet: ok", self.e.salida)
+
     def test_con_el_fortigate_apagado_dice_que_hacer(self):
         with self.assertRaisesRegex(ErrorEstado, "FGT-01 no esta encendido. Corre: gns3ctl.py iniciar"):
             self.activar()
@@ -73,6 +80,20 @@ class Licencia(unittest.TestCase):
         with self.assertRaisesRegex(ErrorSecretos, "Falta automatizacion/.env"):
             self.activar()
         self.assertEqual(self.e.gns3.llamadas, [])
+
+    def test_reintenta_si_el_fortigate_rechaza_mientras_arranca(self):
+        self.e.fortigate.rechazos_clave = 1
+        self.encender()
+        self.activar()
+        self.assertEqual(self.e.fortigate.licencia, "Valid")
+        self.assertGreaterEqual(self.e.reloj.t, 65 + 20 + 25)
+
+    def test_con_la_clave_equivocada_falla_tras_tres_intentos(self):
+        self.e.fortigate.clave = "otra"
+        self.encender()
+        with self.assertRaisesRegex(ErrorConsola, "rechazo la clave 3 veces"):
+            self.activar()
+        self.assertEqual(self.e.fortigate.recibido.count("Fortinet.2026"), 3)
 
     def test_espera_el_reinicio_sin_gastar_tiempo_real(self):
         self.encender()

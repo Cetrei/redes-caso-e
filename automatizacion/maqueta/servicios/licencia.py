@@ -11,6 +11,8 @@ from maqueta.servicios.entorno import Entorno
 
 NAT = "NAT-licencia"
 _ESPERA_REINICIO = 480
+_ESPERA_INTERNET = 150
+_PAUSA_INTERNET = 20
 
 
 @dataclass
@@ -68,11 +70,18 @@ class ActivadorLicencia:
         c.sesion.enviar_lineas(["config system interface", f"edit {c.puerto}", "set mode dhcp", "set allowaccess ping",
                                 "set defaultgw enable", "set status up", "next", "end"])
         self._e.salida(f"{c.puerto} en DHCP contra el NAT de GNS3; espero la direccion y pruebo salida a internet")
-        self._e.reloj.dormir(20)
-        if c.sesion.paquetes_recibidos("8.8.8.8") == 0:
-            raise ErrorEstado(f"{c.nombre} no tiene salida a internet por {c.puerto} (ping a 8.8.8.8 sin respuesta). Revisa el nodo {NAT}.")
+        self._esperar_internet(c)
         self._e.salida("salida a internet: ok")
         return nat
+
+    def _esperar_internet(self, c: _Corrida) -> None:
+        fin = self._e.reloj.ahora() + _ESPERA_INTERNET
+        while True:
+            self._e.reloj.dormir(_PAUSA_INTERNET)
+            if c.sesion.paquetes_recibidos("8.8.8.8"):
+                return
+            if self._e.reloj.ahora() >= fin:
+                raise ErrorEstado(f"{c.nombre} no tiene salida a internet por {c.puerto} (ping a 8.8.8.8 sin respuesta tras {_ESPERA_INTERNET} s). Revisa el nodo {NAT}.")
 
     def _nat_temporal(self, c: _Corrida) -> NodoGns3:
         if NAT in c.nodos:

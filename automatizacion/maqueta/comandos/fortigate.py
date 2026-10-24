@@ -10,7 +10,7 @@ class _ConNodo(Comando):
 
 class Fortigate(_ConNodo):
     nombre = "fortigate"
-    ayuda = "pega configs/<FortiGate>.conf (o el plan B si plan_b: true) por su consola"
+    ayuda = "pega configs/<FortiGate>.conf por su consola y, si la licencia rechaza politicas, pasa al plan B (o va directo con plan_b: true)"
     orden = 60
 
     def ejecutar(self, app, args):

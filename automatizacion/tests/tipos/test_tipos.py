@@ -58,7 +58,7 @@ class Puertos(unittest.TestCase):
 
 class ConfiguracionDeRouter(unittest.TestCase):
     def test_traduce_interfaces_corta_en_end_y_separa_comandos_exec(self):
-        config, ejecutar = configuracion_arranque(CONFIG, plan_b=False)
+        config, ejecutar = configuracion_arranque(CONFIG)
         self.assertIn("interface GigabitEthernet2/0", config)
         self.assertIn("interface Gi4/0", config)
         self.assertNotIn("hostname R1\n!", config)
@@ -67,13 +67,9 @@ class ConfiguracionDeRouter(unittest.TestCase):
         self.assertTrue(config.endswith("end\n"))
         self.assertEqual(ejecutar, ["crypto key generate rsa modulus 2048"])
 
-    def test_sin_plan_b_la_linea_35_sigue_comentada(self):
-        config, _ = configuracion_arranque(CONFIG, plan_b=False)
+    def test_los_remark_pasan_tal_cual(self):
+        config, _ = configuracion_arranque(CONFIG)
         self.assertIn(" remark 35 permit tcp any any", config)
-
-    def test_con_plan_b_se_activa_solo_la_linea_35(self):
-        config, _ = configuracion_arranque(CONFIG, plan_b=True)
-        self.assertIn("\n 35 permit tcp any any", config)
         self.assertIn(" remark otra nota", config)
 
 

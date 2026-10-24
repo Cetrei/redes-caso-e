@@ -58,7 +58,7 @@ ssh: {host: 127.0.0.1, puerto: 2222, usuario: gns3, clave: gns3}
     "configs/R1.txt": (
         "!\nhostname R1\ninterface GigabitEthernet0/1\n ip address 10.0.0.1 255.255.255.0\n"
         "crypto key generate rsa modulus 2048\nip access-list extended USUARIOS\n remark 35 permit tcp any any\nend\nquedo fuera\n"),
-    "configs/FGT-01.conf": "# comentario\nconfig system interface\nedit port1\nnext\nend\n",
+    "configs/FGT-01.conf": "# comentario\nconfig system interface\nedit port1\nset alias plana\nset extintf port1\nnext\nend\n",
     "configs/FGT-01-planB.conf": "# plan B\nconfig system interface\nedit port1\nset alias planb\nnext\nend\n",
     "hosts/hosts.md": "# Hosts\n\n### PC\n\n```\nauto eth0\niface eth0 inet static\n```\n",
     "servicios/Dockerfile": "FROM alpine\n",
