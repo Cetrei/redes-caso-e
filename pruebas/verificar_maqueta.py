@@ -27,6 +27,16 @@ PRUEBAS = [
     ("E06b", "PC-USER", CURL.format(f=4), r"http4=200"),
     ("E07", "PC-USER", "ping -c1 -W2 10.50.1.10", r"100% packet loss"),
     ("E08", "PC-ADMIN", "ping -c1 -W2 10.50.0.10", r" 1 received"),
+    ("E02", "PC-EXT", "ping -c1 -W2 10.50.0.10 2>&1", r"100% packet loss|Unreachable|unreachable"),
+    ("E09", "SRV-DMZ", "ping -c1 -W2 10.50.0.10 2>&1", r"100% packet loss|Unreachable|unreachable"),
+    ("E11", "PC-EXT", "curl -k -s -m 5 -o /dev/null -w 'https=%{http_code}\\n' https://203.0.113.18/", r"https=000"),
+    ("E12a", "PC-USER", "nc -z -w3 10.50.0.1 22; echo rc=$?", r"rc=1"),
+    ("E12b", "PC-ADMIN", "timeout 3 bash -c '</dev/tcp/10.50.1.1/22' && echo ssh_rlan_abierto", r"ssh_rlan_abierto"),
+    ("E13a", "PC-USER", "curl -k -s -m 5 -o /dev/null -w 'gui=%{http_code}\\n' https://10.50.1.49/", r"gui=000"),
+    ("E13b", "PC-ADMIN", "curl -k -s -m 5 -o /dev/null -w 'gui=%{http_code}\\n' https://10.50.1.49/", r"gui=(200|301|302|303)"),
+    ("E14", "SRV-DMZ", "ping -c1 -W2 198.51.100.10 2>&1", r"100% packet loss|Unreachable|unreachable"),
+    ("E15a", "PC-USER", "ping -c1 -W2 10.50.99.9 2>&1", r"100% packet loss|Unreachable|unreachable"),
+    ("E15b", "PC-USER", "ping -6 -c1 -W2 2001:db8:105:99::9 2>&1", r"100% packet loss|Unreachable|unreachable"),
 ]
 
 
@@ -60,7 +70,20 @@ class Consola:
         m = re.search(r"^__INI__\n(.*?)^__FIN__$", salida, re.M | re.S)
         return (m.group(1) if m else salida).strip()
 
+    def entrar(self, usuario, clave):
+        for _ in range(3):
+            pantalla = self.linea("", 2)
+            if "login:" in pantalla:
+                self.linea(usuario, 2)
+                self.linea(clave, 4)
+            elif "Password:" in pantalla:
+                self.s.sendall(b"\x03")
+                self.leer(1)
+            else:
+                return
+
     def fortigate(self, comandos, espera=3):
+        self.entrar("admin", "Fortinet.2026")
         return "\n".join(self.linea(c, espera) for c in comandos)
 
 
@@ -72,7 +95,7 @@ def puertos():
 
 def main():
     p = puertos()
-    hosts = {n: Consola(p[n]) for n in ("PC-EXT", "PC-USER", "PC-ADMIN")}
+    hosts = {n: Consola(p[n]) for n in ("PC-EXT", "PC-USER", "PC-ADMIN", "SRV-DMZ")}
     fgt = Consola(p["FGT-01"])
     informe, fallas = [], 0
 
@@ -97,6 +120,24 @@ def main():
     vuelto = hosts["PC-EXT"].host(http_vip)
     anotar("F01", "http4=200" not in caido and "http4=200" in vuelto,
            f"politica 1 desactivada: {caido} ; reactivada: {vuelto}")
+
+    rlan = Consola(p["R-LAN"])
+    rlan.linea("enable", 2)
+    rlan.linea("admin", 2)
+    try:
+        rlan.fortigate(["configure terminal", "interface GigabitEthernet1/0", "shutdown", "end"], 2)
+        time.sleep(60)
+        vecinos = fgt.fortigate(["get router info ospf neighbor"], 4)
+        desde_afuera = hosts["PC-EXT"].host(http_vip)
+        desde_lan = hosts["PC-USER"].host(CURL.format(f=4), 12)
+    finally:
+        rlan.fortigate(["configure terminal", "interface GigabitEthernet1/0", "no shutdown", "end"], 2)
+    time.sleep(70)
+    vecinos2 = fgt.fortigate(["get router info ospf neighbor"], 4)
+    vuelta = hosts["PC-USER"].host(CURL.format(f=4), 12)
+    caida = "Full" not in vecinos and "http4=200" in desde_afuera and "http4=200" not in desde_lan
+    anotar("F02", caida and "Full" in vecinos2 and "http4=200" in vuelta,
+           f"R-LAN Gi1/0 apagada: {vecinos.strip()[-160:]} ; publicacion externa {desde_afuera} ; HTTP de usuarios {desde_lan[-40:]}\n        restaurada: {vecinos2.strip()[-160:]} ; HTTP de usuarios {vuelta[-40:]}")
 
     time.sleep(4)
     logs = fgt.fortigate(["execute log filter device disk", "execute log filter category 0", "execute log display"], 8)
