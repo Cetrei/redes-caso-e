@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Callable
 
 from .consola import Conexion, ConexionTcp, Consola
+from .entorno import Entorno
 from .fortigate_cli import SesionFortigate
 from .gns3 import ClienteGns3, Transporte, TransporteHttp
 from .modelo import ConfigSsh, Proyecto
@@ -28,9 +29,10 @@ from .tipos import RegistroTipos, registro_por_defecto
 from .validacion import Validador
 
 
-@dataclass
-class Aplicacion:
-    repositorio: Repositorio
+@dataclass(frozen=True)
+class Adaptadores:
+    """Los bordes con el mundo de afuera. Las pruebas ponen dobles en memoria en cada uno."""
+
     reloj: Reloj
     salida: Callable[[str], None]
     fabrica_transporte: Callable[[str], Transporte]      # servidor -> transporte hacia la API de GNS3
@@ -39,11 +41,24 @@ class Aplicacion:
     tipos: RegistroTipos
 
     @classmethod
+    def reales(cls, salida: Callable[[str], None] = print) -> Adaptadores:
+        """HTTP, telnet y SSH de verdad."""
+        return cls(RelojReal(), salida, TransporteHttp, ConexionTcp, CanalSsh, registro_por_defecto())
+
+
+@dataclass
+class Aplicacion:
+    repositorio: Repositorio
+    adaptadores: Adaptadores
+
+    @classmethod
     def crear(cls, base: Path, salida: Callable[[str], None] = print) -> Aplicacion:
         """La aplicacion de verdad: disco, HTTP, telnet y SSH reales."""
-        return cls(repositorio=Repositorio(base), reloj=RelojReal(), salida=salida,
-                   fabrica_transporte=TransporteHttp, fabrica_conexion=ConexionTcp, fabrica_canal=CanalSsh,
-                   tipos=registro_por_defecto())
+        return cls(Repositorio(base), Adaptadores.reales(salida))
+
+    @property
+    def salida(self) -> Callable[[str], None]:
+        return self.adaptadores.salida
 
     # datos que se cargan una sola vez
 
@@ -53,32 +68,36 @@ class Aplicacion:
 
     @cached_property
     def gns3(self) -> ClienteGns3:
-        return ClienteGns3(self.fabrica_transporte(self.proyecto.servidor), self.proyecto.nombre)
+        return ClienteGns3(self.adaptadores.fabrica_transporte(self.proyecto.servidor), self.proyecto.nombre)
+
+    @cached_property
+    def entorno(self) -> Entorno:
+        a = self.adaptadores
+        return Entorno(self.gns3, self.proyecto, self.repositorio, a.tipos, a.reloj, a.salida, self.abrir_sesion_fortigate)
 
     # servicios
 
     def validador(self) -> Validador:
-        return Validador(self.proyecto, self.repositorio, self.tipos)
+        return Validador(self.proyecto, self.repositorio, self.adaptadores.tipos)
 
     def constructor(self) -> Constructor:
-        return Constructor(self.gns3, self.proyecto, self.repositorio, self.tipos, self.validador(), self.salida)
+        return Constructor(self.entorno, self.validador())
 
     def ciclo(self) -> CicloVida:
-        return CicloVida(self.gns3, self.salida)
+        return CicloVida(self.entorno)
 
     def posiciones(self) -> Posiciones:
-        return Posiciones(self.gns3, self.proyecto, self.repositorio, self.salida)
+        return Posiciones(self.entorno)
 
     def imagenes(self) -> ConstructorImagenes:
-        return ConstructorImagenes(self.gns3, self.proyecto, self.repositorio, self.fabrica_canal, self.salida)
+        return ConstructorImagenes(self.entorno, self.adaptadores.fabrica_canal)
 
     def pegador_fortigate(self) -> PegadorConfigFortigate:
-        return PegadorConfigFortigate(self.gns3, self.proyecto, self.repositorio, self.abrir_sesion_fortigate, self.salida)
+        return PegadorConfigFortigate(self.entorno)
 
     def activador_licencia(self) -> ActivadorLicencia:
-        secretos = AlmacenSecretos(self.repositorio.base / "secretos.yml", self.salida)
-        return ActivadorLicencia(self.gns3, self.proyecto, secretos, self.tipos, self.abrir_sesion_fortigate,
-                                 self.reloj, self.salida)
+        return ActivadorLicencia(self.entorno, AlmacenSecretos(self.repositorio.base / "secretos.yml", self.salida))
 
     def abrir_sesion_fortigate(self, puerto: int) -> SesionFortigate:
-        return SesionFortigate(Consola(self.fabrica_conexion(puerto), self.reloj), self.proyecto.fortigate_requerido(), self.reloj)
+        a = self.adaptadores
+        return SesionFortigate(Consola(a.fabrica_conexion(puerto), a.reloj), self.proyecto.fortigate_requerido(), a.reloj)

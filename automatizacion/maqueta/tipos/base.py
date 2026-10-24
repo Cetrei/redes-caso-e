@@ -8,13 +8,16 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Callable, ClassVar, Iterable
+from typing import TYPE_CHECKING, Callable, ClassVar, Iterable
 
 from .. import hosts_md
 from ..errores import ErrorTopologia
-from ..gns3 import ClienteGns3, NodoGns3
+from ..gns3 import Archivo, ClienteGns3, NodoGns3
 from ..modelo import Nodo, Proyecto, Puerto
 from ..repositorio import Repositorio
+
+if TYPE_CHECKING:
+    from ..entorno import Entorno
 
 
 @dataclass
@@ -22,12 +25,29 @@ class ContextoPreparacion:
     """Lo que un tipo necesita para preparar un nodo, y donde deja sus avisos para el final de `construir`."""
 
     pid: str
-    gns3: ClienteGns3
-    proyecto: Proyecto
-    repositorio: Repositorio
-    salida: Callable[[str], None]
+    entorno: Entorno
     avisos: list[str] = field(default_factory=list)
     _redes: dict[str, dict[str, str]] = field(default_factory=dict)
+
+    @property
+    def gns3(self) -> ClienteGns3:
+        return self.entorno.gns3
+
+    @property
+    def proyecto(self) -> Proyecto:
+        return self.entorno.proyecto
+
+    @property
+    def repositorio(self) -> Repositorio:
+        return self.entorno.repositorio
+
+    @property
+    def salida(self) -> Callable[[str], None]:
+        return self.entorno.salida
+
+    def escribir(self, creado: NodoGns3, ruta: str, contenido: bytes) -> None:
+        """Escribe un archivo dentro del nodo recien creado."""
+        self.gns3.escribir_archivo(self.pid, creado.node_id, Archivo(ruta, contenido))
 
     def bloque_red(self, ruta: str, equipo: str) -> str | None:
         """Contenido de /etc/network/interfaces de `equipo` segun `ruta` (hosts.md), leyendo el archivo una sola vez."""

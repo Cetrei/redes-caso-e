@@ -18,8 +18,12 @@ from .modelo import Puerto
 
 
 class Transporte(Protocol):
-    def solicitar(self, metodo: str, ruta: str, *, cuerpo: Any = None, crudo: bytes | None = None) -> Any:
-        """Una llamada a la API. `cuerpo` se envia como JSON, `crudo` tal cual. Devuelve el JSON o el texto de la respuesta."""
+    def solicitar(self, metodo: str, ruta: str, cuerpo: Any = None) -> Any:
+        """Una llamada a la API. `cuerpo` se envia como JSON. Devuelve el JSON o el texto de la respuesta."""
+        ...
+
+    def subir(self, ruta: str, contenido: bytes) -> None:
+        """POST de un archivo tal cual, sin JSON."""
         ...
 
 
@@ -28,17 +32,23 @@ class TransporteHttp:
         self._api = servidor.rstrip("/") + "/v2"
         self._timeout = timeout
 
-    def solicitar(self, metodo: str, ruta: str, *, cuerpo: Any = None, crudo: bytes | None = None) -> Any:
-        datos = crudo if crudo is not None else (json.dumps(cuerpo).encode() if cuerpo is not None else None)
+    def solicitar(self, metodo: str, ruta: str, cuerpo: Any = None) -> Any:
+        datos = None if cuerpo is None else json.dumps(cuerpo).encode()
         req = urllib.request.Request(self._api + ruta, data=datos, method=metodo)
-        if datos is not None and crudo is None:
+        if datos is not None:
             req.add_header("Content-Type", "application/json")
+        return self._enviar(req)
+
+    def subir(self, ruta: str, contenido: bytes) -> None:
+        self._enviar(urllib.request.Request(self._api + ruta, data=contenido, method="POST"))
+
+    def _enviar(self, req: urllib.request.Request) -> Any:
         try:
             with urllib.request.urlopen(req, timeout=self._timeout) as r:
                 texto = r.read().decode()
                 return json.loads(texto) if texto and texto.lstrip()[0] in "[{" else texto
         except urllib.error.HTTPError as e:
-            raise ErrorGns3(f"ERROR {e.code} en {metodo} {ruta}: {e.read().decode()[:1500]}") from e
+            raise ErrorGns3(f"ERROR {e.code} en {req.get_method()} {req.selector}: {e.read().decode()[:1500]}") from e
         except urllib.error.URLError as e:
             raise ErrorGns3(f"No hay conexion con {self._api}: {e.reason}. Arranca la VM con gns3vm/start-gns3vm.sh") from e
 
@@ -49,6 +59,24 @@ class Extremo(NamedTuple):
     node_id: str
     adaptador: int
     numero: int
+
+
+@dataclass(frozen=True)
+class NuevoNodo:
+    """Lo que hace falta para crear un nodo: de que plantilla, como se llama y donde cae en el lienzo."""
+
+    plantilla: str
+    nombre: str
+    x: int
+    y: int
+
+
+@dataclass(frozen=True)
+class Archivo:
+    """Un archivo que se escribe dentro de un nodo."""
+
+    ruta: str
+    contenido: bytes
 
 
 @dataclass(frozen=True)
@@ -121,19 +149,19 @@ class ClienteGns3:
     def nodos(self, pid: str) -> dict[str, NodoGns3]:
         return {n["name"]: NodoGns3.desde_json(n) for n in self._t.solicitar("GET", f"/projects/{pid}/nodes")}
 
-    def crear_nodo(self, pid: str, plantilla: str, nombre: str, x: int, y: int) -> NodoGns3:
+    def crear_nodo(self, pid: str, nuevo: NuevoNodo) -> NodoGns3:
         """Crea un nodo desde una plantilla (por nombre) y le pone su nombre."""
-        tid = self.plantilla_id(plantilla)
-        n = self._t.solicitar("POST", f"/projects/{pid}/templates/{tid}", cuerpo={"x": x, "y": y, "compute_id": "local"})
-        self._t.solicitar("PUT", f"/projects/{pid}/nodes/{n['node_id']}", cuerpo={"name": nombre})
-        return NodoGns3.desde_json({**n, "name": nombre})
+        tid = self.plantilla_id(nuevo.plantilla)
+        n = self._t.solicitar("POST", f"/projects/{pid}/templates/{tid}", {"x": nuevo.x, "y": nuevo.y, "compute_id": "local"})
+        self._t.solicitar("PUT", f"/projects/{pid}/nodes/{n['node_id']}", {"name": nuevo.nombre})
+        return NodoGns3.desde_json({**n, "name": nuevo.nombre})
 
     def actualizar_nodo(self, pid: str, node_id: str, campos: Mapping[str, Any]) -> None:
         self._t.solicitar("PUT", f"/projects/{pid}/nodes/{node_id}", cuerpo=dict(campos))
 
-    def escribir_archivo(self, pid: str, node_id: str, ruta: str, contenido: bytes) -> None:
+    def escribir_archivo(self, pid: str, node_id: str, archivo: Archivo) -> None:
         """Escribe un archivo dentro del nodo (startup-config de un router, interfaces de un contenedor)."""
-        self._t.solicitar("POST", f"/projects/{pid}/nodes/{node_id}/files/{ruta}", crudo=contenido)
+        self._t.subir(f"/projects/{pid}/nodes/{node_id}/files/{archivo.ruta}", archivo.contenido)
 
     def iniciar_nodo(self, pid: str, node_id: str) -> None:
         self._t.solicitar("POST", f"/projects/{pid}/nodes/{node_id}/start", cuerpo={})

@@ -34,6 +34,7 @@ automatizacion/
 │   ├── errores.py          todos los errores esperados cuelgan de ErrorMaqueta
 │   ├── gns3.py, ssh.py, consola.py   los bordes: API REST de GNS3, SSH a la VM, telnet al FortiGate
 │   ├── aplicacion.py       arma el motor y le da a cada subcomando sus servicios
+│   ├── entorno.py          lo que comparten los servicios (GNS3, proyecto, reloj, salida) en un solo objeto
 │   ├── tipos/              un modulo por tipo de nodo: dynamips, qemu, docker, switch
 │   ├── servicios/          el trabajo real: construir, ciclo de vida, posiciones, imagenes, FortiGate, licencia
 │   └── comandos/           un modulo por subcomando, delgado: llama a un servicio
@@ -73,6 +74,8 @@ Dos formas de acomodar:
 ## Pruebas
 
 Desde `automatizacion/`: `python3 -m unittest discover -s tests -t .`. Usan un GNS3 y un FortiGate falsos en memoria, así que corren en menos de un segundo, sin VM y sin credenciales. Corrélas antes del PR si tocaste algo de `maqueta/`.
+
+`tests/test_limites.py` hace cumplir el estilo del código: un archivo no pasa de 300 líneas, una función no pasa de 25 y no recibe más de 3 argumentos (sin contar `self`). Si una función necesita más datos, se agrupan en un tipo (dataclass) en vez de alargar la firma.
 
 ## Para que los merges no sean un caos
 

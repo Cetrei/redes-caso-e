@@ -3,22 +3,20 @@ from __future__ import annotations
 
 from typing import Callable
 
-from ..gns3 import ClienteGns3
-from ..modelo import ConfigSsh, Proyecto
-from ..repositorio import Repositorio
+from ..entorno import Entorno
+from ..modelo import ConfigSsh
 from ..ssh import CanalVm
 
 DESTINO = "/home/gns3/servicios"
 
 
 class ConstructorImagenes:
-    def __init__(self, gns3: ClienteGns3, proyecto: Proyecto, repositorio: Repositorio,
-                 abrir_canal: Callable[[ConfigSsh], CanalVm], salida: Callable[[str], None]):
-        self._gns3 = gns3
-        self._p = proyecto
-        self._repo = repositorio
+    def __init__(self, entorno: Entorno, abrir_canal: Callable[[ConfigSsh], CanalVm]):
+        self._gns3 = entorno.gns3
+        self._p = entorno.proyecto
+        self._repo = entorno.repositorio
+        self._salida = entorno.salida
         self._abrir_canal = abrir_canal
-        self._salida = salida
 
     def construir(self) -> None:
         canal = self._abrir_canal(self._p.ssh_requerido())

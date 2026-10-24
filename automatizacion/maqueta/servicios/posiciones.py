@@ -4,11 +4,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable, Mapping
+from typing import Mapping
 
-from ..gns3 import ClienteGns3, NodoGns3
+from ..entorno import Entorno
+from ..gns3 import NodoGns3
 from ..modelo import Proyecto
-from ..repositorio import Repositorio
 
 
 @dataclass(frozen=True)
@@ -26,11 +26,11 @@ def diferencias(proyecto: Proyecto, en_gns3: Mapping[str, NodoGns3]) -> list[Mov
 
 
 class Posiciones:
-    def __init__(self, gns3: ClienteGns3, proyecto: Proyecto, repositorio: Repositorio, salida: Callable[[str], None]):
-        self._gns3 = gns3
-        self._p = proyecto
-        self._repo = repositorio
-        self._salida = salida
+    def __init__(self, entorno: Entorno):
+        self._gns3 = entorno.gns3
+        self._p = entorno.proyecto
+        self._repo = entorno.repositorio
+        self._salida = entorno.salida
 
     def aplicar(self) -> None:
         pid = self._gns3.abrir_proyecto()

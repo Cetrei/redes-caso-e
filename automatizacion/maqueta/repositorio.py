@@ -66,20 +66,7 @@ class Repositorio:
             raise ErrorTopologia(f"no pude leer {ruta}: {e.strerror or e}") from e
 
     def cargar(self) -> Proyecto:
-        ruta = self._dir / "proyecto.yml"
-        if not ruta.exists():
-            raise ErrorTopologia(f"Falta {ruta}")
-        datos = self._yaml(ruta) or {}
-        if not isinstance(datos, dict):
-            raise ErrorTopologia("proyecto.yml: debe ser un mapa")
-        for clave in ("proyecto", "servidor"):
-            if not datos.get(clave):
-                raise ErrorTopologia(f"proyecto.yml: falta '{clave}'")
-        fg = _seccion(datos, "fortigate", ("nodo", "usuario", "clave"))
-        ssh = _seccion(datos, "ssh", ("host", "puerto", "usuario", "clave"))
-        imagenes = datos.get("imagenes") or []
-        if not isinstance(imagenes, list):
-            raise ErrorTopologia("proyecto.yml > imagenes: debe ser una lista")
+        datos = self._datos_proyecto()
         return Proyecto(
             nombre=str(datos["proyecto"]),
             servidor=str(datos["servidor"]),
@@ -87,12 +74,9 @@ class Repositorio:
             plantillas=_mapa_texto(datos.get("plantillas"), "plantillas"),
             tipos=_mapa_texto(datos.get("tipos"), "tipos"),
             dynamips_slots=_mapa_texto(datos.get("dynamips_slots"), "dynamips_slots"),
-            fortigate=None if fg is None else ConfigFortigate(
-                nodo=str(fg["nodo"]), usuario=str(fg["usuario"]), clave=str(fg["clave"]),
-                puerto_internet=str(fg.get("puerto_internet", "port4"))),
-            imagenes=tuple(self._imagen(i) for i in imagenes),
-            ssh=None if ssh is None else ConfigSsh(
-                host=str(ssh["host"]), puerto=int(ssh["puerto"]), usuario=str(ssh["usuario"]), clave=str(ssh["clave"])),
+            fortigate=self._fortigate(datos),
+            imagenes=self._imagenes(datos),
+            ssh=self._ssh(datos),
             nodos={n.nombre: n for n in self._nodos()},
             enlaces=tuple(self._enlaces()),
         )
@@ -106,6 +90,40 @@ class Repositorio:
         ruta.write_text(texto, encoding="utf-8")
 
     # lectura de los archivos de topologia/
+
+    def _datos_proyecto(self) -> dict:
+        """El mapa de proyecto.yml, ya comprobado que existe, es un mapa y trae lo indispensable."""
+        ruta = self._dir / "proyecto.yml"
+        if not ruta.exists():
+            raise ErrorTopologia(f"Falta {ruta}")
+        datos = self._yaml(ruta) or {}
+        if not isinstance(datos, dict):
+            raise ErrorTopologia("proyecto.yml: debe ser un mapa")
+        for clave in ("proyecto", "servidor"):
+            if not datos.get(clave):
+                raise ErrorTopologia(f"proyecto.yml: falta '{clave}'")
+        return datos
+
+    @staticmethod
+    def _fortigate(datos: dict) -> ConfigFortigate | None:
+        fg = _seccion(datos, "fortigate", ("nodo", "usuario", "clave"))
+        if fg is None:
+            return None
+        return ConfigFortigate(nodo=str(fg["nodo"]), usuario=str(fg["usuario"]), clave=str(fg["clave"]),
+                               puerto_internet=str(fg.get("puerto_internet", "port4")))
+
+    @staticmethod
+    def _ssh(datos: dict) -> ConfigSsh | None:
+        ssh = _seccion(datos, "ssh", ("host", "puerto", "usuario", "clave"))
+        if ssh is None:
+            return None
+        return ConfigSsh(host=str(ssh["host"]), puerto=int(ssh["puerto"]), usuario=str(ssh["usuario"]), clave=str(ssh["clave"]))
+
+    def _imagenes(self, datos: dict) -> tuple[Imagen, ...]:
+        imagenes = datos.get("imagenes") or []
+        if not isinstance(imagenes, list):
+            raise ErrorTopologia("proyecto.yml > imagenes: debe ser una lista")
+        return tuple(self._imagen(i) for i in imagenes)
 
     def _yaml(self, ruta: Path) -> Any:
         try:

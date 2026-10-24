@@ -26,5 +26,5 @@ class Docker(TipoNodo):
         if interfaces is None:
             ctx.avisos.append(f"{nodo.nombre}: no hay bloque en {nodo.red}")
             return
-        ctx.gns3.escribir_archivo(ctx.pid, creado.node_id, "etc/network/interfaces", interfaces.encode())
+        ctx.escribir(creado, "etc/network/interfaces", interfaces.encode())
         ctx.salida(f"red de {nodo.nombre} escrita desde {nodo.red}")

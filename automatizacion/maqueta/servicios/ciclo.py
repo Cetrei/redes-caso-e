@@ -1,15 +1,13 @@
 """iniciar, detener, estado y destruir: el ciclo de vida de los nodos del proyecto."""
 from __future__ import annotations
 
-from typing import Callable
-
-from ..gns3 import ClienteGns3
+from ..entorno import Entorno
 
 
 class CicloVida:
-    def __init__(self, gns3: ClienteGns3, salida: Callable[[str], None]):
-        self._gns3 = gns3
-        self._salida = salida
+    def __init__(self, entorno: Entorno):
+        self._gns3 = entorno.gns3
+        self._salida = entorno.salida
 
     def cambiar(self, accion: str) -> None:
         """`start` o `stop` sobre todos los nodos."""

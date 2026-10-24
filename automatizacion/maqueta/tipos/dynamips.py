@@ -49,6 +49,5 @@ class Dynamips(TipoNodo):
         config, comandos_exec = configuracion_arranque(ctx.repositorio.leer(nodo.config), ctx.proyecto.plan_b)
         ctx.avisos += [f"{nodo.nombre}: ejecutar por consola ya encendido: {c}" for c in comandos_exec]
         # startup_config_content solo se acepta al crear: se escribe el archivo que Dynamips lee al arrancar
-        ctx.gns3.escribir_archivo(ctx.pid, creado.node_id,
-                                  f"configs/i{creado.propiedades['dynamips_id']}_startup-config.cfg", config.encode())
+        ctx.escribir(creado, f"configs/i{creado.propiedades['dynamips_id']}_startup-config.cfg", config.encode())
         ctx.salida(f"config de {nodo.nombre} escrita desde {nodo.config}")

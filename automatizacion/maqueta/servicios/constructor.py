@@ -1,25 +1,21 @@
 """construir: crea el proyecto, los equipos, su configuracion inicial y los cables. Idempotente."""
 from __future__ import annotations
 
-from typing import Callable
-
+from ..entorno import Entorno
 from ..errores import ErrorValidacion
-from ..gns3 import ClienteGns3, Extremo
-from ..modelo import Proyecto
-from ..repositorio import Repositorio
-from ..tipos import ContextoPreparacion, RegistroTipos
+from ..gns3 import Extremo, NuevoNodo
+from ..tipos import ContextoPreparacion
 from ..validacion import Validador
 
 
 class Constructor:
-    def __init__(self, gns3: ClienteGns3, proyecto: Proyecto, repositorio: Repositorio, tipos: RegistroTipos,
-                 validador: Validador, salida: Callable[[str], None]):
-        self._gns3 = gns3
-        self._p = proyecto
-        self._repo = repositorio
-        self._tipos = tipos
+    def __init__(self, entorno: Entorno, validador: Validador):
+        self._e = entorno
+        self._gns3 = entorno.gns3
+        self._p = entorno.proyecto
+        self._tipos = entorno.tipos
+        self._salida = entorno.salida
         self._validador = validador
-        self._salida = salida
 
     def construir(self) -> str:
         """Arma la maqueta en GNS3 y devuelve el id del proyecto. Repetirlo no duplica nada."""
@@ -27,7 +23,7 @@ class Constructor:
         if not informe.ok:
             raise ErrorValidacion(informe.errores)
         pid = self._gns3.abrir_proyecto(crear=True)
-        ctx = ContextoPreparacion(pid, self._gns3, self._p, self._repo, self._salida)
+        ctx = ContextoPreparacion(pid, self._e)
         self._crear_nodos(pid)
         nodos = self._gns3.nodos(pid)
         self._preparar_nodos(ctx, nodos)
@@ -42,7 +38,8 @@ class Constructor:
         for nodo in self._p.nodos.values():
             if nodo.nombre in existentes:
                 continue
-            creado = self._gns3.crear_nodo(pid, self._p.plantilla_gns3(nodo), nodo.nombre, nodo.x, nodo.y)
+            nuevo = NuevoNodo(self._p.plantilla_gns3(nodo), nodo.nombre, nodo.x, nodo.y)
+            creado = self._gns3.crear_nodo(pid, nuevo)
             self._salida(f"nodo {nodo.nombre} ({creado.tipo})")
 
     def _preparar_nodos(self, ctx: ContextoPreparacion, en_gns3: dict) -> None:

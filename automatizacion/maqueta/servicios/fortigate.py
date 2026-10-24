@@ -1,23 +1,17 @@
 """fortigate: pega la configuracion del FortiGate por su consola telnet."""
 from __future__ import annotations
 
-from typing import Callable
-
+from ..entorno import Entorno
 from ..errores import ErrorConsola, ErrorEstado, ErrorTopologia
-from ..fortigate_cli import SesionFortigate
-from ..gns3 import ClienteGns3
-from ..modelo import Proyecto
-from ..repositorio import Repositorio
 
 
 class PegadorConfigFortigate:
-    def __init__(self, gns3: ClienteGns3, proyecto: Proyecto, repositorio: Repositorio,
-                 abrir_sesion: Callable[[int], SesionFortigate], salida: Callable[[str], None]):
-        self._gns3 = gns3
-        self._p = proyecto
-        self._repo = repositorio
-        self._abrir_sesion = abrir_sesion
-        self._salida = salida
+    def __init__(self, entorno: Entorno):
+        self._gns3 = entorno.gns3
+        self._p = entorno.proyecto
+        self._repo = entorno.repositorio
+        self._abrir_sesion = entorno.sesion_fortigate
+        self._salida = entorno.salida
 
     def pegar(self, equipo: str | None = None) -> None:
         nombre = equipo or self._p.fortigate_requerido().nodo
