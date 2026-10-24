@@ -37,7 +37,7 @@ class SesionFortigate:
         return False
 
     def _intentar(self, espera: float) -> bool | None:
-        self._c.enviar("")
+        self._c.despertar()
         for _ in range(8):
             r = self._c.esperar(_ORDEN, espera)
             if r == _RECHAZO:
@@ -51,7 +51,7 @@ class SesionFortigate:
             elif r:
                 return True
             else:
-                self._c.enviar("")
+                self._c.despertar()
         return False
 
     def enviar(self, texto: str) -> None:

@@ -24,6 +24,11 @@ class PegarConfig(unittest.TestCase):
         self.assertNotIn("# comentario", r)
         self.assertIn("usando configs/FGT-01.conf", self.e.salida)
 
+    def test_despierta_la_consola_sin_enviar_usuario_vacio(self):
+        self.e.app.ciclo().cambiar("start")
+        self.pegar()
+        self.assertEqual(self.e.fortigate.recibido[:3], ["\x03", "admin", "Fortinet.2026"])
+
     def test_con_plan_b_usa_la_config_del_plan_b(self):
         self.e.reemplazar("automatizacion/topologia/proyecto.yml", "plan_b: false", "plan_b: true")
         self.e.recargar()

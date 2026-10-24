@@ -62,6 +62,9 @@ class Consola:
     def enviar(self, texto: str) -> None:
         self._c.enviar(texto.encode() + b"\r")
 
+    def despertar(self) -> None:
+        self._c.enviar(b"\x03")
+
     def limpiar(self) -> None:
         self.buffer = ""
 

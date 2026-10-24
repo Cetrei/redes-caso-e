@@ -47,7 +47,7 @@ class ConexionFortigate:
 
     def _entrar(self, linea: str) -> None:
         if self._fase == "login":
-            if linea == "":
+            if linea in ("", "\x03"):
                 self._decir("FortiGate-VM64 login: ")
             elif linea == "admin":
                 self._fase = "clave"
