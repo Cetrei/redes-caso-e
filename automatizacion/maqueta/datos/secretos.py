@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -47,6 +48,6 @@ class AlmacenSecretos:
         ruta = self._ruta
         if not ruta.exists():
             raise ErrorSecretos(f"Falta automatizacion/{ruta.name}. Copia .env.example como {ruta.name} y llena tu correo y clave de FortiCloud.")
-        if ruta.stat().st_mode & 0o077:
+        if os.name != "nt" and ruta.stat().st_mode & 0o077:
             self._salida(f"aviso: {ruta.name} es legible por otros usuarios; conviene: chmod 600 {ruta}")
         return leer_env(ruta.read_text(encoding="utf-8"))

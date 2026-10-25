@@ -1,31 +1,90 @@
 # Automatización de la maqueta
 
-`gns3ctl.py` arma la maqueta en GNS3 desde los archivos de `topologia/` y `configs/`. Se edita el archivo y se aplica.
+`gns3ctl.py` arma la maqueta del Caso E en GNS3 desde los archivos de `topologia/` y `configs/`: crea el proyecto, los equipos y los cables, carga las configuraciones, pega la del FortiGate y activa su licencia de evaluación. Se edita el archivo y se aplica; repetir un subcomando no duplica nada.
 
-## Requisitos
+## Requisitos en Windows 11
 
-La VM de GNS3 arrancada (`gns3vm/start-gns3vm.sh`) y `uv`, o Python 3.10+ con `pyyaml` y `paramiko`.
+1. **VirtualBox 7** con la OVA del profesor importada (la VM de GNS3 2.2).
+2. **Reenvío de puertos** de la VM, en Configuración, Red, Adaptador 1 (NAT), Avanzadas, Reenvío de puertos. Se agregan estas reglas con IP de host 127.0.0.1:
+
+   | Nombre | Protocolo | Puerto del host | Puerto del invitado |
+   | --- | --- | --- | --- |
+   | api | TCP | 3080 | 80 |
+   | ssh | TCP | 2222 | 22 |
+   | consolas | TCP | 5000 a 5039 | 5000 a 5039 |
+
+   VirtualBox pide una regla por puerto. Para crear las 40 de las consolas de una vez, en PowerShell (con la VM apagada y el nombre real de la VM en `$vm`):
+
+   ```
+   $vm = "GNS3 VM 101O"
+   & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vm --natpf1 "api,tcp,127.0.0.1,3080,,80"
+   & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vm --natpf1 "ssh,tcp,127.0.0.1,2222,,22"
+   5000..5039 | ForEach-Object { & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vm --natpf1 "con$_,tcp,127.0.0.1,$_,,$_" }
+   ```
+
+3. **Virtualización anidada** habilitada en la VM (el FortiGate corre dentro de ella con KVM): en Configuración, Sistema, Procesador, marcar Habilitar VT-x/AMD-V anidado, o `VBoxManage modifyvm $vm --nested-hw-virt on`. Asigna a la VM al menos 4 vCPU y 6 GB de RAM. Si el nodo del FortiGate se congela al iniciar, revisa que Hyper-V, Plataforma de máquina virtual y Aislamiento del núcleo (Integridad de memoria) estén desactivados en Windows, porque compiten con VirtualBox por la virtualización por hardware.
+4. **uv**, que instala Python y las dependencias (pyyaml y paramiko) por su cuenta. En PowerShell:
+
+   ```
+   winget install --id astral-sh.uv -e
+   ```
+
+   Cierra y abre PowerShell para que reconozca el comando. Sin uv también sirve Python 3.10 o más reciente con `py -m pip install pyyaml paramiko`, y se corre con `py gns3ctl.py` en lugar de `uv run gns3ctl.py`.
+
+Antes de empezar, enciende la VM en VirtualBox y espera a que `http://127.0.0.1:3080/v2/version` responda en el navegador.
 
 ## Uso
 
-Desde esta carpeta:
+Todo se corre desde esta carpeta (`automatizacion`) en PowerShell. En Windows el archivo no se ejecuta directo: se antepone `uv run`.
 
 ```
-./gns3ctl.py validar        # revisa topologia/ sin tocar GNS3
-./gns3ctl.py construir      # crea proyecto, equipos, configs y cables
-./gns3ctl.py iniciar        # enciende los nodos (el FortiGate tarda 2 a 3 minutos)
-./gns3ctl.py fortigate      # pega la config del FortiGate (y avisa de cada línea que FortiOS rechace)
-./gns3ctl.py licenciar      # activa la licencia de evaluación del FortiGate
-./gns3ctl.py posiciones     # aplica x e y de cada equipo y dibuja zonas y notas en el lienzo
-./gns3ctl.py --help
+uv run gns3ctl.py validar        # revisa topologia/ sin tocar GNS3
+uv run gns3ctl.py imagen         # solo la primera vez: construye las imágenes Docker en la VM
+uv run gns3ctl.py construir      # crea proyecto, equipos, configs y cables
+uv run gns3ctl.py iniciar        # enciende los nodos (el FortiGate tarda 2 a 3 minutos)
+uv run gns3ctl.py fortigate      # pega la config del FortiGate y avisa de cada línea que FortiOS rechace
+uv run gns3ctl.py licenciar      # activa la licencia de evaluación del FortiGate
+uv run gns3ctl.py posiciones     # aplica x e y de cada equipo y dibuja zonas y notas en el lienzo
+uv run gns3ctl.py estado         # lista nodos, estado y puerto de consola
+uv run gns3ctl.py --help
 ```
+
+### Todo en un paso
+
+`caso-e.ps1` encadena los pasos habituales y espera al FortiGate antes de licenciar. Con la VM encendida:
+
+```
+powershell -ExecutionPolicy Bypass -File .\caso-e.ps1
+```
+
+Sin argumentos corre `construir`, `iniciar` y `licenciar`. También acepta pasos sueltos, por ejemplo `.\caso-e.ps1 fortigate` o `.\caso-e.ps1 validar`, y se niega a correr `destruir`. Antes de licenciar comprueba que el `.env` esté lleno.
+
+## Licenciar el FortiGate
+
+Un FortiGate recién desplegado no trae una licencia de evaluación válida y no reenvía tráfico hasta activarla con una cuenta de FortiCloud (https://support.fortinet.com).
+
+1. Copia la plantilla y llénala con tu cuenta:
+
+   ```
+   Copy-Item .env.example .env
+   notepad .env
+   ```
+
+   `FORTICLOUD_CORREO` es el correo con el que entras a esa página y `FORTICLOUD_CLAVE` es su clave, sin espacios ni signos de interrogación. El `.env` no se sube al repo.
+2. Con la maqueta encendida: `uv run gns3ctl.py licenciar`. El subcomando entra al FortiGate, conecta un nodo NAT temporal a `port4`, activa la licencia, espera el reinicio y verifica que quede en estado Valid; luego retira el NAT.
+
+La licencia queda ligada a esa instancia del FortiGate: no corras `destruir` después.
+
+## Plan A y plan B del FortiGate
+
+`fortigate` pega `configs/FGT-01-planB.conf` (plan B, tres políticas), porque la licencia de evaluación solo admite tres (`plan_b: true` en `topologia/proyecto.yml`). Con `plan_b: false` pega `configs/FGT-01.conf` (plan A, seis políticas) y, si FortiOS rechaza alguna, cae al plan B y lo avisa. El plan B usa central NAT para que una sola política cubra a los externos (por el VIP) y a los usuarios (por la IP real).
 
 ## Cambiar la maqueta
 
 - Un equipo es un archivo en `topologia/nodos/<EQUIPO>.yml`. Su posición es el `x` e `y` del archivo.
 - Los cables van en `topologia/enlaces/`, un archivo por segmento.
 - La config de cada equipo está en `configs/`.
-- Para guardar en el repo lo que moviste en GNS3: `./gns3ctl.py posiciones --guardar`.
+- Para guardar en el repo lo que moviste en GNS3: `uv run gns3ctl.py posiciones --guardar`.
 - `construir` solo agrega: lo que quites de los archivos se borra a mano en GNS3.
 
 ## Zonas y notas del lienzo
@@ -37,19 +96,19 @@ Desde esta carpeta:
 - Los tonos son `neutro`, `gris`, `ambar`, `verde`, `violeta`, `rojo` y `exito`.
 - Las notas se identifican por su orden en el archivo: al insertar una en medio, las siguientes se redibujan.
 
-## Plan A y plan B del FortiGate
-
-`fortigate` pega `configs/FGT-01-planB.conf` (plan B, tres políticas), porque la licencia de evaluación solo admite tres (`plan_b: true` en `topologia/proyecto.yml`). Con `plan_b: false` pega `configs/FGT-01.conf` (plan A, seis políticas) y, si FortiOS rechaza alguna, cae al plan B y lo avisa. El plan B usa central NAT para que una sola política cubra a los externos (por el VIP) y a los usuarios (por la IP real).
-
-## Licenciar el FortiGate
-
-1. `cp .env.example .env`, llena tu cuenta de FortiCloud y `chmod 600 .env`. El `.env` no se sube al repo.
-2. Con la maqueta encendida: `./gns3ctl.py licenciar`.
-
-La licencia queda ligada a esa instancia: no corras `destruir` después.
-
 ## Pruebas
 
+Del motor, sin GNS3:
+
 ```
-python3 -m unittest discover -s tests -t .
+uv run --with pyyaml --with paramiko python -m unittest discover -s tests -t .
 ```
+
+De la maqueta en vivo, con todo encendido y licenciado (desde la raíz del repo):
+
+```
+uv run python pruebas\verificar_maqueta.py
+uv run python pruebas\verificar_extras.py
+```
+
+Cada una guarda su salida en `pruebas/evidencias/`. La segunda tarda unos 6 minutos.
