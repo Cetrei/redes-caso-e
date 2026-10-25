@@ -70,6 +70,12 @@ class Consola:
         m = re.search(r"^__INI__\n(.*?)^__FIN__$", salida, re.M | re.S)
         return (m.group(1) if m else salida).strip()
 
+    def privilegiado(self, clave):
+        if self.linea("", 1).rstrip().endswith(">"):
+            self.linea("enable", 2)
+            self.linea(clave, 2)
+        self.linea("terminal length 0", 1)
+
     def entrar(self, usuario, clave):
         for _ in range(3):
             pantalla = self.linea("", 2)
@@ -122,8 +128,7 @@ def main():
            f"politica 1 desactivada: {caido} ; reactivada: {vuelto}")
 
     rlan = Consola(p["R-LAN"])
-    rlan.linea("enable", 2)
-    rlan.linea("admin", 2)
+    rlan.privilegiado("admin")
     try:
         rlan.fortigate(["configure terminal", "interface GigabitEthernet1/0", "shutdown", "end"], 2)
         time.sleep(60)
