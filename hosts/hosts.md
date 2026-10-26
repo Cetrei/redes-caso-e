@@ -75,9 +75,9 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 10.50.0.1
 	up printf 'nameserver 10.50.1.34\nnameserver 2001:db8:105:30::10\n' > /etc/resolv.conf
-
-iface eth0 inet6 auto
 ```
+
+Sin bloque inet6: el ifup de BusyBox (Alpine) no soporta `inet6 auto` y aborta todo el archivo, dejando sin IPv4 al host. La dirección IPv6 llega sola por SLAAC al recibir los RA del router (accept_ra del kernel).
 
 Dirección SLAAC real (anotar con `ip -6 addr` antes de E01): `pendiente`
 

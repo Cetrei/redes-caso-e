@@ -1,0 +1,7 @@
+plantilla: switch
+x: 530
+y: -200
+puertos:
+  - {n: 0, tipo: dot1q, vlan: 1}
+  - {n: 1, tipo: access, vlan: 10}
+  - {n: 2, tipo: access, vlan: 20}

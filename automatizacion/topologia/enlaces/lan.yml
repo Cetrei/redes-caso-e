@@ -1,0 +1,3 @@
+- [R-LAN, Gi0/1, SW-LAN, p0]
+- [SW-LAN, p1, PC-USER, eth0]
+- [SW-LAN, p2, PC-ADMIN, eth0]

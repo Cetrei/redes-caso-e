@@ -177,7 +177,7 @@ class Vip:
 class Policy:
     id: int
     name: str
-    src_if: str
+    src_if: str | tuple
     dst_if: str
     src: list
     dst: list
@@ -186,6 +186,10 @@ class Policy:
     nat: bool = False
     enabled: bool = True
     hits: int = 0
+
+    def __post_init__(self):
+        if isinstance(self.src_if, str):
+            self.src_if = (self.src_if,)
 
 
 @dataclass
@@ -240,6 +244,7 @@ class Fgt(Node):
         super().__init__(name, "fgt")
         self.allow, self.trusted, self.vips, self.policies = {}, [], [], []
         self.sessions, self.logs, self.localin_denied = [], [], []
+        self.central_nat = False
         self.listen = {("tcp", 443), ("tcp", 22)}
 
     def process(self, p, ing):
@@ -263,11 +268,11 @@ class Fgt(Node):
         if r.iface == "blackhole":
             return "drop", f"FGT descarta por ruta blackhole {r.prefix} (antes de evaluar politicas)"
         for pol in self.policies:
-            if not pol.enabled or pol.src_if != ing.name or pol.dst_if != r.iface:
+            if not pol.enabled or ing.name not in pol.src_if or pol.dst_if != r.iface:
                 continue
             if not in_objs(p.src, pol.src):
                 continue
-            dst_ok = any(o is vip for o in pol.dst if isinstance(o, Vip)) if vip else in_objs(p.dst, pol.dst)
+            dst_ok = in_objs(p.dst, pol.dst) if (self.central_nat or not vip) else any(o is vip for o in pol.dst if isinstance(o, Vip))
             if not dst_ok or not svc_match(pol.svc, p):
                 continue
             pol.hits += 1
@@ -501,7 +506,7 @@ ALL = [ANY4, ANY6]
 
 
 def build(plan_b=False):
-    """plan_b=True arma el FortiGate reducido para la licencia de prueba (3 politicas, 3 rutas)."""
+    """plan_b=True arma el FortiGate reducido para la licencia de prueba (3 politicas)."""
     N = Network()
 
     risp = N.add(Node("R-ISP"))
@@ -524,9 +529,8 @@ def build(plan_b=False):
     fgt.iface("port2", "transit", "10.50.1.49/30", "2001:db8:105:ff00::1/64", "fe80::f2/64", ospf="active")
     fgt.iface("port3", "dmz", "10.50.1.33/28", "2001:db8:105:30::1/64", "fe80::f3/64", ospf="passive")
     fgt.static("0.0.0.0/0", "203.0.113.17", ad=10).static("::/0", "2001:db8:105:ff01::1", ad=10)
-    if not plan_b:
-        fgt.static("10.50.0.0/16", None, "blackhole", ad=254)
-        fgt.static("2001:db8:105::/48", None, "blackhole", ad=254)
+    fgt.static("10.50.0.0/16", None, "blackhole", ad=254)
+    fgt.static("2001:db8:105::/48", None, "blackhole", ad=254)
     fgt.ospf = fgt.ospf_default = True
     fgt.allow = {"port1": {"ping"}, "port2": {"https", "ssh", "ping"}, "port3": {"ping"}}
     fgt.trusted = NET_ADMIN
@@ -541,10 +545,11 @@ def build(plan_b=False):
         Policy(6, "DENY-DMZ-A-LAN", "port3", "port2", ALL, ALL, ["ALL"], "deny"),
     ]
     if plan_b:
+        fgt.central_nat = True
         fgt.policies = [
-            fgt.policies[0],
-            Policy(2, "LAN-A-DMZ", "port2", "port3", NET_LAN, SRV, ["SSH", "DNS", "HTTP", "PING"], "accept"),
-            fgt.policies[4],
+            Policy(1, "DNS-HTTP-A-DMZ", ("port1", "port2"), "port3", ALL, SRV, ["DNS", "HTTP"], "accept"),
+            fgt.policies[1],
+            Policy(3, "DENY-A-LAN", ("port1", "port3"), "port2", ALL, ALL, ["ALL"], "deny"),
         ]
 
     rlan = N.add(Node("R-LAN"))
@@ -600,9 +605,6 @@ def build(plan_b=False):
     seg6 = [Ace(10, "permit", "icmp", [users6], [admin6], icmp="echo-reply"),
             Ace(20, "permit", "tcp", [users6], [admin6], established=True),
             Ace(30, "deny", "ip", [users6], [admin6])]
-    if plan_b:  # la politica fusionada ya no distingue usuarios de admin
-        seg4.append(Ace(35, "deny", "tcp", [users4], [SRV[0]], dports=(22,)))
-        seg6.append(Ace(35, "deny", "tcp", [users6], SRV_V6, dports=(22,)))
     N.acls["ACL-SEG-USUARIOS"] = Acl("ACL-SEG-USUARIOS", seg4 + [Ace(40, "permit")], seg6 + [Ace(40, "permit")])
     N.acls["ACL-VTY-ADMIN"] = Acl("ACL-VTY-ADMIN",
         [Ace(10, "permit", src=[admin4]), Ace(20, "deny")],
@@ -837,39 +839,40 @@ def run_failures(rep):
 
 
 def run_plan_b(rep):
-    """FortiGate reducido para la licencia de prueba: politicas 1, 2 (fusionada) y 5, sin blackholes."""
+    """FortiGate reducido para la licencia de prueba: politicas 1 (DNS y HTTP desde WAN y LAN), 2 (admin) y 3 (deniega WAN y DMZ hacia la LAN)."""
     chk = rep.check
     N = build(plan_b=True)
     fgt = N["FGT-01"]
-    chk("B00", "Cabe en la licencia de prueba (3 politicas, 3 rutas, 3 interfaces)",
-        len(fgt.policies) <= 3 and len(fgt.statics) <= 3 and len(fgt.ifaces) <= 3,
+    chk("B00", "Cabe en el limite medido de la licencia de prueba (3 politicas)",
+        len(fgt.policies) <= 3 and len(fgt.ifaces) <= 3,
         f"politicas={[p.id for p in fgt.policies]}, rutas estaticas={len(fgt.statics)}, interfaces={len(fgt.ifaces)}")
     ok4, d4 = N.curl("PC-EXT", WWW, 4)
     ok6, _ = N.curl("PC-EXT", WWW, 6)
     chk("P05/P06", "Publicacion desde afuera, IPv4 e IPv6", ok4 and ok6, d4)
     m = len(fgt.logs)
     c = N.converse("PC-EXT", SLAAC_PC_USER, "icmp")
-    chk("E01", "Externo -> LAN por IPv6", not c.ok and pols(new_logs(N, m)) == [5], c.why())
+    chk("E01", "Externo -> LAN por IPv6 (politica 3)", not c.ok and pols(new_logs(N, m)) == [3], c.why())
     m = len(fgt.logs)
     c = N.converse("PC-EXT", "203.0.113.20", "tcp", 22)
     chk("E03", "SSH externo al servidor", not c.ok and pols(new_logs(N, m)) == [0], c.why())
     m = len(fgt.logs)
     c = N.converse("PC-ADMIN", "10.50.1.34", "tcp", 22)
     chk("E04", "Admin SSH al servidor", c.ok and pols(new_logs(N, m)) == [2], c.why())
+    m = len(fgt.logs)
     c4 = N.converse("PC-USER", "10.50.1.34", "tcp", 22)
     c6 = N.converse("PC-USER", "2001:db8:105:30::10", "tcp", 22)
-    chk("E05", "Usuario SSH al servidor: lo bloquea la linea 35 de R-LAN",
-        not c4.ok and not c6.ok and "linea 35" in c4.req.reason and "linea 35" in c6.req.reason,
-        f"v4: {c4.why()} ; v6: {c6.req.reason}")
+    chk("E05", "Usuario SSH al servidor (denegacion implicita)", not c4.ok and not c6.ok and pols(new_logs(N, m)) == [0],
+        f"v4: {c4.why()} ; v6: {c6.why()}")
     m = len(fgt.logs)
     h4, _ = N.curl("PC-USER", WWW, 4)
     h6, _ = N.curl("PC-USER", WWW, 6)
-    chk("E06", "Usuario consume DNS y HTTP", h4 and h6 and pols(new_logs(N, m)) == [2], f"http4={h4} http6={h6}")
+    chk("E06", "Usuario consume DNS y HTTP (politica 1)", h4 and h6 and pols(new_logs(N, m)) == [1],
+        f"http4={h4} http6={h6}")
     c = N.converse("PC-USER", "10.50.1.10", "icmp")
     chk("E07", "Usuarios -> Admin bloqueado", not c.ok and "linea 30" in c.req.reason, c.why())
     m = len(fgt.logs)
     c = N.converse("SRV-DMZ", "10.50.0.10", "icmp")
-    chk("E09", "DMZ -> LAN (denegacion implicita)", not c.ok and pols(new_logs(N, m)) == [0], c.why())
+    chk("E09", "DMZ -> LAN (politica 3)", not c.ok and pols(new_logs(N, m)) == [3], c.why())
     m = len(fgt.logs)
     c = N.converse("SRV-DMZ", "198.51.100.10", "icmp")
     chk("E14", "SRV-DMZ -> Internet (denegacion implicita)", not c.ok and pols(new_logs(N, m)) == [0], c.why())
@@ -877,7 +880,8 @@ def run_plan_b(rep):
     c4 = N.converse("PC-USER", "10.50.99.9", "icmp")
     c6 = N.converse("PC-USER", "2001:db8:105:99::9", "icmp")
     lg = new_logs(N, m)
-    chk("E15", "Destino interno inexistente sin blackhole: lo para la implicita", not c4.ok and not c6.ok and pols(lg) == [0],
+    chk("E15", "Destino interno inexistente descartado por la blackhole",
+        not c4.ok and not c6.ok and "blackhole" in c4.req.reason and "blackhole" in c6.req.reason and not lg,
         f"v4: {c4.why()} ; v6: {c6.req.reason}")
 
 

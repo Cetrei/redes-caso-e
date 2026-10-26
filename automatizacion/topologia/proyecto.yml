@@ -1,0 +1,28 @@
+proyecto: casoE_dev
+plan_b: true
+servidor: http://127.0.0.1:3080
+
+plantillas:
+  router: "c7200-15.2-4.M7-256MB"
+  fortigate: "FortiGate 8.0.0 (admin:Fortinet.2026)"
+  switch: "Ethernet switch"
+  cliente: "Cliente-caso-e"
+  admin: "Ubuntu Docker Guest"
+  navegador: "webterm"
+  servidor: "SRV-DMZ-img"
+
+tipos: {router: dynamips, fortigate: qemu, switch: ethernet_switch, cliente: docker, admin: docker, navegador: docker, servidor: docker}
+
+dynamips_slots: {slot1: PA-GE, slot2: PA-GE, slot3: PA-GE, slot4: PA-GE}
+
+fortigate:
+  nodo: FGT-01
+  usuario: admin
+  clave: Fortinet.2026
+  puerto_internet: port4
+
+imagenes:
+  - {etiqueta: caso-e/srv-dmz, ruta: servicios, plantilla: SRV-DMZ-img}
+  - {etiqueta: caso-e/cliente, ruta: servicios/cliente, plantilla: Cliente-caso-e}
+
+ssh: {host: 127.0.0.1, puerto: 2222, usuario: gns3, clave: gns3}

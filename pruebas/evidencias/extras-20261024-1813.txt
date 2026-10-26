@@ -1,0 +1,230 @@
+[OK   ] R02    R-ISP ipv4: faltan []
+show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       + - replicated route, % - next hop override
+
+Gateway of last resort is not set
+
+      192.0.2.0/24 is variably subnetted, 2 subnets, 2 masks
+C        192.0.2.0/24 is directly connected, GigabitEthernet3/0
+L        192.0.2.1/32 is directly connected, GigabitEthernet3/0
+      198.51.100.0/24 is variably subnetted, 2 subnets, 2 masks
+C        198.51.100.0/24 is directly connected, GigabitEthernet2/0
+L        198.51.100.1/32 is directly connected, GigabitEthernet2/0
+      203.0.113.0/24 is variably subnetted, 3 subnets, 3 masks
+C        203.0.113.0/30 is directly connected, GigabitEthernet1/0
+L        203.0.113.1/32 is directly connected, GigabitEthernet1/0
+S        203.0.113.16/29 [1/0] via 203.0.113.2
+R-ISP#
+[OK   ] R02    R-ISP ipv6: faltan []
+show ipv6 route
+IPv6 Routing Table - default - 8 entries
+Codes: C - Connected, L - Local, S - Static, U - Per-user Static route
+       B - BGP, HA - Home Agent, MR - Mobile Router, R - RIP
+       H - NHRP, I1 - ISIS L1, I2 - ISIS L2, IA - ISIS interarea
+       IS - ISIS summary, D - EIGRP, EX - EIGRP external, NM - NEMO
+       ND - ND Default, NDp - ND Prefix, DCE - Destination, NDr - Redirect
+       O - OSPF Intra, OI - OSPF Inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2
+       ON1 - OSPF NSSA ext 1, ON2 - OSPF NSSA ext 2, l - LISP
+S   2001:DB8:105::/48 [1/0]
+     via 2001:DB8:FFFF:1::2
+C   2001:DB8:FFFF:1::/64 [0/0]
+     via GigabitEthernet1/0, directly connected
+L   2001:DB8:FFFF:1::1/128 [0/0]
+     via GigabitEthernet1/0, receive
+C   2001:DB8:FFFF:100::/64 [0/0]
+     via GigabitEthernet2/0, directly connected
+L   2001:DB8:FFFF:100::1/128 [0/0]
+     via GigabitEthernet2/0, receive
+C   2001:DB8:FFFF:200::/64 [0/0]
+     via GigabitEthernet3/0, directly connected
+L   2001:DB8:FFFF:200::1/128 [0/0]
+     via GigabitEthernet3/0, receive
+L   FF00::/8 [0/0]
+     via Null0, receive
+R-ISP#
+[OK   ] R02    R-EDGE ipv4: faltan []
+show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       + - replicated route, % - next hop override
+
+Gateway of last resort is 203.0.113.1 to network 0.0.0.0
+
+S*    0.0.0.0/0 [1/0] via 203.0.113.1
+      203.0.113.0/24 is variably subnetted, 4 subnets, 3 masks
+C        203.0.113.0/30 is directly connected, GigabitEthernet1/0
+L        203.0.113.2/32 is directly connected, GigabitEthernet1/0
+C        203.0.113.16/29 is directly connected, GigabitEthernet2/0
+L        203.0.113.17/32 is directly connected, GigabitEthernet2/0
+R-EDGE#
+[OK   ] R02    R-EDGE ipv6: faltan []
+show ipv6 route
+IPv6 Routing Table - default - 7 entries
+Codes: C - Connected, L - Local, S - Static, U - Per-user Static route
+       B - BGP, HA - Home Agent, MR - Mobile Router, R - RIP
+       H - NHRP, I1 - ISIS L1, I2 - ISIS L2, IA - ISIS interarea
+       IS - ISIS summary, D - EIGRP, EX - EIGRP external, NM - NEMO
+       ND - ND Default, NDp - ND Prefix, DCE - Destination, NDr - Redirect
+       O - OSPF Intra, OI - OSPF Inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2
+       ON1 - OSPF NSSA ext 1, ON2 - OSPF NSSA ext 2, l - LISP
+S   ::/0 [1/0]
+     via 2001:DB8:FFFF:1::1
+S   2001:DB8:105::/48 [1/0]
+     via 2001:DB8:105:FF01::2
+C   2001:DB8:105:FF01::/64 [0/0]
+     via GigabitEthernet2/0, directly connected
+L   2001:DB8:105:FF01::1/128 [0/0]
+     via GigabitEthernet2/0, receive
+C   2001:DB8:FFFF:1::/64 [0/0]
+     via GigabitEthernet1/0, directly connected
+L   2001:DB8:FFFF:1::2/128 [0/0]
+     via GigabitEthernet1/0, receive
+L   FF00::/8 [0/0]
+     via Null0, receive
+R-EDGE#
+[OK   ] R02    R-LAN ipv4: faltan []
+show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       + - replicated route, % - next hop override
+
+Gateway of last resort is 10.50.1.49 to network 0.0.0.0
+
+O*E2  0.0.0.0/0 [110/10] via 10.50.1.49, 00:35:12, GigabitEthernet1/0
+      10.0.0.0/8 is variably subnetted, 7 subnets, 5 masks
+C        10.50.0.0/24 is directly connected, GigabitEthernet2/0.10
+L        10.50.0.1/32 is directly connected, GigabitEthernet2/0.10
+C        10.50.1.0/27 is directly connected, GigabitEthernet2/0.20
+L        10.50.1.1/32 is directly connected, GigabitEthernet2/0.20
+O        10.50.1.32/28 [110/2] via 10.50.1.49, 00:35:12, GigabitEthernet1/0
+C        10.50.1.48/30 is directly connected, GigabitEthernet1/0
+L        10.50.1.50/32 is directly connected, GigabitEthernet1/0
+R-LAN#
+[OK   ] R02    R-LAN ipv6: faltan []
+show ipv6 route
+IPv6 Routing Table - default - 9 entries
+Codes: C - Connected, L - Local, S - Static, U - Per-user Static route
+       B - BGP, HA - Home Agent, MR - Mobile Router, R - RIP
+       H - NHRP, I1 - ISIS L1, I2 - ISIS L2, IA - ISIS interarea
+       IS - ISIS summary, D - EIGRP, EX - EIGRP external, NM - NEMO
+       ND - ND Default, NDp - ND Prefix, DCE - Destination, NDr - Redirect
+       O - OSPF Intra, OI - OSPF Inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2
+       ON1 - OSPF NSSA ext 1, ON2 - OSPF NSSA ext 2, l - LISP
+OE2 ::/0 [110/10]
+     via FE80::EC5:6BFF:FEAE:1, GigabitEthernet1/0
+C   2001:DB8:105:10::/64 [0/0]
+     via GigabitEthernet2/0.10, directly connected
+L   2001:DB8:105:10::1/128 [0/0]
+     via GigabitEthernet2/0.10, receive
+C   2001:DB8:105:20::/64 [0/0]
+     via GigabitEthernet2/0.20, directly connected
+L   2001:DB8:105:20::1/128 [0/0]
+     via GigabitEthernet2/0.20, receive
+O   2001:DB8:105:30::/64 [110/2]
+     via FE80::EC5:6BFF:FEAE:1, GigabitEthernet1/0
+C   2001:DB8:105:FF00::/64 [0/0]
+     via GigabitEthernet1/0, directly connected
+L   2001:DB8:105:FF00::2/128 [0/0]
+     via GigabitEthernet1/0, receive
+L   FF00::/8 [0/0]
+     via Null0, receive
+R-LAN#
+[OK   ] R02    FGT-01 ipv4: faltan []
+get router info routing-table all
+Codes: K - kernel, C - connected, S - static, R - RIP, B - BGP
+       O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+       V - BGP VPNv4, E - BGP EVPN, L - Leaked, D - Directly leaked
+       * - candidate default
+
+Routing table for VRF=0
+S*      0.0.0.0/0 [10/0] via 203.0.113.17, port1, [1/0]
+S       10.50.0.0/16 [254/0] is a summary, Null, [1/0]
+O       10.50.0.0/24 [110/2] via 10.50.1.50, port2, 00:35:15, [1/0]
+O       10.50.1.0/27 [110/2] via 10.50.1.50, port2, 00:35:15, [1/0]
+C       10.50.1.32/28 is directly connected, port3
+C       10.50.1.48/30 is directly connected, port2
+C       203.0.113.16/29 is directly connected, port1
+
+
+FGT-01 #
+[OK   ] R02    FGT-01 ipv6: faltan []
+get router info6 routing-table
+IPv6 Routing Table
+Codes: K - kernel route, C - connected, S - static, R - RIP, O - OSPF,
+       IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+       B - BGP, V - BGP VPNv6, L - Leaked, D - Directly leaked
+       * - candidate default
+
+Timers: Uptime
+
+Routing table for VRF=0
+S*      ::/0 [10/0] via 2001:db8:105:ff01::1, port1, 02:10:36, [1024/0]
+C       ::1/128 via ::, root, 02:10:43
+S       2001:db8:105::/48 [254/0] via ::, Null, 02:10:36, [1024/0]
+O       2001:db8:105:10::/64 [110/2] via fe80::2, port2, 00:35:29, [1024/0]
+O       2001:db8:105:20::/64 [110/2] via fe80::2, port2, 00:35:29, [1024/0]
+C       2001:db8:105:30::/64 via ::, port3, 02:10:43
+C       2001:db8:105:ff00::/64 via ::, port2, 02:10:43
+C       2001:db8:105:ff01::/64 via ::, port1, 02:10:43
+
+
+FGT-01 #
+[OK   ] E02b   ping con ruta filtrada: .0.10 ping statistics ---
+2 packets transmitted, 0 received, 100% packet loss, time 1028ms
+        log del FGT: denegado en port1
+[OK   ] E02c   rutas temporales retiradas: ng statistics ---
+1 packets transmitted, 0 received, +1 errors, 100% packet loss, time 0ms
+[OK   ] E10    ping desde 10.99.99.99: s of 10.99.99.99 
+U.U
+Success rate is 0 percent (0/3)
+R-ISP#
+        contador entrada 10 de ACL-BORDE-IN: 3
+show ip access-lists ACL-BORDE-IN
+Extended IP access list ACL-BORDE-IN
+    10 deny ip 10.0.0.0 0.255.255.255 any log (3 matches)
+    11 deny ip 172.16.0.0 0.15.255.255 any log
+    12 deny ip 192.168.0.0 0.0.255.255 any log
+    13 deny ip 127.0.0.0 0.255.255.255 any log
+    20 deny ip 203.0.113.16 0.0.0.7 any log
+    30 deny tcp any host 203.0.113.2 eq 22 log
+    31 deny tcp any host 203.0.113.2 eq telnet log
+    32 deny tcp any host 203.0.113.17 eq 22 log
+    33 deny tcp any host 203.0.113.17 eq telnet log
+    40 permit ip any any (12 matches)
+R-EDGE#
+show logging | include IPACCESSLOGP
+R-EDGE#
+[OK   ] E16a   FGT-01: E01 denegado en el syslog de PC-ADMIN: 1 mensajes
+[OK   ] E16b   R-LAN: E07 ACL-SEG-USUARIOS en el syslog de PC-ADMIN: 1 mensajes
+[OK   ] E16c   R-LAN: E12 ACL-VTY-ADMIN en el syslog de PC-ADMIN: 1 mensajes
+
+== Syslog recibido en PC-ADMIN (/tmp/syslog-pcadmin.log) ==
+<189>date=2026-10-24 time=17:11:10 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1792887070309605492 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:100::10 identifier=1799 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:10::1 dstintf="port2" dstintfrole="lan
+<190>102: *Oct 25 00:11:49.055: %SEC-6-IPACCESSLOGDP: list ACL-SEG-USUARIOS denied icmp 10.50.0.10 -> 10.50.1.10 (8/0), 1 packet  
+<189>date=2026-10-24 time=17:12:44 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1792887164342462398 tz="-0700" logid="0001000014" type="traffic" subtype="local" level="notice" vd="root" srcip=203.0.113.18 srcport=4422 srcintf="root" srcintfrole="undefined" dstip=96.45.45.45 dstport=53 dstintf="port1" dstintfrole="wan" src
+<189>date=2026-10-24 time=17:12:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1792887167510210412 tz="-0700" logid="0100040704" type="event" subtype="system" level="notice" vd="root" logdesc="System performance statistics" action="perf-stats" cpu=3 mem=47 totalsession=6 disk=1 bandwidth="2/0" setuprate=0 disklograte=0 f
+<189>date=2026-10-24 time=17:12:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1792887168082475239 tz="-0700" logid="0001000014" type="traffic" subtype="local" level="notice" vd="root" srcip=203.0.113.18 srcport=4422 srcintf="root" srcintfrole="undefined" dstip=96.45.46.46 dstport=53 dstintf="port1" dstintfrole="wan" src
+<190>103: *Oct 25 00:12:49.055: %SEC-6-IPACCESSLOGNP: list ACL-VTY-ADMIN denied 0 10.50.0.10 -> 0.0.0.0, 1 packet

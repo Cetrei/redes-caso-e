@@ -266,16 +266,18 @@ El syslog no va a SRV-DMZ: es el servidor expuesto, y si alguien lo compromete p
 
 **Plan B si la licencia es de prueba**
 
-La licencia de prueba permanente de FortiOS (7.2.1 en adelante) limita a 3 interfaces, 3 políticas de firewall y 3 rutas. El diseño normal usa 6 políticas y 4 estáticas, así que se reduce a esto:
+La licencia de prueba permanente de FortiOS (7.2.1 en adelante) limita las políticas de firewall. Medido en el FGT-01 con FortiOS 8.0.0: acepta 3 políticas y rechaza la cuarta con "reached the maximum number of entries". Las cuatro rutas estáticas (dos IPv4 y dos IPv6) y las tres interfaces del diseño se aplicaron sin error. El diseño normal usa 6 políticas, así que se reduce a esto:
 
-1. Se mantiene la política 1.
-2. Las políticas 2 y 3 se fusionan en una sola: NET-LAN → SRV-DMZ con SSH, DNS, HTTP y PING.
-3. Se mantiene la política 5.
-4. La restricción de SSH para los usuarios pasa a la línea 35 de ACL-SEG-USUARIOS en R-LAN (sección ACL).
-5. La salida a Internet (política 4) se elimina porque el caso no la exige.
-6. Se quitan las dos rutas blackhole y quedan solo las dos por defecto. Ya no hacen falta: sin la política 4 no hay ninguna política LAN → WAN, y la denegación implícita descarta los destinos internos inexistentes.
+1. Las políticas 1 y 3 se fusionan en la 1, DNS-HTTP-A-DMZ: port1 y port2 hacia port3, solo DNS y HTTP, con la IP real del servidor como destino. Una política admite varias interfaces de origen.
+   FortiOS no deja mezclar un VIP con un objeto normal en el destino de una política (probado en el FGT-01: "entry not found in datasource"), ni crear un VIP cuya IP externa sea igual a la mapeada. Por eso el plan B activa `central-nat`: el VIP VIP-SRV-DMZ solo hace el DNAT de 203.0.113.20 hacia 10.50.1.34 y la política evalúa el tráfico ya traducido, así un mismo objeto de destino sirve a los externos (por el VIP) y a los usuarios (directo a la IP real, como indica la zona DNS interna).
+2. La política 2 (ADMIN-A-DMZ) queda igual, así que el SSH sigue siendo exclusivo de Administración y lo hace cumplir el firewall.
+3. Las políticas 5 y 6 se fusionan en la 3, DENY-A-LAN: port1 y port3 hacia port2, denegar todo, con log.
+4. La salida a Internet (política 4) se elimina porque el caso no la exige.
+5. Las dos rutas blackhole se conservan: no cuentan contra el límite y siguen descartando los destinos internos inexistentes (E15).
 
-Con el plan B, DMZ → LAN (E09) y el SSH externo (E03) quedan en la denegación implícita, que sigue registrada. El simulador verifica este plan por separado.
+Las ACL de los routers no cambian. Con el plan B, el externo hacia la LAN (E01) y la DMZ hacia la LAN (E09) los registra la política 3, y la política 1 atiende el DNS y el HTTP de los usuarios (E06). El SSH externo (E03), el SSH de usuarios al servidor (E05) y el servidor hacia Internet (E14) caen en la denegación implícita, que sigue registrada. El simulador verifica este plan por separado.
+
+Cambiar de plan es una línea: `plan_b` en `automatizacion/topologia/proyecto.yml` (queda en `true` porque el límite de 3 políticas está medido en este FortiGate).
 
 ## ACL de router
 
@@ -294,10 +296,9 @@ Las líneas de denegación llevan `log`, para que el router deje su propio regis
 | 10 | Permitir | NET-USUARIOS | NET-ADMIN | ICMP echo-reply | Que Admin pueda hacer ping a Usuarios y reciba la respuesta |
 | 20 | Permitir | NET-USUARIOS | NET-ADMIN | TCP established | Respuestas a conexiones que inicia Admin |
 | 30 | Denegar (log) | NET-USUARIOS | NET-ADMIN | IP (todo) | Usuarios no inician nada hacia Administración |
-| 35 | Denegar (log) | NET-USUARIOS | SRV-DMZ | TCP 22 | **Solo con el plan B**, cuando la política fusionada ya no distingue usuarios de admin |
 | 40 | Permitir | any | any | IP (todo) | El resto del tráfico de usuarios sigue al FortiGate |
 
-La versión IPv6 es igual, con 2001:db8:105:10::/64 → 2001:db8:105:20::/64 (y 2001:db8:105:30::10 en la línea 35). Neighbor Discovery queda permitido por la línea final.
+La versión IPv6 es igual, con 2001:db8:105:10::/64 → 2001:db8:105:20::/64. Neighbor Discovery queda permitido por la línea final.
 
 Las líneas 10 y 20 existen porque la ACL no tiene estado. Sin ellas, Admin no recibiría las respuestas de los usuarios. Esa diferencia con el FortiGate es justo lo que hay que mostrar en la defensa.
 
@@ -494,7 +495,7 @@ redes-caso-e/
 Hay doce puntos por cerrar antes de congelar la maqueta. Los tres primeros pueden cambiar el diseño; los demás solo ajustan detalles.
 
 - [ ] Confirmar con el profesor el bloque del grupo (10.50.0.0/16, 2001:db8:105::/48, g5) y el número de grupo para nombrar el PDF.
-- [ ] Revisar en la OVA la versión de FortiOS y su licencia. Si es la de prueba (3 interfaces, 3 políticas, 3 rutas), se aplica el plan B de la sección FortiGate.
+- [ ] Revisar en la OVA la versión de FortiOS y su licencia. Si es la de prueba (máximo 3 políticas), se aplica el plan B de la sección FortiGate.
 - [ ] Con esa misma versión, confirmar dos funciones. La primera: políticas con IPv4 e IPv6 juntas (nativas desde 7.0; en 6.4 hace falta el modo consolidado, y si no, se duplican). La segunda: `default-information-originate` en OSPFv3. Si no existe, R-LAN lleva una estática ::/0 hacia la link-local del FGT.
 - [ ] Confirmar la imagen de los routers (IOSv u otra) y ajustar los nombres de interfaz del cableado.
 - [ ] Elegir la imagen de PC-ADMIN: una con terminal, navegador y un servidor syslog (rsyslog o syslog-ng). Si no hay una que reúna todo, el FortiGate se administra por la consola de GNS3 y el syslog va solo al disco local.

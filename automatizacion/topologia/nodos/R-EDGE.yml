@@ -1,0 +1,4 @@
+plantilla: router
+x: -200
+y: -30
+config: configs/R-EDGE.txt

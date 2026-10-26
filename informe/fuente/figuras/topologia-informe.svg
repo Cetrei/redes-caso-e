@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="900" viewBox="0 0 760 900" role="img" aria-label="Diagrama lógico final del Caso E">
+<style>
+text { font-family: "Liberation Sans", "DejaVu Sans", Arial, sans-serif; fill: #18202b; }
+.zt { font-size: 15px; font-weight: 700; }
+.s { font-size: 11.5px; fill: #3d4756; }
+.n { font-size: 14.5px; font-weight: 700; }
+.l { font-size: 11.5px; fill: #1f2733; }
+.b { font-size: 11.5px; font-weight: 700; }
+.node { fill: #ffffff; stroke: #aab2bf; stroke-width: 1.3; }
+.ln { stroke: #2d3748; stroke-width: 2; fill: none; }
+.wt { fill: #ffffff; }
+</style>
+<rect x="0" y="0" width="760" height="900" fill="#ffffff"/>
+
+<rect x="20" y="20" width="720" height="215" rx="14" fill="#eceef2" stroke="#bfc5cf"/>
+<text x="40" y="44" class="zt">Red externa</text>
+<text x="40" y="62" class="s">Internet simulada · rangos de documentación (RFC 5737)</text>
+
+<rect x="255" y="255" width="0" height="0" fill="none"/>
+<rect x="20" y="255" width="720" height="150" rx="14" fill="#fbf1dc" stroke="#dcb86a"/>
+<text x="40" y="281" class="zt">WAN pública de la empresa</text>
+<text x="40" y="299" class="s">203.0.113.16/29 · 2001:db8:105:ff01::/64</text>
+
+<rect x="20" y="590" width="350" height="290" rx="14" fill="#e1efed" stroke="#86bdb6"/>
+<text x="40" y="614" class="zt">LAN interna</text>
+<text x="40" y="632" class="s">OSPF área 0 · detrás del NAT</text>
+
+<rect x="390" y="590" width="350" height="290" rx="14" fill="#f0e6f5" stroke="#bf9fd3"/>
+<text x="410" y="614" class="zt">DMZ</text>
+<text x="410" y="632" class="s">10.50.1.32/28 · 2001:db8:105:30::/64</text>
+
+<path class="ln" d="M155 146 V193 H265"/>
+<path class="ln" d="M605 146 V193 H495"/>
+<path class="ln" d="M380 221 V318"/>
+<path class="ln" d="M380 382 V448"/>
+<path class="ln" d="M310 536 V646"/>
+<path class="ln" d="M450 536 V570 H690 V646"/>
+<path class="ln" d="M200 708 V740"/>
+<path class="ln" d="M560 708 V740"/>
+<path class="ln" d="M115 786 V814"/>
+<path class="ln" d="M285 786 V814"/>
+
+<text x="163" y="168" class="l">198.51.100.0/24</text>
+<text x="163" y="182" class="l">Gi0/1</text>
+<text x="597" y="168" class="l" text-anchor="end">192.0.2.0/24</text>
+<text x="597" y="182" class="l" text-anchor="end">Gi0/2</text>
+<text x="392" y="247" class="l">Enlace ISP 203.0.113.0/30 · Gi0/0 a Gi0/0</text>
+<text x="392" y="430" class="l">Gi0/1 a port1 · .17 a .18</text>
+<text x="300" y="556" class="l" text-anchor="end">port2 · 10.50.1.48/30</text>
+<text x="460" y="562" class="l">port3 · 10.50.1.32/28</text>
+<text x="210" y="728" class="l">Gi0/1 troncal 802.1Q</text>
+<text x="570" y="728" class="l">SW-DMZ a SRV-DMZ</text>
+
+<rect x="40" y="82" width="230" height="64" rx="8" class="node"/>
+<text x="155" y="103" class="n" text-anchor="middle">PC-EXT</text>
+<text x="155" y="121" class="s" text-anchor="middle">198.51.100.10/24</text>
+<text x="155" y="137" class="s" text-anchor="middle">2001:db8:ffff:100::10/64</text>
+
+<rect x="490" y="82" width="230" height="64" rx="8" class="node"/>
+<text x="605" y="103" class="n" text-anchor="middle">PC-EXT-WEB</text>
+<text x="605" y="121" class="s" text-anchor="middle">192.0.2.10/24 · navegador</text>
+<text x="605" y="137" class="s" text-anchor="middle">2001:db8:ffff:200::10/64</text>
+
+<rect x="265" y="165" width="230" height="56" rx="8" class="node"/>
+<text x="380" y="187" class="n" text-anchor="middle">R-ISP</text>
+<text x="380" y="205" class="s" text-anchor="middle">Simula Internet · rutas estáticas</text>
+
+<rect x="265" y="318" width="230" height="64" rx="8" class="node"/>
+<text x="380" y="340" class="n" text-anchor="middle">R-EDGE</text>
+<text x="380" y="358" class="s" text-anchor="middle">Borde · ACL-BORDE-IN</text>
+<text x="380" y="374" class="s" text-anchor="middle">203.0.113.2 · 203.0.113.17</text>
+
+<rect x="40" y="456" width="180" height="64" rx="8" fill="#fbe3e3" stroke="#c0392b"/>
+<text x="130" y="478" class="b" text-anchor="middle">Política 3 (denegar)</text>
+<text x="130" y="496" class="l" text-anchor="middle">WAN y DMZ hacia LAN</text>
+<text x="130" y="511" class="s" text-anchor="middle">registro de violaciones</text>
+
+<rect x="540" y="456" width="180" height="64" rx="8" fill="#dcf1e4" stroke="#2e8b57"/>
+<text x="630" y="478" class="b" text-anchor="middle">Política 1 (permitir)</text>
+<text x="630" y="496" class="l" text-anchor="middle">DNS y HTTP hacia la DMZ</text>
+<text x="630" y="511" class="s" text-anchor="middle">VIP en IPv4, directo en IPv6</text>
+
+<rect x="250" y="448" width="260" height="88" rx="10" fill="#1f3a5f"/>
+<text x="380" y="472" class="wt" text-anchor="middle" style="font-size:16px;font-weight:700;fill:#ffffff">FGT-01</text>
+<text x="380" y="491" class="wt" text-anchor="middle" style="font-size:11.5px;fill:#ffffff">FortiGate · único paso entre zonas</text>
+<text x="380" y="508" class="wt" text-anchor="middle" style="font-size:11.5px;fill:#ffffff">VIP · NAT · OSPF · políticas · logs</text>
+<text x="380" y="525" class="wt" text-anchor="middle" style="font-size:11.5px;fill:#ffffff">port1 WAN · port2 LAN · port3 DMZ</text>
+
+<rect x="50" y="646" width="300" height="62" rx="8" class="node"/>
+<text x="200" y="667" class="n" text-anchor="middle">R-LAN</text>
+<text x="200" y="685" class="s" text-anchor="middle">ACL-SEG-USUARIOS · ACL-VTY-ADMIN</text>
+<text x="200" y="700" class="s" text-anchor="middle">Gi0/0 10.50.1.50/30 · OSPFv2 y OSPFv3</text>
+
+<rect x="50" y="740" width="300" height="46" rx="8" class="node"/>
+<text x="200" y="760" class="n" text-anchor="middle">SW-LAN</text>
+<text x="200" y="777" class="s" text-anchor="middle">VLAN 10 y 20</text>
+
+<rect x="40" y="814" width="150" height="58" rx="8" class="node"/>
+<text x="115" y="833" class="n" text-anchor="middle">PC-USER</text>
+<text x="115" y="849" class="s" text-anchor="middle">VLAN 10 · 10.50.0.10/24</text>
+<text x="115" y="864" class="s" text-anchor="middle">IPv6 por SLAAC</text>
+
+<rect x="210" y="814" width="150" height="58" rx="8" class="node"/>
+<text x="285" y="833" class="n" text-anchor="middle">PC-ADMIN</text>
+<text x="285" y="849" class="s" text-anchor="middle">VLAN 20 · 10.50.1.10/27</text>
+<text x="285" y="864" class="s" text-anchor="middle">2001:db8:105:20::10/64</text>
+
+<rect x="410" y="646" width="300" height="62" rx="8" class="node"/>
+<text x="560" y="667" class="n" text-anchor="middle">SW-DMZ</text>
+<text x="560" y="685" class="s" text-anchor="middle">Segmento plano de la DMZ</text>
+
+<rect x="410" y="740" width="300" height="108" rx="8" class="node"/>
+<text x="560" y="761" class="n" text-anchor="middle">SRV-DMZ</text>
+<text x="560" y="779" class="s" text-anchor="middle">10.50.1.34/28 · 2001:db8:105:30::10/64</text>
+<text x="560" y="795" class="s" text-anchor="middle">contenedor Linux: bind9 · nginx · ssh</text>
+<text x="560" y="811" class="l" text-anchor="middle">www.g5.eif101o.test</text>
+<text x="560" y="827" class="s" text-anchor="middle">VIP 203.0.113.20 a 10.50.1.34 · IPv6 sin NAT</text>
+</svg>
