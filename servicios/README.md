@@ -10,7 +10,7 @@ Fuente: sección Servicio DNS/HTTP de `docs/especificacion.md`. SRV-DMZ es un co
 | `web/caso-e.conf` | `/etc/nginx/http.d/default.conf` | Sitio para `www`, `v4` y `v6`, en IPv4 e IPv6, con SSI |
 | `web/index.html` | `/var/www/caso-e/index.html` | Página del grupo: muestra el nombre pedido, la IP del cliente y si llegó por IPv4 o IPv6 |
 | `iniciar.sh` | `/usr/local/bin/iniciar.sh` | Arranca sshd, named y nginx cuando GNS3 levanta el contenedor |
-| `Dockerfile` | — | Construye la imagen `caso-e/srv-dmz` con todo lo anterior |
+| `Dockerfile` | - | Construye la imagen `caso-e/srv-dmz` con todo lo anterior |
 
 Credenciales: usuario `admin`, contraseña `admin` (SSH solo desde PC-ADMIN, por la política 2).
 

@@ -1,5 +1,5 @@
 #!/bin/sh
-# SRV-DMZ — arranque de servicios dentro del contenedor de GNS3.
+# SRV-DMZ - arranque de servicios dentro del contenedor de GNS3.
 # GNS3 configura eth0 con /etc/network/interfaces y después ejecuta este script.
 
 # Espera hasta 30 s a que eth0 tenga la IP de la DMZ (en Docker local puede no tenerla nunca).

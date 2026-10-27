@@ -1,4 +1,4 @@
-; Zona g5.eif101o.test — vista EXTERNA (todo lo que no es la red interna)
+; Zona g5.eif101o.test - vista EXTERNA (todo lo que no es la red interna)
 ; En IPv4 se publica el VIP del FortiGate. En IPv6 no hay NAT: es la misma dirección que adentro.
 ; Al cambiar algo, subir el serial (AAAAMMDDNN) en las dos vistas.
 $TTL 300
