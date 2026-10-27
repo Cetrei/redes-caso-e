@@ -1,6 +1,6 @@
-# Matriz de pruebas — copia de trabajo
+# Matriz de pruebas: copia de trabajo
 
-El detalle de cada prueba (desde, hacia y evidencia) está en la sección Matriz de pruebas de `docs/especificacion.md`. Acá solo se lleva el estado en la maqueta.
+El detalle de cada prueba (desde, hacia y evidencia) está en la sección Matriz de pruebas de `docs/especificacion.md`. Aquí solo se lleva el estado en la maqueta.
 
 **Estados:** Pendiente · En curso · OK · Falla. Una prueba queda **OK** cuando da el resultado esperado en la maqueta integrada y su captura está en `evidencias/`.
 
@@ -13,16 +13,16 @@ El detalle de cada prueba (desde, hacia y evidencia) está en la sección Matriz
 | P05 | HTTP IPv4 por nombre (www y v4) | HTTP 200, IP cliente IPv4 | OK | OK | | maqueta-20261024-1734.txt |
 | P06 | HTTP IPv6 por nombre (www y v6) | HTTP 200, IP cliente IPv6 | OK | OK | | maqueta-20261024-1734.txt |
 | P07 | Política permitida y denegada | P05 + E01 | OK | OK | | maqueta-20261024-1734.txt |
-| E01 | Externo → LAN por IPv6 | Bloqueado por política 5 | OK | OK | | maqueta-20261024-1734.txt |
+| E01 | Externo → LAN por IPv6 | Bloqueado por política 3 (DENY-A-LAN) | OK | OK | | maqueta-20261024-1734.txt |
 | E02 | Externo → LAN por IPv4 | Sin ruta en R-ISP | OK | OK | | maqueta-20261024-1734.txt |
-| E02b | Externo → LAN con ruta filtrada | Bloqueado por política 5 | OK | OK | | extras-20261024-1813.txt |
+| E02b | Externo → LAN con ruta filtrada | Denegado en port1 | OK | OK | | extras-20261024-1813.txt |
 | E03 | SSH externo al servidor | Denegación implícita | OK | OK | | maqueta-20261024-1734.txt |
 | E04 | Admin SSH al servidor | Conecta, política 2 | OK | OK | | maqueta-20261024-1734.txt |
 | E05 | Usuario SSH al servidor | Denegación implícita | OK | OK | | maqueta-20261024-1734.txt |
-| E06 | Usuario consume DNS y HTTP | Vista interna, política 3 | OK | OK | | maqueta-20261024-1734.txt |
+| E06 | Usuario consume DNS y HTTP | Vista interna, política 1 | OK | OK | | maqueta-20261024-1734.txt |
 | E07 | Usuarios → Admin | ACL-SEG-USUARIOS línea 30 | OK | OK | | maqueta-20261024-1734.txt |
 | E08 | Admin → Usuarios (ping) | Responde por la línea 10 | OK | OK | | maqueta-20261024-1734.txt |
-| E09 | DMZ → LAN | Bloqueado por política 6 | OK | OK | | maqueta-20261024-1734.txt |
+| E09 | DMZ → LAN | Bloqueado por política 3 (DENY-A-LAN) | OK | OK | | maqueta-20261024-1734.txt |
 | E10 | Origen falsificado en el borde | ACL-BORDE-IN línea 10 | OK | OK | | extras-20261024-1813.txt |
 | E11 | Gestión del FGT desde la WAN | Rechazado + log local-in | OK | OK | | maqueta-20261024-1734.txt |
 | E12 | Gestión de R-LAN | Bloqueado a Usuarios, OK a Admin | OK | OK | | maqueta-20261024-1734.txt |

@@ -4,7 +4,7 @@ Proyecto del curso EIF 101O (UNA): diseño e implementación en GNS3 de una red 
 
 ![Topología del Caso E: red externa, WAN pública, FortiGate, LAN interna y DMZ](docs/topologia.svg)
 
-El FortiGate es el único punto de paso entre zonas: la política 1 publica DNS y HTTP hacia la DMZ y la política 5 bloquea el acceso externo a la LAN. La versión con leyenda y tabla de segmentos está en [docs/topologia.html](docs/topologia.html).
+El FortiGate es el único punto de paso entre zonas: la política 1 publica DNS y HTTP hacia la DMZ y la política 3 (DENY-A-LAN) bloquea el acceso externo a la LAN, en el plan B que corre la maqueta. La versión con leyenda y tabla de segmentos está en [docs/topologia.html](docs/topologia.html).
 
 ## Estado
 
@@ -46,7 +46,7 @@ La maqueta se arma sola desde los archivos del repo. El detalle de cada paso est
 | Script `gns3ctl.py` que arma la maqueta completa (equipos, cables, configs, posiciones, zonas del lienzo) desde archivos de texto | `automatizacion/` |
 | `caso-e.ps1`, el atajo para Windows 11 que encadena construir, iniciar y licenciar | `automatizacion/caso-e.ps1` |
 | Plan B del FortiGate con tres políticas y central NAT, porque la licencia de evaluación no admite más | `configs/FGT-01-planB.conf` |
-| Pruebas en vivo sobre la maqueta (27 de 27 y 14 de 14 en verde) con su evidencia | `pruebas/` |
+| Pruebas en vivo sobre la maqueta (las 28 pruebas de la matriz en verde) con su evidencia | `pruebas/` |
 | Informe de la Parte I en Word | `informe/Grupo_05_Proyecto_Parte_I.docx` |
 
 Las credenciales de FortiCloud viven en `automatizacion\.env`, que no se sube al repo.

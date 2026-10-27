@@ -1,5 +1,7 @@
 ! R-ISP — Simula Internet: redes externas A y B, estáticas hacia la empresa
-! Fuente del diseño: docs/especificacion.md. Imagen: Cisco IOSv 15.x.
+! Fuente del diseño: docs/especificacion.md. Imagen de la maqueta: Cisco c7200 (Dynamips).
+! Los nombres Gi0/N son los del diseño. En el c7200 la interfaz Gi0/N se llama Gi(N+1)/0: gns3ctl.py
+! los traduce al cargar, pero al pegar a mano hay que usar el nombre real (Gi0/0 es Gi1/0).
 ! Se pega en modo configuración (configure terminal).
 !
 ! === 1. Base ===
