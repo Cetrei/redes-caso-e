@@ -14,42 +14,44 @@ El FortiGate es el único punto de paso entre zonas: la política 1 publica DNS 
 | Entrega Parte I (PDF) | 31 de octubre |
 | Defensa Parte II | 4 de noviembre |
 
-## Arranque rápido en Windows 11
+## Arranque rápido
 
-La maqueta se arma sola desde los archivos del repo. El detalle de cada paso está en [automatizacion/README.md](automatizacion/README.md); este es el camino corto.
+La maqueta se arma sola desde los archivos del repo, en Windows 11, Linux o macOS. El detalle de cada paso está en [automatizacion/README.md](automatizacion/README.md); este es el camino corto.
 
-1. Instalá **VirtualBox 7**, importá la OVA del profesor y configurá el reenvío de puertos y la virtualización anidada de la VM (el README de `automatizacion/` trae los comandos de PowerShell).
-2. Instalá **uv** en PowerShell y reabrí la terminal:
+1. Instala **VirtualBox 7**, importa la OVA del profesor y configura el reenvío de puertos y la virtualización anidada de la VM (el README de `automatizacion/` trae los comandos).
+2. Instala **uv** y reabre la terminal. En Windows, desde PowerShell:
 
    ```
    winget install --id astral-sh.uv -e
    ```
-3. Cloná el repo, entrá a `automatizacion\` y copiá la plantilla de credenciales de FortiCloud:
+
+   En Linux y macOS: `curl -LsSf https://astral.sh/uv/install.sh | sh`.
+3. Clona el repo, entra a `automatizacion/` y copia la plantilla de credenciales de FortiCloud:
 
    ```
    cd automatizacion
-   Copy-Item .env.example .env
-   notepad .env
+   Copy-Item .env.example .env     # en Linux y macOS: cp .env.example .env
+   notepad .env                    # o el editor que prefieras
    ```
-4. Encendé la VM, esperá a que `http://127.0.0.1:3080/v2/version` responda y corré todo en un paso:
+4. Enciende la VM, espera a que `http://127.0.0.1:3080/v2/version` responda y corre todo en un paso:
 
    ```
-   powershell -ExecutionPolicy Bypass -File .\caso-e.ps1
+   uv run gns3ctl.py todo
    ```
 
-`caso-e.ps1` construye el proyecto, enciende los nodos, espera al FortiGate y activa su licencia de evaluación. Con pasos sueltos (`.\caso-e.ps1 fortigate`, `.\caso-e.ps1 validar`) repite solo lo que necesitás. Se niega a correr `destruir`, porque borrar el FortiGate pierde la licencia.
+`todo` construye el proyecto, enciende los nodos, espera al FortiGate y activa su licencia de evaluación. Con pasos sueltos (`uv run gns3ctl.py todo fortigate`, `uv run gns3ctl.py validar`) repite solo lo que necesitas. Se niega a correr `destruir`, porque borrar el FortiGate hace perder su licencia.
 
 ## Qué hay de nuevo
 
 | Novedad | Dónde |
 | --- | --- |
 | Script `gns3ctl.py` que arma la maqueta completa (equipos, cables, configs, posiciones, zonas del lienzo) desde archivos de texto | `automatizacion/` |
-| `caso-e.ps1`, el atajo para Windows 11 que encadena construir, iniciar y licenciar | `automatizacion/caso-e.ps1` |
+| Subcomando `todo`, que encadena construir, iniciar y licenciar en Windows, Linux y macOS | `automatizacion/` |
 | Plan B del FortiGate con tres políticas y central NAT, porque la licencia de evaluación no admite más | `configs/FGT-01-planB.conf` |
 | Pruebas en vivo sobre la maqueta (las 28 pruebas de la matriz en verde) con su evidencia | `pruebas/` |
 | Informe de la Parte I en Word | `informe/Grupo_05_Proyecto_Parte_I.docx` |
 
-Las credenciales de FortiCloud viven en `automatizacion\.env`, que no se sube al repo.
+Las credenciales de FortiCloud viven en `automatizacion/.env`, que no se sube al repo.
 
 ## Credenciales del laboratorio
 
@@ -62,7 +64,7 @@ Todos los equipos usan **`admin` / `admin`**.
 | R-LAN | `admin` | `admin` (también enable) | Consola, o SSH desde la VLAN 20 |
 | FGT-01 | `admin` | `admin` | Consola, o GUI/SSH desde la VLAN 20 (10.50.1.49) |
 
-En la primera entrada, el FortiGate pide cambiar la contraseña. Si la versión no acepta `admin`, anoten acá cuál usaron para que todo el grupo use la misma.
+En la primera entrada, el FortiGate pide cambiar la contraseña. Si la versión no acepta `admin`, anoten aquí cuál usaron para que todo el grupo use la misma.
 
 ## Qué hay en el repo
 
@@ -76,7 +78,7 @@ El repo guarda **solo texto**. La maqueta de GNS3 no se versiona acá: tiene dis
 | `servicios/` | bind9 (DNS) y nginx (web) de SRV-DMZ |
 | `simulacion/` | Simulador lógico que corre la matriz de pruebas sobre las tablas del documento |
 | `pruebas/` | Matriz de pruebas con su estado y las capturas de evidencia |
-| `automatizacion/` | `gns3ctl.py`, `caso-e.ps1`, la definición de la maqueta en `topologia/` y sus pruebas |
+| `automatizacion/` | `gns3ctl.py`, la definición de la maqueta en `topologia/` y sus pruebas |
 | `informe/` | Informe de la Parte I en Word (`.docx`) y sus figuras en `informe/fuente/figuras/` |
 | `bitacora.md` | Incidencias reales (el informe pide al menos dos) |
 | `CHANGELOG.md` | Una línea por versión publicada de la maqueta |
