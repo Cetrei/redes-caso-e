@@ -81,7 +81,7 @@ class Repositorio:
         texto = ruta.read_text(encoding="utf-8")
         texto = re.sub(r"(?m)^x: .*$", f"x: {x}", texto, count=1)
         texto = re.sub(r"(?m)^y: .*$", f"y: {y}", texto, count=1)
-        ruta.write_text(texto, encoding="utf-8")
+        ruta.write_text(texto, encoding="utf-8", newline="\n")
 
     def _opcional(self, nombre: str) -> Any:
         ruta = self._dir / nombre

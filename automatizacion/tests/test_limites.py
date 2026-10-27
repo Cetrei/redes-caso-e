@@ -26,19 +26,19 @@ class LimitesDeTamano(unittest.TestCase):
         self.assertGreater(len(_archivos()), 20)
 
     def test_ningun_archivo_pasa_de_300_lineas(self):
-        largos = [f"{p.relative_to(RAIZ)}: {len(p.read_text().splitlines())}" for p in _archivos()
-                  if len(p.read_text().splitlines()) > MAX_ARCHIVO]
+        largos = [f"{p.relative_to(RAIZ)}: {len(p.read_text(encoding="utf-8").splitlines())}" for p in _archivos()
+                  if len(p.read_text(encoding="utf-8").splitlines()) > MAX_ARCHIVO]
         self.assertEqual(largos, [])
 
     def test_ninguna_funcion_pasa_de_25_lineas(self):
         largas = [f"{p.relative_to(RAIZ)}: {f.name} ({f.end_lineno - f.lineno + 1})"
-                  for p in _archivos() for f in _funciones(ast.parse(p.read_text()))
+                  for p in _archivos() for f in _funciones(ast.parse(p.read_text(encoding="utf-8")))
                   if f.end_lineno - f.lineno + 1 > MAX_FUNCION]
         self.assertEqual(largas, [])
 
     def test_ninguna_funcion_recibe_mas_de_3_argumentos(self):
         anchas = [f"{p.relative_to(RAIZ)}: {f.name} {_argumentos(f)}"
-                  for p in _archivos() for f in _funciones(ast.parse(p.read_text()))
+                  for p in _archivos() for f in _funciones(ast.parse(p.read_text(encoding="utf-8")))
                   if len(_argumentos(f)) > MAX_ARGUMENTOS]
         self.assertEqual(anchas, [])
 

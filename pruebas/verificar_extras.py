@@ -139,7 +139,7 @@ def main():
 
     SALIDA.mkdir(parents=True, exist_ok=True)
     destino = SALIDA / f"extras-{datetime.now():%Y%m%d-%H%M}.txt"
-    destino.write_text("\n".join(informe) + f"\n\n== Syslog recibido en PC-ADMIN ({SYSLOG}) ==\n{muestra}\n")
+    destino.write_text("\n".join(informe) + f"\n\n== Syslog recibido en PC-ADMIN ({SYSLOG}) ==\n{muestra}\n", encoding="utf-8")
     print(f"{len(informe) - fallas} de {len(informe)} OK; evidencia en {destino}")
     return 1 if fallas else 0
 

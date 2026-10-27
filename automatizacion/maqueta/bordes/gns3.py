@@ -48,7 +48,7 @@ class TransporteHttp:
         except urllib.error.HTTPError as e:
             raise ErrorGns3(f"ERROR {e.code} en {req.get_method()} {req.selector}: {e.read().decode()[:1500]}") from e
         except urllib.error.URLError as e:
-            raise ErrorGns3(f"No hay conexion con {self._api}: {e.reason}. Arranca la VM con gns3vm/start-gns3vm.sh") from e
+            raise ErrorGns3(f"No hay conexion con {self._api}: {e.reason}. Enciende la VM de GNS3 y espera a que ese puerto responda") from e
 
 
 class Extremo(NamedTuple):

@@ -50,4 +50,4 @@ class AlmacenSecretos:
             raise ErrorSecretos(f"Falta automatizacion/{ruta.name}. Copia .env.example como {ruta.name} y llena tu correo y clave de FortiCloud.")
         if os.name != "nt" and ruta.stat().st_mode & 0o077:
             self._salida(f"aviso: {ruta.name} es legible por otros usuarios; conviene: chmod 600 {ruta}")
-        return leer_env(ruta.read_text(encoding="utf-8"))
+        return leer_env(ruta.read_text(encoding="utf-8-sig"))

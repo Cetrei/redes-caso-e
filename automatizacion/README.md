@@ -2,7 +2,9 @@
 
 `gns3ctl.py` arma la maqueta del Caso E en GNS3 desde los archivos de `topologia/` y `configs/`: crea el proyecto, los equipos y los cables, carga las configuraciones, pega la del FortiGate y activa su licencia de evaluación. Se edita el archivo y se aplica; repetir un subcomando no duplica nada.
 
-## Requisitos en Windows 11
+Funciona igual en Windows 11, Linux y macOS: es Python y se corre con `uv`. Los pasos de VirtualBox están escritos para Windows; en Linux y macOS se hacen con la misma configuración de la VM.
+
+## Requisitos
 
 1. **VirtualBox 7** con la OVA del profesor importada (la VM de GNS3 2.2).
 2. **Reenvío de puertos** de la VM, en Configuración, Red, Adaptador 1 (NAT), Avanzadas, Reenvío de puertos. Se agregan estas reglas con IP de host 127.0.0.1:
@@ -23,19 +25,19 @@
    ```
 
 3. **Virtualización anidada** habilitada en la VM (el FortiGate corre dentro de ella con KVM): en Configuración, Sistema, Procesador, marcar Habilitar VT-x/AMD-V anidado, o `VBoxManage modifyvm $vm --nested-hw-virt on`. Asigna a la VM al menos 4 vCPU y 6 GB de RAM. Si el nodo del FortiGate se congela al iniciar, revisa que Hyper-V, Plataforma de máquina virtual y Aislamiento del núcleo (Integridad de memoria) estén desactivados en Windows, porque compiten con VirtualBox por la virtualización por hardware.
-4. **uv**, que instala Python y las dependencias (pyyaml y paramiko) por su cuenta. En PowerShell:
+4. **uv**, que instala Python y las dependencias (pyyaml y paramiko) por su cuenta. En Windows, desde PowerShell:
 
    ```
    winget install --id astral-sh.uv -e
    ```
 
-   Cierra y abre PowerShell para que reconozca el comando. Sin uv también sirve Python 3.10 o más reciente con `py -m pip install pyyaml paramiko`, y se corre con `py gns3ctl.py` en lugar de `uv run gns3ctl.py`.
+   En Linux y macOS: `curl -LsSf https://astral.sh/uv/install.sh | sh`. Cierra y abre la terminal para que reconozca el comando. Sin uv también sirve Python 3.10 o más reciente con `py -m pip install pyyaml paramiko`, y se corre con `py gns3ctl.py` en lugar de `uv run gns3ctl.py`.
 
 Antes de empezar, enciende la VM en VirtualBox y espera a que `http://127.0.0.1:3080/v2/version` responda en el navegador.
 
 ## Uso
 
-Todo se corre desde esta carpeta (`automatizacion`) en PowerShell. En Windows el archivo no se ejecuta directo: se antepone `uv run`.
+Todo se corre desde esta carpeta (`automatizacion`), en PowerShell o en cualquier terminal. Se antepone `uv run` en todos los sistemas, que es lo que Windows necesita y también funciona en Linux y macOS.
 
 ```
 uv run gns3ctl.py validar        # revisa topologia/ sin tocar GNS3
@@ -51,13 +53,13 @@ uv run gns3ctl.py --help
 
 ### Todo en un paso
 
-`caso-e.ps1` encadena los pasos habituales y espera al FortiGate antes de licenciar. Con la VM encendida:
+`todo` encadena los pasos habituales y espera al FortiGate antes de licenciar. Con la VM encendida:
 
 ```
-powershell -ExecutionPolicy Bypass -File .\caso-e.ps1
+uv run gns3ctl.py todo
 ```
 
-Sin argumentos corre `construir`, `iniciar` y `licenciar`. También acepta pasos sueltos, por ejemplo `.\caso-e.ps1 fortigate` o `.\caso-e.ps1 validar`, y se niega a correr `destruir`. Antes de licenciar comprueba que el `.env` esté lleno.
+Sin argumentos corre `construir`, `iniciar` y `licenciar`. También acepta los pasos que le indiques, por ejemplo `uv run gns3ctl.py todo construir iniciar fortigate`. Se niega a correr `destruir` y, antes de tocar nada, comprueba que el `.env` esté lleno si vas a licenciar.
 
 ## Licenciar el FortiGate
 
@@ -66,8 +68,8 @@ Un FortiGate recién desplegado no trae una licencia de evaluación válida y no
 1. Copia la plantilla y llénala con tu cuenta:
 
    ```
-   Copy-Item .env.example .env
-   notepad .env
+   Copy-Item .env.example .env     # en Linux y macOS: cp .env.example .env
+   notepad .env                     # o el editor que prefieras; se acepta UTF-8 con o sin BOM
    ```
 
    `FORTICLOUD_CORREO` es el correo con el que entras a esa página y `FORTICLOUD_CLAVE` es su clave, sin espacios ni signos de interrogación. El `.env` no se sube al repo.
@@ -107,8 +109,8 @@ uv run --with pyyaml --with paramiko python -m unittest discover -s tests -t .
 De la maqueta en vivo, con todo encendido y licenciado (desde la raíz del repo):
 
 ```
-uv run python pruebas\verificar_maqueta.py
-uv run python pruebas\verificar_extras.py
+uv run python pruebas/verificar_maqueta.py
+uv run python pruebas/verificar_extras.py
 ```
 
 Cada una guarda su salida en `pruebas/evidencias/`. La segunda tarda unos 6 minutos.
