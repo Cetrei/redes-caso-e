@@ -5,7 +5,7 @@ Una entrada por problema real encontrado durante el desarrollo. El informe pide 
 ## Plantilla
 
 ```
-### INC-NN — Título corto
+### INC-NN - Título corto
 - Fecha:
 - Quién:
 - Equipo(s):

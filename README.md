@@ -1,4 +1,4 @@
-# Redes Avanzadas I — Caso E: DMZ corporativa protegida
+# Redes Avanzadas I - Caso E: DMZ corporativa protegida
 
 Proyecto del curso EIF 101O (UNA): diseño e implementación en GNS3 de una red empresarial que publica DNS y HTTP desde una DMZ, sin exponer la LAN interna. Grupo **Los Arepísticos**.
 
@@ -10,7 +10,7 @@ El FortiGate es el único punto de paso entre zonas: la política 1 publica DNS 
 
 | Elemento | Valor |
 | --- | --- |
-| Versión vigente de la maqueta | — (todavía no se publica `casoE_v1`) |
+| Versión vigente de la maqueta | - (todavía no se publica `casoE_v1`) |
 | Entrega Parte I (PDF) | 31 de octubre |
 | Defensa Parte II | 4 de noviembre |
 
@@ -59,8 +59,8 @@ Todos los equipos usan **`admin` / `admin`**.
 
 | Equipo | Usuario | Contraseña | Acceso |
 | --- | --- | --- | --- |
-| R-ISP | — | `admin` (enable) | Solo consola de GNS3 |
-| R-EDGE | — | `admin` (enable) | Solo consola de GNS3 |
+| R-ISP | - | `admin` (enable) | Solo consola de GNS3 |
+| R-EDGE | - | `admin` (enable) | Solo consola de GNS3 |
 | R-LAN | `admin` | `admin` (también enable) | Consola, o SSH desde la VLAN 20 |
 | FGT-01 | `admin` | `admin` | Consola, o GUI/SSH desde la VLAN 20 (10.50.1.49) |
 

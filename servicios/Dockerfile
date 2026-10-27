@@ -1,4 +1,4 @@
-# SRV-DMZ — imagen para GNS3 con bind9, nginx y OpenSSH ya instalados y configurados.
+# SRV-DMZ - imagen para GNS3 con bind9, nginx y OpenSSH ya instalados y configurados.
 # Se construye una vez en la VM de GNS3 (que sí tiene Internet):
 #   docker build -t caso-e/srv-dmz servicios/
 # Dentro del laboratorio no hay salida a Internet, por eso no se instala nada con apk en la maqueta.

@@ -1,4 +1,4 @@
-; Zona g5.eif101o.test — vista INTERNA (LAN y DMZ)
+; Zona g5.eif101o.test - vista INTERNA (LAN y DMZ)
 ; Desde adentro el VIP no es alcanzable sin hairpin NAT: se responde la IP real del servidor.
 ; Al cambiar algo, subir el serial (AAAAMMDDNN) en las dos vistas.
 $TTL 300

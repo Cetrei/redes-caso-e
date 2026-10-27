@@ -1,4 +1,4 @@
-! R-LAN — Router interno: subinterfaces VLAN 10/20, OSPFv2/OSPFv3, ACL-SEG-USUARIOS, ACL-VTY-ADMIN
+! R-LAN - Router interno: subinterfaces VLAN 10/20, OSPFv2/OSPFv3, ACL-SEG-USUARIOS, ACL-VTY-ADMIN
 ! Fuente del diseño: docs/especificacion.md. Imagen de la maqueta: Cisco c7200 (Dynamips).
 ! Los nombres Gi0/N son los del diseño. En el c7200 la interfaz Gi0/N se llama Gi(N+1)/0: gns3ctl.py
 ! los traduce al cargar, pero al pegar a mano hay que usar el nombre real (Gi0/1.10 es Gi2/0.10).

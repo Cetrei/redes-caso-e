@@ -1,4 +1,4 @@
-# Caso E — Especificación de topología
+# Caso E - Especificación de topología
 
 Oct 18, 2026 · @Los Arepísticos
 
@@ -99,7 +99,7 @@ Los hosts necesarios son el dimensionamiento supuesto. El grupo los ajusta si ca
 | VLAN 20 Admin | hasta 25 | 10.50.1.0/27 | 255.255.255.224 | 10.50.1.1 – .1.30 | 10.50.1.31 | 2001:db8:105:20::/64 |
 | DMZ | hasta 10 | 10.50.1.32/28 | 255.255.255.240 | 10.50.1.33 – .1.46 | 10.50.1.47 | 2001:db8:105:30::/64 |
 | Tránsito FGT–R-LAN | 2 | 10.50.1.48/30 | 255.255.255.252 | 10.50.1.49 – .1.50 | 10.50.1.51 | 2001:db8:105:ff00::/64 |
-| Reserva | — | 10.50.1.52 en adelante | — | — | — | resto del /48 |
+| Reserva | - | 10.50.1.52 en adelante | - | - | - | resto del /48 |
 
 **Segmentos externos (rangos de documentación)**
 
@@ -120,7 +120,7 @@ Los hosts necesarios son el dimensionamiento supuesto. El grupo los ajusta si ca
 | R-EDGE | Gi0/0 | 203.0.113.2/30 | 2001:db8:ffff:1::2/64 | fe80::2 |
 | R-EDGE | Gi0/1 | 203.0.113.17/29 | 2001:db8:105:ff01::1/64 | fe80::1 |
 | FGT-01 | port1 (WAN) | 203.0.113.18/29 | 2001:db8:105:ff01::2/64 | automática (EUI-64) |
-| FGT-01 | VIP | 203.0.113.20 → 10.50.1.34 | — | — |
+| FGT-01 | VIP | 203.0.113.20 → 10.50.1.34 | - | - |
 | FGT-01 | port2 (LAN) | 10.50.1.49/30 | 2001:db8:105:ff00::1/64 | automática |
 | FGT-01 | port3 (DMZ) | 10.50.1.33/28 | 2001:db8:105:30::1/64 | automática |
 | R-LAN | Gi0/0 | 10.50.1.50/30 | 2001:db8:105:ff00::2/64 | fe80::2 |
@@ -238,9 +238,9 @@ El VIP es 1:1 y no por puerto. Así la restricción de servicios queda visible e
 | 2 | ADMIN-A-DMZ | port2 → port3 | NET-ADMIN | SRV-DMZ | SSH, DNS, HTTP, PING | Permitir | No | Todas las sesiones | Única zona autorizada para administrar el servidor |
 | 3 | USUARIOS-A-DMZ | port2 → port3 | NET-USUARIOS | SRV-DMZ | DNS, HTTP | Permitir | No | Todas las sesiones | Consumo interno del servicio, sin gestión |
 | 4 | LAN-A-INTERNET | port2 → port1 | NET-LAN | all | HTTP, HTTPS, DNS, PING | Permitir | SNAT a port1 (solo IPv4) | Seguridad | Salida de la LAN a Internet |
-| 5 | DENY-EXT-A-LAN | port1 → port2 | all | all | ALL | Denegar | — | Violaciones | La LAN no queda expuesta (requisito central) |
-| 6 | DENY-DMZ-A-LAN | port3 → port2 | all | all | ALL | Denegar | — | Violaciones | Un servidor comprometido no puede saltar a la LAN |
-| — | Implícita | cualquiera | all | all | ALL | Denegar | — | Violaciones activado | Todo lo demás |
+| 5 | DENY-EXT-A-LAN | port1 → port2 | all | all | ALL | Denegar | - | Violaciones | La LAN no queda expuesta (requisito central) |
+| 6 | DENY-DMZ-A-LAN | port3 → port2 | all | all | ALL | Denegar | - | Violaciones | Un servidor comprometido no puede saltar a la LAN |
+| - | Implícita | cualquiera | all | all | ALL | Denegar | - | Violaciones activado | Todo lo demás |
 
 Cada política cubre IPv4 e IPv6 a la vez, algo que FortiOS 6.4 y posteriores permiten. Con una versión anterior se duplican en un juego IPv6.
 
@@ -380,7 +380,7 @@ El AAAA es igual en ambas vistas porque en IPv6 no hay traducción: la direcció
 
 **Página web (index.html)**
 
-- **Identifica:** el número de grupo, los integrantes, "Caso E — DMZ corporativa protegida" y el FQDN www.g5.eif101o.test.
+- **Identifica:** el número de grupo, los integrantes, "Caso E - DMZ corporativa protegida" y el FQDN www.g5.eif101o.test.
 - **IP del cliente:** nginx imprime la IP del cliente (variable `$remote_addr`, con SSI o un `return` aparte). Abriendo `v4` y `v6`, la misma página muestra una dirección IPv4 y luego una IPv6. Eso sirve como evidencia de dual-stack y prueba que el VIP no oculta el origen.
 
 ## Matriz de pruebas
@@ -406,7 +406,7 @@ Antes de armar la maqueta, la matriz completa se corre en el simulador lógico (
 | P04 | Consulta DNS por IPv6 | PC-EXT | servidor en 2001:db8:105:30::10 | Respuesta autoritativa recibida por IPv6 | Consulta + log de la política 1 |
 | P05 | HTTP por IPv4 con nombre | PC-EXT (`curl -4` a www) y PC-EXT-WEB (navegador a v4.g5.eif101o.test) | servidor por el VIP | Página del grupo, HTTP 200, muestra una IP cliente IPv4 | Salida + captura del navegador |
 | P06 | HTTP por IPv6 con nombre | PC-EXT (`curl -6` a www) y PC-EXT-WEB (navegador a v6.g5.eif101o.test) | 2001:db8:105:30::10 | Página del grupo, HTTP 200, muestra una IP cliente IPv6 | Salida + captura del navegador |
-| P07 | Política permitida y denegada | — | — | Se cumple con P05 y E01 | Logs con ID de política |
+| P07 | Política permitida y denegada | - | - | Se cumple con P05 y E01 | Logs con ID de política |
 
 **Pruebas específicas del caso E**
 

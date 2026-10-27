@@ -1,4 +1,4 @@
-! R-EDGE — Borde de la empresa: ACL-BORDE-IN, estáticas, vty sin acceso (solo consola)
+! R-EDGE - Borde de la empresa: ACL-BORDE-IN, estáticas, vty sin acceso (solo consola)
 ! Fuente del diseño: docs/especificacion.md. Imagen de la maqueta: Cisco c7200 (Dynamips).
 ! Los nombres Gi0/N son los del diseño. En el c7200 la interfaz Gi0/N se llama Gi(N+1)/0: gns3ctl.py
 ! los traduce al cargar, pero al pegar a mano hay que usar el nombre real (Gi0/0 es Gi1/0).
@@ -92,7 +92,7 @@ end
 ! ------------------------------------------------------------------
 ! Cambios temporales para pruebas (aplicar, probar y quitar)
 ! ------------------------------------------------------------------
-! E02b — ruta filtrada hacia la LAN (junto con la de R-ISP):
+! E02b - ruta filtrada hacia la LAN (junto con la de R-ISP):
 !   ip route 10.50.0.0 255.255.0.0 203.0.113.18
 !   Quitar: no ip route 10.50.0.0 255.255.0.0 203.0.113.18
 !
