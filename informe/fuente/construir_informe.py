@@ -703,7 +703,7 @@ def anexos(inf):
         "show logging | include IPACCESSLOG"
     )
     inf.h(1, "Anexo E. Proyecto GNS3")
-    inf.p("Enlace de descarga del proyecto exportado sin imágenes propietarias (Archivo, Exportar proyecto): ==[DATO-ENLACE-2: pegar el mismo enlace de Drive]==.")
+    inf.p("Enlace de descarga del proyecto exportado sin imágenes propietarias (Archivo, Exportar proyecto): https://drive.google.com/drive/folders/1mmUOyVEecsfnWPkWwIrvBDGNry5oO2gS?usp=sharing.")
     inf.p("La maqueta también puede reconstruirse desde cero con el script `automatizacion/gns3ctl.py` del repositorio, cuya guía de uso está en `automatizacion/README.md`.")
     inf.h(1, "Anexo F. Matriz de pruebas")
     inf.p("Las 28 pruebas con el resultado esperado y el observado. La evidencia completa está en `pruebas/evidencias/`.")
@@ -794,13 +794,13 @@ def portada(inf):
     fuente(t.add_run("Caso E: DMZ corporativa protegida"), tam=26, negrita=True, color=AZUL)
     par = inf.p("Diseño, implementación y verificación en GNS3 de una red empresarial con publicación controlada de DNS y HTTP", alinear="centro", tam=13, espacio=30)
     inf.p("**Grupo 5, Los Arepísticos**", alinear="centro", tam=13, espacio=10)
-    for nombre in ("==[DATO-NOMBRE-1: nombre completo del integrante 1]==", "==[DATO-NOMBRE-2: nombre completo del integrante 2]==", "==[DATO-NOMBRE-3: nombre completo del integrante 3]==", "==[DATO-NOMBRE-4: nombre completo del integrante 4]=="):
+    for nombre in ("Joanfer Hidalgo Chaves", "Roy Arias Mejia", "Isaac Rodriguez Aguero", "Eduardo Canton Grajales"):
         inf.p(nombre, alinear="centro", tam=12, espacio=2)
     for _ in range(3):
         d.add_paragraph()
     inf.p("Profesor: Mag. Pablo Sandoval Barrantes", alinear="centro", tam=12, espacio=2)
     inf.p("31 de octubre de 2026", alinear="centro", tam=12, espacio=14)
-    inf.p("Proyecto GNS3 descargable: ==[DATO-ENLACE-1: pegar el enlace de Drive de casoE_v1.gns3project]==", alinear="centro", tam=11)
+    inf.p("Proyecto GNS3 descargable: https://drive.google.com/drive/folders/1mmUOyVEecsfnWPkWwIrvBDGNry5oO2gS?usp=sharing", alinear="centro", tam=11)
 
 
 def activar_actualizacion(doc):

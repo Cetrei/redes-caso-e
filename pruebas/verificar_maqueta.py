@@ -7,6 +7,9 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+for _flujo in (sys.stdout, sys.stderr):
+    _flujo.reconfigure(encoding="utf-8", errors="replace")
+
 RAIZ = Path(__file__).resolve().parent.parent
 SALIDA = RAIZ / "pruebas" / "evidencias"
 WWW = "www.g5.eif101o.test"
@@ -94,8 +97,8 @@ class Consola:
 
 
 def puertos():
-    texto = subprocess.run([str(RAIZ / "automatizacion" / "gns3ctl.py"), "estado"],
-                           capture_output=True, text=True, check=True).stdout
+    texto = subprocess.run(["uv", "run", str(RAIZ / "automatizacion" / "gns3ctl.py"), "estado"],
+                           capture_output=True, text=True, encoding="utf-8", check=True).stdout
     return {m[1]: int(m[2]) for m in re.finditer(r"^(\S+)\s+\S+\s+started\s+consola\s+\S+:(\d+)", texto, re.M)}
 
 
@@ -153,7 +156,7 @@ def main():
     archivo = SALIDA / f"maqueta-{datetime.now():%Y%m%d-%H%M}.txt"
     archivo.write_text("\n".join(informe) + "\n\n== Logs de trafico del FortiGate ==\n" + logs +
                        "\n\n== Politicas en el kernel (iprope) ==\n" + contadores +
-                       "\n\n== Estado del FortiGate ==\n" + estado + "\n")
+                       "\n\n== Estado del FortiGate ==\n" + estado + "\n", encoding="utf-8")
     print(f"\n{len(informe) - fallas}/{len(informe)} verificaciones OK. Evidencia en {archivo}")
     sys.exit(1 if fallas else 0)
 
