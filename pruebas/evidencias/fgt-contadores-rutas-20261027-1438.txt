@@ -1,0 +1,143 @@
+diagnose firewall iprope show 100004 1
+idx:1 
+pkts:1230 (1230 0 0 0 0 0 0 0)
+bytes:86576 (86576 0 0 0 0 0 0 0)
+asic_pkts:0 (0 0 0 0 0 0 0 0)
+asic_bytes:0 (0 0 0 0 0 0 0 0)
+flag:0x0
+hit count:157 (157 0 0 0 0 0 0 0)
+    first hit:2026-10-27 13:20:17 last hit:2026-10-27 13:34:48
+established session count:12
+    first est:2026-10-27 13:20:17 last est:2026-10-27 13:34:48
+
+FGT-01 # 
+
+diagnose firewall iprope show 100004 2
+idx:2 
+pkts:8 (8 0 0 0 0 0 0 0)
+bytes:441 (441 0 0 0 0 0 0 0)
+asic_pkts:0 (0 0 0 0 0 0 0 0)
+asic_bytes:0 (0 0 0 0 0 0 0 0)
+flag:0x0
+hit count:1 (1 0 0 0 0 0 0 0)
+    first hit:2026-10-27 13:21:45 last hit:2026-10-27 13:21:45
+established session count:0
+    first est:2026-10-27 13:21:45 last est:2026-10-27 13:21:45
+
+FGT-01 # 
+
+diagnose firewall iprope show 100004 3
+idx:3 
+pkts:2 (2 0 0 0 0 0 0 0)
+bytes:168 (168 0 0 0 0 0 0 0)
+asic_pkts:0 (0 0 0 0 0 0 0 0)
+asic_bytes:0 (0 0 0 0 0 0 0 0)
+flag:0x0
+hit count:2 (2 0 0 0 0 0 0 0)
+    first hit:2026-10-27 13:21:36 last hit:2026-10-27 13:21:37
+
+FGT-01 # 
+
+diagnose firewall iprope show 100004 0
+idx:0 
+pkts:3 (3 0 0 0 0 0 0 0)
+bytes:180 (180 0 0 0 0 0 0 0)
+asic_pkts:0 (0 0 0 0 0 0 0 0)
+asic_bytes:0 (0 0 0 0 0 0 0 0)
+flag:0x0
+hit count:3 (3 0 0 0 0 0 0 0)
+    first hit:2026-10-27 13:21:54 last hit:2026-10-27 13:21:56
+
+FGT-01 # 
+
+diagnose firewall iprope6 show 100004 1
+idx:1 
+pkts:1256 (1256 0 0 0 0 0 0 0)
+bytes:113540 (113540 0 0 0 0 0 0 0)
+asic_pkts:0 (0 0 0 0 0 0 0 0)
+asic_bytes:0 (0 0 0 0 0 0 0 0)
+flag:0x0
+hit count:158 (158 0 0 0 0 0 0 0)
+    first hit:2026-10-27 13:20:16 last hit:2026-10-27 13:34:48
+established session count:0
+    first est:2026-10-27 13:20:16 last est:2026-10-27 13:34:48
+
+FGT-01 # 
+
+diagnose firewall iprope6 show 100004 2
+idx:2 
+pkts:0 (0 0 0 0 0 0 0 0)
+bytes:0 (0 0 0 0 0 0 0 0)
+asic_pkts:0 (0 0 0 0 0 0 0 0)
+asic_bytes:0 (0 0 0 0 0 0 0 0)
+flag:0x0
+
+FGT-01 # 
+
+diagnose firewall iprope6 show 100004 3
+idx:3 
+pkts:2 (2 0 0 0 0 0 0 0)
+bytes:208 (208 0 0 0 0 0 0 0)
+asic_pkts:0 (0 0 0 0 0 0 0 0)
+asic_bytes:0 (0 0 0 0 0 0 0 0)
+flag:0x0
+hit count:2 (2 0 0 0 0 0 0 0)
+    first hit:2026-10-27 13:21:27 last hit:2026-10-27 13:21:28
+
+FGT-01 # 
+
+diagnose firewall iprope6 show 100004 0
+idx:0 
+pkts:0 (0 0 0 0 0 0 0 0)
+bytes:0 (0 0 0 0 0 0 0 0)
+asic_pkts:0 (0 0 0 0 0 0 0 0)
+asic_bytes:0 (0 0 0 0 0 0 0 0)
+flag:0x0
+
+FGT-01 # 
+
+get router info routing-table all
+Codes: K - kernel, C - connected, S - static, R - RIP, B - BGP
+       O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+       V - BGP VPNv4, E - BGP EVPN, L - Leaked, D - Directly leaked
+       * - candidate default
+
+Routing table for VRF=0
+S*      0.0.0.0/0 [10/0] via 203.0.113.17, port1, [1/0]
+S       10.50.0.0/16 [254/0] is a summary, Null, [1/0]
+O       10.50.0.0/24 [110/2] via 10.50.1.50, port2, 00:16:59, [1/0]
+O       10.50.1.0/27 [110/2] via 10.50.1.50, port2, 00:16:59, [1/0]
+C       10.50.1.32/28 is directly connected, port3
+C       10.50.1.48/30 is directly connected, port2
+C       203.0.113.16/29 is directly connected, port1
+
+
+FGT-01 # 
+
+get router info6 routing-table
+IPv6 Routing Table
+Codes: K - kernel route, C - connected, S - static, R - RIP, O - OSPF,
+       IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+       B - BGP, V - BGP VPNv6, L - Leaked, D - Directly leaked
+       * - candidate default
+
+Timers: Uptime
+
+Routing table for VRF=0
+S*      ::/0 [10/0] via 2001:db8:105:ff01::1, port1, 00:18:08, [1024/0]
+C       ::1/128 via ::, root, 00:18:08
+S       2001:db8:105::/48 [254/0] via ::, Null, 00:18:08, [1024/0]
+O       2001:db8:105:10::/64 [110/2] via fe80::2, port2, 00:17:10, [1024/0]
+O       2001:db8:105:20::/64 [110/2] via fe80::2, port2, 00:17:10, [1024/0]
+C       2001:db8:105:30::/64 via ::, port3, 00:18:08
+C       2001:db8:105:ff00::/64 via ::, port2, 00:18:08
+C       2001:db8:105:ff01::/64 via ::, port1, 00:18:08
+
+
+FGT-01 # 

@@ -7,12 +7,17 @@ Entrega: `Grupo_05_Proyecto_Parte_I.pdf` en AVI (sección "Sem15-Te7") a más ta
 | Archivo | Qué es |
 | --- | --- |
 | `Grupo_05_Proyecto_Parte_I.docx` | El informe completo: portada, índice, las nueve secciones del enunciado, referencias y anexos |
+| `fuente/construir_informe.py` | Genera el `.docx`: `uv run fuente/construir_informe.py <raíz del repo> <salida.docx>` |
 | `fuente/figuras/topologia-informe.svg` | Diagrama lógico en vertical, para imprimir |
 | `fuente/figuras/topologia.png` | Mismo diagrama en PNG, el que se inserta en el Word |
 
 ## Antes de entregar
 
-1. Abrí el `.docx` en Word y reemplazá los cuatro `[Nombre completo del integrante N]` de la portada.
-2. Reemplazá `[PENDIENTE: enlace de Drive]` por el enlace al proyecto GNS3 exportado, en la portada y en el Anexo E.
-3. En Word, actualizá el índice (clic derecho sobre la tabla de contenido, Actualizar campo) para que los números de página queden bien.
-4. Guardá como PDF con el nombre `Grupo_05_Proyecto_Parte_I.pdf` y subilo al AVI.
+En Word, use Ctrl + F con el prefijo indicado. Cada marca amarilla lleva un identificador.
+
+1. `DATO-NOMBRE-1` a `DATO-NOMBRE-4`: nombre completo de cada integrante, en la portada.
+2. `DATO-ENLACE-1` y `DATO-ENLACE-2`: enlace de Drive del proyecto exportado (`casoE_v1.gns3project`), en la portada y en el Anexo E.
+3. `CAP-01` a `CAP-04`: cada recuadro amarillo indica el dispositivo, el comando o acción y lo que debe verse. Reemplace el recuadro por la captura y deje el pie de figura.
+4. `servicios/web/index.html` y el Anexo B.3 todavía listan "Integrante 1" a "Integrante 4". Edite el HTML antes de tomar CAP-01 y CAP-02, y vuelva a generar el informe.
+5. En Word, actualice el índice (clic derecho sobre la tabla de contenido, Actualizar campo) para que los números de página queden bien.
+6. Verifique que el cuerpo no pase de 15 páginas al insertar las capturas, y guarde como PDF con el nombre `Grupo_05_Proyecto_Parte_I.pdf`.

@@ -1,5 +1,7 @@
 ! R-LAN — Router interno: subinterfaces VLAN 10/20, OSPFv2/OSPFv3, ACL-SEG-USUARIOS, ACL-VTY-ADMIN
-! Fuente del diseño: docs/especificacion.md. Imagen: Cisco IOSv 15.x.
+! Fuente del diseño: docs/especificacion.md. Imagen de la maqueta: Cisco c7200 (Dynamips).
+! Los nombres Gi0/N son los del diseño. En el c7200 la interfaz Gi0/N se llama Gi(N+1)/0: gns3ctl.py
+! los traduce al cargar, pero al pegar a mano hay que usar el nombre real (Gi0/1.10 es Gi2/0.10).
 ! Se pega en modo configuración (configure terminal).
 !
 ! === 1. Base ===
@@ -12,7 +14,7 @@ username admin privilege 15 secret admin
 ipv6 unicast-routing
 !
 ! SSH: la clave se genera una sola vez y no aparece en el running-config.
-! Tarda unos segundos: pegá esta línea sola y esperá el aviso "SSH 2.0 has been enabled" antes de seguir.
+! Tarda unos segundos: pegue esta línea sola y espere el aviso "SSH 2.0 has been enabled" antes de seguir.
 crypto key generate rsa modulus 2048
 ip ssh version 2
 !
