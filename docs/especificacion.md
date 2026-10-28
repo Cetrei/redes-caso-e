@@ -1,6 +1,6 @@
 # Caso E - Especificación de topología
 
-Oct 18, 2026 · @Los Arepísticos
+Oct 18, 2026 · Grupo 5
 
 ## Resumen y supuestos
 

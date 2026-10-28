@@ -139,7 +139,7 @@ class Informe:
 
     def cabecera_pie(self, s):
         hp = s.header.paragraphs[0]
-        texto(hp, "Caso E: DMZ corporativa protegida | Grupo 5, Los Arepísticos | Redes Avanzadas I", tam=8.5)
+        texto(hp, "Caso E: DMZ corporativa protegida | Grupo 5 | Redes Avanzadas I", tam=8.5)
         hp.alignment = WD_ALIGN_PARAGRAPH.CENTER
         fp = s.footer.paragraphs[0]
         fp.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -793,7 +793,7 @@ def portada(inf):
     t.alignment = WD_ALIGN_PARAGRAPH.CENTER
     fuente(t.add_run("Caso E: DMZ corporativa protegida"), tam=26, negrita=True, color=AZUL)
     par = inf.p("Diseño, implementación y verificación en GNS3 de una red empresarial con publicación controlada de DNS y HTTP", alinear="centro", tam=13, espacio=30)
-    inf.p("**Grupo 5, Los Arepísticos**", alinear="centro", tam=13, espacio=10)
+    inf.p("**Grupo 5**", alinear="centro", tam=13, espacio=10)
     for nombre in ("Joanfer Hidalgo Chaves", "Roy Arias Mejia", "Isaac Rodriguez Aguero", "Eduardo Canton Grajales"):
         inf.p(nombre, alinear="centro", tam=12, espacio=2)
     for _ in range(3):
@@ -823,7 +823,7 @@ def main():
     final.indice_previo = entradas
     construir(final)
     final.doc.core_properties.title = "Caso E: DMZ corporativa protegida"
-    final.doc.core_properties.author = "Grupo 5, Los Arepísticos"
+    final.doc.core_properties.author = "Grupo 5"
     activar_actualizacion(final.doc)
     final.doc.save(str(SALIDA))
     print(SALIDA)
