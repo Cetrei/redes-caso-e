@@ -82,13 +82,21 @@ class NodoGns3:
     console: int | None
     console_host: str
     propiedades: Mapping[str, Any]
+    tipo_consola: str = ""
 
     @classmethod
     def desde_json(cls, d: Mapping[str, Any]) -> NodoGns3:
         return cls(
             node_id=d["node_id"], nombre=d["name"], tipo=d["node_type"], estado=d.get("status", ""),
             x=d.get("x", 0), y=d.get("y", 0), console=d.get("console"), console_host=d.get("console_host") or "",
-            propiedades=MappingProxyType(dict(d.get("properties") or {})))
+            propiedades=MappingProxyType(dict(d.get("properties") or {})), tipo_consola=d.get("console_type") or "")
+
+    @property
+    def consola_texto(self) -> int | None:
+        aux = self.propiedades.get("aux")
+        if self.tipo_consola == "vnc" and aux:
+            return aux
+        return self.console
 
     @property
     def encendido(self) -> bool:
@@ -146,9 +154,9 @@ class ClienteGns3:
                 return t["template_id"]
         raise ErrorGns3(f"No existe la plantilla '{nombre}' en el servidor.")
 
-    def crear_plantilla_docker(self, nombre: str, imagen: str) -> None:
+    def crear_plantilla_docker(self, nombre: str, imagen: str, consola: str = "telnet") -> None:
         self._t.solicitar("POST", "/templates", cuerpo={
-            "name": nombre, "template_type": "docker", "image": imagen, "adapters": 1, "console_type": "telnet",
+            "name": nombre, "template_type": "docker", "image": imagen, "adapters": 1, "console_type": consola,
             "start_command": "", "compute_id": "local", "category": "guest", "symbol": ":/symbols/docker_guest.svg"})
 
     def nodos(self, pid: str) -> dict[str, NodoGns3]:

@@ -23,7 +23,7 @@ class Detener(Comando):
 
 class Estado(Comando):
     nombre = "estado"
-    ayuda = "lista nodos, estado y puerto de consola"
+    ayuda = "lista nodos, estado y puerto de consola (telnet; con VNC, el auxiliar y el puerto vnc)"
     orden = 52
 
     def ejecutar(self, app, args):

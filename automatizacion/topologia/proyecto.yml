@@ -7,11 +7,12 @@ plantillas:
   fortigate: "FortiGate 8.0.0 (admin:Fortinet.2026)"
   switch: "Ethernet switch"
   cliente: "Cliente-caso-e"
-  admin: "Ubuntu Docker Guest"
+  admin: "Webterm-caso-e"
+  usuario: "Webterm-caso-e"
   navegador: "webterm"
   servidor: "SRV-DMZ-img"
 
-tipos: {router: dynamips, fortigate: qemu, switch: ethernet_switch, cliente: docker, admin: docker, navegador: docker, servidor: docker}
+tipos: {router: dynamips, fortigate: qemu, switch: ethernet_switch, cliente: docker, admin: docker, usuario: docker, navegador: docker, servidor: docker}
 
 dynamips_slots: {slot1: PA-GE, slot2: PA-GE, slot3: PA-GE, slot4: PA-GE}
 
@@ -24,5 +25,6 @@ fortigate:
 imagenes:
   - {etiqueta: caso-e/srv-dmz, ruta: servicios, plantilla: SRV-DMZ-img}
   - {etiqueta: caso-e/cliente, ruta: servicios/cliente, plantilla: Cliente-caso-e}
+  - {etiqueta: caso-e/webterm, ruta: servicios/webterm, plantilla: Webterm-caso-e, consola: vnc}
 
 ssh: {host: 127.0.0.1, puerto: 2222, usuario: gns3, clave: gns3}

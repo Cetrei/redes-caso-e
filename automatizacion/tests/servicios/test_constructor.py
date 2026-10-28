@@ -99,6 +99,15 @@ class Ciclo(unittest.TestCase):
         self.assertEqual([t.split()[0] for t in self.e.salida], ["FGT-01", "PC", "R1", "SW"])
         self.assertIn("consola 127.0.0.1:", self.e.salida[0])
 
+    def test_estado_de_un_nodo_con_vnc_muestra_el_auxiliar_como_consola(self):
+        nodo = self.e.gns3.nodo("PC")
+        nodo["console_type"] = "vnc"
+        nodo["properties"]["aux"] = 6001
+        self.e.salida.clear()
+        self.e.app.ciclo().estado()
+        pc = next(t for t in self.e.salida if t.startswith("PC "))
+        self.assertIn("consola 127.0.0.1:6001  vnc 127.0.0.1:", pc)
+
     def test_destruir_borra_el_proyecto(self):
         self.e.app.ciclo().destruir()
         self.assertEqual(self.e.gns3.proyectos, {})
@@ -120,6 +129,17 @@ class Imagenes(unittest.TestCase):
         self.assertEqual([p["name"] for p in e.gns3.plantillas_creadas], ["IMG"])
         e.app.imagenes().construir()
         self.assertEqual(len(e.gns3.plantillas_creadas), 1)
+
+    def test_la_plantilla_nace_con_la_consola_pedida(self):
+        e = Escenario()
+        self.addCleanup(e.cerrar)
+        e.app.imagenes().construir()
+        self.assertEqual(e.gns3.plantillas_creadas[0]["console_type"], "telnet")
+        e2 = Escenario()
+        self.addCleanup(e2.cerrar)
+        e2.reemplazar("automatizacion/topologia/proyecto.yml", "plantilla: IMG}", "plantilla: IMG, consola: vnc}")
+        e2.app.imagenes().construir()
+        self.assertEqual(e2.gns3.plantillas_creadas[0]["console_type"], "vnc")
 
 
 if __name__ == "__main__":

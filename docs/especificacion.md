@@ -48,8 +48,8 @@ Cada nodo responde a un requisito del caso E. No hay equipos de relleno, que es 
 | SRV-DMZ | Docker Linux (Alpine o Debian) | DMZ | DNS autoritativo (bind9) y HTTP (nginx). Es el servicio publicado |
 | PC-EXT | Docker Alpine con dig y curl | Externa | Cliente de pruebas desde Internet: DNS, HTTP e intentos que deben bloquearse |
 | PC-EXT-WEB | Docker Webterm (Firefox) | Externa | Navegador para mostrar la página por nombre en la defensa |
-| PC-USER | Docker Alpine con dig, curl y ssh | LAN, VLAN 10 | Usuario interno. Prueba el consumo permitido y el SSH denegado |
-| PC-ADMIN | Docker con terminal y navegador | LAN, VLAN 20 | Administración del servidor (SSH), de R-LAN (SSH) y del FortiGate (GUI). Recibe el syslog del FortiGate y de R-LAN |
+| PC-USER | Docker Webterm (Debian) con dig, curl, ssh y nc | LAN, VLAN 10 | Usuario interno. Prueba el consumo permitido y el SSH denegado. Terminal por la consola auxiliar y Firefox por VNC |
+| PC-ADMIN | Docker Webterm (Debian) con terminal y Firefox | LAN, VLAN 20 | Administración del servidor (SSH), de R-LAN (SSH) y del FortiGate (GUI). Recibe el syslog del FortiGate y de R-LAN |
 
 ## Cableado
 
@@ -498,7 +498,7 @@ Hay doce puntos por cerrar antes de congelar la maqueta. Los tres primeros puede
 - [ ] Revisar en la OVA la versión de FortiOS y su licencia. Si es la de prueba (máximo 3 políticas), se aplica el plan B de la sección FortiGate.
 - [ ] Con esa misma versión, confirmar dos funciones. La primera: políticas con IPv4 e IPv6 juntas (nativas desde 7.0; en 6.4 hace falta el modo consolidado, y si no, se duplican). La segunda: `default-information-originate` en OSPFv3. Si no existe, R-LAN lleva una estática ::/0 hacia la link-local del FGT.
 - [ ] Confirmar la imagen de los routers (IOSv u otra) y ajustar los nombres de interfaz del cableado.
-- [ ] Elegir la imagen de PC-ADMIN: una con terminal, navegador y un servidor syslog (rsyslog o syslog-ng). Si no hay una que reúna todo, el FortiGate se administra por la consola de GNS3 y el syslog va solo al disco local.
+- [x] Imagen de PC-ADMIN y PC-USER: `caso-e/webterm`, que parte de gns3/webterm (Firefox por VNC, terminal por la consola auxiliar) y suma dnsutils y netcat. El syslog lo recibe `socat` en UDP 514 y lo guarda en un archivo, sin rsyslog.
 - [ ] Verificar que los contenedores Docker tengan IPv6 habilitado (`disable_ipv6=0`) y, en PC-USER, que acepten RA (`accept_ra=1`) para que funcione SLAAC.
 - [ ] Anotar la dirección SLAAC real de PC-USER (`ip -6 addr`) antes de E01. Puede ser EUI-64 o aleatoria según la imagen.
 - [ ] Confirmar que la plantilla del FortiGate tenga el disco de logs conectado y que la VM de GNS3 tenga RAM suficiente (unos 4–5 GB para FGT, 3 IOSv y 6 contenedores).

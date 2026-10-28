@@ -122,7 +122,7 @@ def main():
     time.sleep(2)
     pc_ext.host("ping -6 -c1 -W2 2001:db8:105:10::1 2>&1")
     pc_user.host("ping -c1 -W2 10.50.1.10 2>&1")
-    pc_user.host("nc -z -w3 10.50.0.1 22; echo rc=$?", 10)
+    pc_user.host("/usr/bin/nc -zv -w3 10.50.0.1 22 2>&1; echo rc=$?", 10)
     time.sleep(25)
     for tid, patron, que in (
             ("E16a", r'devname="FGT-01"[^<]*dstip=2001:db8:105:10::1[^<]*action="deny"', "FGT-01: E01 denegado"),

@@ -15,7 +15,11 @@ class CicloVida:
     def estado(self) -> None:
         pid = self._gns3.abrir_proyecto()
         for n in sorted(self._gns3.nodos(pid).values(), key=lambda n: n.nombre):
-            self._salida(f"{n.nombre:<12}{n.tipo:<16}{n.estado:<9}consola {n.console_host}:{n.console if n.console else '-'}")
+            texto = n.consola_texto
+            linea = f"{n.nombre:<12}{n.tipo:<16}{n.estado:<9}consola {n.console_host}:{texto if texto else '-'}"
+            if n.tipo_consola == "vnc" and n.console:
+                linea += f"  vnc {n.console_host}:{n.console}"
+            self._salida(linea)
 
     def destruir(self) -> None:
         self._gns3.borrar_proyecto(self._gns3.abrir_proyecto())

@@ -1,0 +1,265 @@
+== Estado ==
+get system status
+Version: FortiGate-VM64-KVM v8.0.0,build0167,260420 (GA.F)
+First GA patch build date: 260420
+Current Security Level: High
+Firmware Signature: certified
+Virus-DB: 1.00001(2026-04-02 13:48)
+Extended DB: 1.00001(2026-04-02 13:48)
+Extreme DB: 1.00001(2026-04-02 13:48)
+OCR DB: 0.00000(2001-01-01 00:00)
+AV AI/ML Model: 0.00000(2001-01-01 00:00)
+IPS-DB: 6.00741(2015-12-01 02:30)
+IPS-ETDB: 6.00741(2015-12-01 02:30)
+IPS-MLDB: 0.00000(2001-01-01 00:00)
+APP-DB: 6.00741(2015-12-01 02:30)
+AIAP-DB: 0.00000(2001-01-01 00:00)
+Proxy-IPS-DB: 6.00741(2015-12-01 02:30)
+Proxy-IPS-ETDB: 6.00741(2015-12-01 02:30)
+Proxy-APP-DB: 6.00741(2015-12-01 02:30)
+Proxy-AIAP-DB: 0.00000(2001-01-01 00:00)
+FMWP-DB: 0.00000(2001-01-01 00:00)
+IPS Malicious URL Database: 1.00001(2015-01-01 01:01)
+IoT-Detect: 0.00000(2022-08-17 17:31)
+OT-Detect-DB: 0.00000(2001-01-01 00:00)
+OT-Patch-DB: 0.00000(2001-01-01 00:00)
+OT-Threat-DB: 6.00741(2015-12-01 02:30)
+IPS-Engine: 8.00028(2026-04-06 22:53)
+Timezone DB Version: 1.003
+Timezone DB IANA Version: 2024a
+Serial-Number: FGVMEV7BMYYKTTAE
+License Status: Valid
+VM Resources: 1 CPU/1 allowed, 1994 MB RAM/2048 MB allowed
+Log hard disk: Available
+Hostname: FGT-01
+Operation Mode: NAT
+Current virtual domain: root
+Max number of virtual domains: 2
+Virtual domains status: 1 in NAT mode, 0 in TP mode
+Virtual domain configuration: disable
+FIPS-CC mode: disable
+Current HA mode: standalone
+Branch point: 0167
+Release Version Information: GA
+FortiOS x86-64: Yes
+System time: Tue Oct 27 19:41:40 2026
+Last reboot reason: power cycle
+
+FGT-01 # 
+
+== E01 PC-EXT: ping -6 -c2 -W2 2001:db8:105:10::1 ==
+PING 2001:db8:105:10::1 (2001:db8:105:10::1) 56 data bytes
+
+--- 2001:db8:105:10::1 ping statistics ---
+2 packets transmitted, 0 received, 100% packet loss, time 1024ms
+
+== E09 SRV-DMZ: ping -c2 -W2 10.50.0.10 ==
+PING 10.50.0.10 (10.50.0.10): 56 data bytes
+
+--- 10.50.0.10 ping statistics ---
+2 packets transmitted, 0 packets received, 100% packet loss
+
+== E04 PC-ADMIN: timeout 3 bash -c '</dev/tcp/10.50.1.34/22' && echo ssh_admin_abierto ==
+ssh_admin_abierto
+
+== E03 PC-EXT: nc -zv -w3 203.0.113.20 22 2>&1 ==
+nc: 203.0.113.20 (203.0.113.20:22): Operation timed out
+
+== Log de Forward Traffic con policyid=1 ==
+
+2262 logs found.
+5 logs returned.
+
+1: date=2026-10-27 time=19:42:48 eventtime=1793155367772732453 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=55649 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfrole="dmz" sessionid=462 proto=17 action="accept" policyid=1 policytype="policy" poluuid="7d096cbc-cdd5-51f1-3e1b-d760e2927278" policyname="DNS-HTTP-A-DMZ" srccountry="Reserved" dstcountry="Reserved" service="DNS" trandisp="noop" appcat="unscanned" duration=180 sentbyte=360 rcvdbyte=360 sentpkt=4 rcvdpkt=4
+
+2: date=2026-10-27 time=19:42:48 eventtime=1793155367752728831 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=37514 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccountry="Reserved" dstcountry="Reserved" sessionid=376 proto=17 action="accept" policyid=1 policytype="policy" poluuid="7d096cbc-cdd5-51f1-3e1b-d760e2927278" policyname="DNS-HTTP-A-DMZ" service="DNS" trandisp="dnat" tranip=10.50.1.34 tranport=53 appcat="unscanned" duration=180 sentbyte=280 rcvdbyte=280 sentpkt=4 rcvdpkt=4
+
+3: date=2026-10-27 time=19:42:48 eventtime=1793155367542840359 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=35469 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfrole="dmz" sessionid=460 proto=17 action="accept" policyid=1 policytype="policy" poluuid="7d096cbc-cdd5-51f1-3e1b-d760e2927278" policyname="DNS-HTTP-A-DMZ" srccountry="Reserved" dstcountry="Reserved" service="DNS" trandisp="noop" appcat="unscanned" duration=180 sentbyte=360 rcvdbyte=360 sentpkt=4 rcvdpkt=4 mastersrcmac="ca:03:0a:82:00:1c" srcmac="ca:03:0a:82:00:1c" srcserver=0
+
+4: date=2026-10-27 time=19:42:48 eventtime=1793155367522801872 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=39233 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccountry="Reserved" dstcountry="Reserved" sessionid=374 proto=17 action="accept" policyid=1 policytype="policy" poluuid="7d096cbc-cdd5-51f1-3e1b-d760e2927278" policyname="DNS-HTTP-A-DMZ" service="DNS" trandisp="noop" appcat="unscanned" duration=180 sentbyte=280 rcvdbyte=280 sentpkt=4 rcvdpkt=4 mastersrcmac="ca:03:0a:82:00:1c" srcmac="ca:03:0a:82:00:1c" srcserver=0
+
+5: date=2026-10-27 time=19:42:48 eventtime=1793155367452804051 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=57767 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfrole="dmz" sessionid=458 proto=17 action="accept" policyid=1 policytype="policy" poluuid="7d096cbc-cdd5-51f1-3e1b-d760e2927278" policyname="DNS-HTTP-A-DMZ" srccountry="Reserved" dstcountry="Reserved" service="DNS" trandisp="noop" appcat="unscanned" duration=180 sentbyte=360 rcvdbyte=360 sentpkt=4 rcvdpkt=4 mastersrcmac="ca:03:0a:82:00:1c" srcmac="ca:03:0a:82:00:1c" srcserver=0
+
+
+FGT-01 # 
+
+== Log de Forward Traffic con policyid=2 ==
+
+37 logs found.
+5 logs returned.
+
+1: date=2026-10-27 time=19:42:14 eventtime=1793155333502822103 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=37598 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=22 dstintf="port3" dstintfrole="dmz" srccountry="Reserved" dstcountry="Reserved" sessionid=403 proto=6 action="client-rst" policyid=2 policytype="policy" poluuid="29763cc4-cf74-51f1-d87d-2e7ad45da169" policyname="ADMIN-A-DMZ" service="SSH" trandisp="noop" appcat="unscanned" duration=5 sentbyte=204 rcvdbyte=237 sentpkt=4 rcvdpkt=4 mastersrcmac="ca:03:0a:82:00:1c" srcmac="ca:03:0a:82:00:1c" srcserver=0
+
+2: date=2026-10-27 time=19:38:47 eventtime=1793155127372837570 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=37910 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfrole="dmz" sessionid=332 proto=17 action="accept" policyid=2 policytype="policy" poluuid="29763cc4-cf74-51f1-d87d-2e7ad45da169" policyname="ADMIN-A-DMZ" srccountry="Reserved" dstcountry="Reserved" service="DNS" trandisp="noop" appcat="unscanned" duration=180 sentbyte=360 rcvdbyte=360 sentpkt=4 rcvdpkt=4 mastersrcmac="ca:03:0a:82:00:1c" srcmac="ca:03:0a:82:00:1c" srcserver=0
+
+3: date=2026-10-27 time=19:38:47 eventtime=1793155127362799385 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=37253 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccountry="Reserved" dstcountry="Reserved" sessionid=270 proto=17 action="accept" policyid=2 policytype="policy" poluuid="29763cc4-cf74-51f1-d87d-2e7ad45da169" policyname="ADMIN-A-DMZ" service="DNS" trandisp="noop" appcat="unscanned" duration=180 sentbyte=280 rcvdbyte=280 sentpkt=4 rcvdpkt=4 mastersrcmac="ca:03:0a:82:00:1c" srcmac="ca:03:0a:82:00:1c" srcserver=0
+
+4: date=2026-10-27 time=19:38:47 eventtime=1793155127212794888 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=33028 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfrole="dmz" sessionid=330 proto=17 action="accept" policyid=2 policytype="policy" poluuid="29763cc4-cf74-51f1-d87d-2e7ad45da169" policyname="ADMIN-A-DMZ" srccountry="Reserved" dstcountry="Reserved" service="DNS" trandisp="noop" appcat="unscanned" duration=180 sentbyte=360 rcvdbyte=360 sentpkt=4 rcvdpkt=4 mastersrcmac="ca:03:0a:82:00:1c" srcmac="ca:03:0a:82:00:1c" srcserver=0
+
+5: date=2026-10-27 time=19:38:47 eventtime=1793155127124267606 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=59666 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccountry="Reserved" dstcountry="Reserved" sessionid=266 proto=17 action="accept" policyid=2 policytype="policy" poluuid="29763cc4-cf74-51f1-d87d-2e7ad45da169" policyname="ADMIN-A-DMZ" service="DNS" trandisp="noop" appcat="unscanned" duration=180 sentbyte=280 rcvdbyte=280 sentpkt=4 rcvdpkt=4 mastersrcmac="ca:03:0a:82:00:1c" srcmac="ca:03:0a:82:00:1c" srcserver=0
+
+
+FGT-01 # 
+
+== Log de Forward Traffic con policyid=3 ==
+
+29 logs found.
+5 logs returned.
+
+1: date=2026-10-27 time=19:42:01 eventtime=1793155320386296380 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.34 identifier=378 srcintf="port3" srcintfrole="dmz" dstip=10.50.0.10 dstintf="port2" dstintfrole="lan" srccountry="Reserved" dstcountry="Reserved" sessionid=402 proto=1 action="deny" policyid=3 policytype="policy" poluuid="2b7e7a40-cf74-51f1-8ff0-bb9de749bf41" policyname="DENY-A-LAN" service="PING" trandisp="noop" appcat="unscanned" duration=0 sentbyte=0 rcvdbyte=0 sentpkt=0 rcvdpkt=0 crscore=30 craction=131072 crlevel="high"
+
+2: date=2026-10-27 time=19:42:00 eventtime=1793155319386825392 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.34 identifier=378 srcintf="port3" srcintfrole="dmz" dstip=10.50.0.10 dstintf="port2" dstintfrole="lan" srccountry="Reserved" dstcountry="Reserved" sessionid=401 proto=1 action="deny" policyid=3 policytype="policy" poluuid="2b7e7a40-cf74-51f1-8ff0-bb9de749bf41" policyname="DENY-A-LAN" service="PING" trandisp="noop" appcat="unscanned" duration=0 sentbyte=0 rcvdbyte=0 sentpkt=0 rcvdpkt=0 crscore=30 craction=131072 crlevel="high"
+
+3: date=2026-10-27 time=19:41:52 eventtime=1793155311377896909 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:100::10 identifier=3760 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:10::1 dstintf="port2" dstintfrole="lan" sessionid=495 proto=58 action="deny" policyid=3 policytype="policy" poluuid="2b7e7a40-cf74-51f1-8ff0-bb9de749bf41" policyname="DENY-A-LAN" srccountry="Reserved" dstcountry="Reserved" service="PING6" trandisp="noop" appcat="unscanned" duration=0 sentbyte=0 rcvdbyte=0 sentpkt=0 rcvdpkt=0 crscore=30 craction=131072 crlevel="high"
+
+4: date=2026-10-27 time=19:41:51 eventtime=1793155310355805849 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:100::10 identifier=3760 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:10::1 dstintf="port2" dstintfrole="lan" sessionid=494 proto=58 action="deny" policyid=3 policytype="policy" poluuid="2b7e7a40-cf74-51f1-8ff0-bb9de749bf41" policyname="DENY-A-LAN" srccountry="Reserved" dstcountry="Reserved" service="PING6" trandisp="noop" appcat="unscanned" duration=0 sentbyte=0 rcvdbyte=0 sentpkt=0 rcvdpkt=0 crscore=30 craction=131072 crlevel="high"
+
+5: date=2026-10-27 time=19:33:52 eventtime=1793154831860386000 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.34 identifier=376 srcintf="port3" srcintfrole="dmz" dstip=10.50.0.10 dstintf="port2" dstintfrole="lan" srccountry="Reserved" dstcountry="Reserved" sessionid=181 proto=1 action="deny" policyid=3 policytype="policy" poluuid="2b7e7a40-cf74-51f1-8ff0-bb9de749bf41" policyname="DENY-A-LAN" service="PING" trandisp="noop" appcat="unscanned" duration=0 sentbyte=0 rcvdbyte=0 sentpkt=0 rcvdpkt=0 crscore=30 craction=131072 crlevel="high"
+
+
+FGT-01 # 
+
+== Log de Forward Traffic con policyid=0 ==
+
+432 logs found.
+5 logs returned.
+
+1: date=2026-10-27 time=19:42:20 eventtime=1793155339533484898 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=198.51.100.10 srcport=42261 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=22 dstintf="port3" dstintfrole="dmz" srccountry="Reserved" dstcountry="Reserved" sessionid=408 proto=6 action="deny" policyid=0 policytype="policy" service="SSH" trandisp="dnat" tranip=10.50.1.34 tranport=22 appcat="unscanned" duration=0 sentbyte=0 rcvdbyte=0 sentpkt=0 rcvdpkt=0 crscore=30 craction=131072 crlevel="high"
+
+2: date=2026-10-27 time=19:42:19 eventtime=1793155338511784292 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=198.51.100.10 srcport=42261 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=22 dstintf="port3" dstintfrole="dmz" srccountry="Reserved" dstcountry="Reserved" sessionid=407 proto=6 action="deny" policyid=0 policytype="policy" service="SSH" trandisp="dnat" tranip=10.50.1.34 tranport=22 appcat="unscanned" duration=0 sentbyte=0 rcvdbyte=0 sentpkt=0 rcvdpkt=0 crscore=30 craction=131072 crlevel="high"
+
+3: date=2026-10-27 time=19:42:18 eventtime=1793155337466381389 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=198.51.100.10 srcport=42261 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=22 dstintf="port3" dstintfrole="dmz" srccountry="Reserved" dstcountry="Reserved" sessionid=406 proto=6 action="deny" policyid=0 policytype="policy" service="SSH" trandisp="dnat" tranip=10.50.1.34 tranport=22 appcat="unscanned" duration=0 sentbyte=0 rcvdbyte=0 sentpkt=0 rcvdpkt=0 crscore=30 craction=131072 crlevel="high"
+
+4: date=2026-10-27 time=19:41:00 eventtime=1793155259401386649 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.0.10 srcport=35600 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=22 dstintf="port3" dstintfrole="dmz" srccountry="Reserved" dstcountry="Reserved" sessionid=397 proto=6 action="deny" policyid=0 policytype="policy" service="SSH" trandisp="noop" appcat="unscanned" duration=0 sentbyte=0 rcvdbyte=0 sentpkt=0 rcvdpkt=0 crscore=30 craction=131072 crlevel="high" mastersrcmac="ca:03:0a:82:00:1c" srcmac="ca:03:0a:82:00:1c" srcserver=0
+
+5: date=2026-10-27 time=19:40:59 eventtime=1793155258375748397 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.0.10 srcport=35600 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=22 dstintf="port3" dstintfrole="dmz" srccountry="Reserved" dstcountry="Reserved" sessionid=396 proto=6 action="deny" policyid=0 policytype="policy" service="SSH" trandisp="noop" appcat="unscanned" duration=0 sentbyte=0 rcvdbyte=0 sentpkt=0 rcvdpkt=0 crscore=30 craction=131072 crlevel="high" mastersrcmac="ca:03:0a:82:00:1c" srcmac="ca:03:0a:82:00:1c" srcserver=0
+
+
+FGT-01 # 
+
+== Contadores iprope ==
+diagnose firewall iprope list 100004
+
+policy index=1 uuid_idx=24760 action=accept
+flag (8050d09): log redir nat d_r d_rm master use_src pol_stats 
+flag2 (6400): central_nat log_fail resolve_sso 
+flag3 (a0): link-local best-route 
+flag4 (200): port-preserve 
+schedule(always)
+cos_fwd=255  cos_rev=255 
+group=00100004 av=00004e20 au=00000000 split=00000000
+host=0 chk_client_info=0x0 app_list=0 ips_view=0
+misc=0
+zone(2): 3 4 -> zone(1): 5 
+source(1): 0.0.0.0-255.255.255.255, uuid_idx=24059, 
+dest(1): 10.50.1.34-10.50.1.34, uuid_idx=24083, 
+vip(1): 1
+service(3): 
+	[6:0x0:0/(1,65535)->(53,53)] flags:0 helper:auto  
+	[17:0x0:0/(1,65535)->(53,53)] flags:0 helper:auto  
+	[6:0x0:0/(1,65535)->(80,80)] flags:0 helper:auto  
+
+policy index=2 uuid_idx=24774 action=accept
+flag (8050d09): log redir nat d_r d_rm master use_src pol_stats 
+flag2 (6400): central_nat log_fail resolve_sso 
+flag3 (a0): link-local best-route 
+flag4 (200): port-preserve 
+schedule(always)
+cos_fwd=255  cos_rev=255 
+group=00100004 av=00004e20 au=00000000 split=00000000
+host=0 chk_client_info=0x0 app_list=0 ips_view=0
+misc=0
+zone(1): 4 -> zone(1): 5 
+source(1): 10.50.1.0-10.50.1.31, uuid_idx=24080, 
+dest(1): 10.50.1.34-10.50.1.34, uuid_idx=24083, 
+vip(1): 1
+service(6): 
+	[6:0x0:0/(1,65535)->(22,22)] flags:0 helper:auto  
+	[6:0x0:0/(1,65535)->(53,53)] flags:0 helper:auto  
+	[17:0x0:0/(1,65535)->(53,53)] flags:0 helper:auto  
+	[6:0x0:0/(1,65535)->(80,80)] flags:0 helper:auto  
+	[1:0x0:0/(0,65535)->(8,8)] flags:0 helper:auto  
+	[58:0x0:0/(0,65535)->(128,128)] flags:0 helper:auto  
+
+policy index=3 uuid_idx=24787 action=drop
+flag (8010c09): log redir d_r d_rm master pol_stats 
+flag2 (6000): log_fail resolve_sso 
+schedule(always)
+cos_fwd=255  cos_rev=255 
+group=00100004 av=00004e20 au=00000000 split=00000000
+host=0 chk_client_info=0x0 app_list=0 ips_view=0
+misc=0
+zone(2): 3 5 -> zone(1): 4 
+source(1): 0.0.0.0-255.255.255.255, uuid_idx=24059, 
+dest(1): 0.0.0.0-255.255.255.255, uuid_idx=24059, 
+vip(1): 1
+service(1): 
+	[0:0x0:0/(0,65535)->(0,65535)] flags:0 helper:auto  
+
+policy index=0 uuid_idx=1 action=drop
+flag (8010801): log d_rm master pol_stats 
+flag2 (4000): resolve_sso 
+flag3 (100): last-deny 
+schedule()
+cos_fwd=0  cos_rev=0 
+group=00100004 av=00000000 au=00000000 split=00000000
+host=0 chk_client_info=0x0 app_list=0 ips_view=0
+misc=0
+zone(1): 0 -> zone(1): 0 
+source(1): 0.0.0.0-255.255.255.255, uuid_idx=0, 
+dest(1): 0.0.0.0-255.255.255.255, uuid_idx=0, 
+service(1): 
+	[0:0x0:0/(0,0)->(0,0)] flags:0 helper:auto  
+
+FGT-01 # 
+
+== Politicas ==
+show firewall policy
+config firewall policy
+    edit 1
+        set name "DNS-HTTP-A-DMZ"
+        set uuid 7d096cbc-cdd5-51f1-3e1b-d760e2927278
+        set srcintf "port1" "port2"
+        set dstintf "port3"
+        set action accept
+        set srcaddr "all"
+        set dstaddr "SRV-DMZ-v4"
+        set srcaddr6 "all"
+        set dstaddr6 "SRV-DMZ-v6"
+        set schedule "always"
+        set service "DNS" "HTTP"
+        set logtraffic all
+        set comments "Plan B con central NAT: el VIP hace el DNAT y la politica casa con la IP real. Une PUB-DNS-HTTP y USUARIOS-A-DMZ. Sin SNAT: el servidor ve el origen real"
+    next
+    edit 2
+        set name "ADMIN-A-DMZ"
+        set uuid 29763cc4-cf74-51f1-d87d-2e7ad45da169
+        set srcintf "port2"
+        set dstintf "port3"
+        set action accept
+        set srcaddr "NET-ADMIN-v4"
+        set dstaddr "SRV-DMZ-v4"
+        set srcaddr6 "NET-ADMIN-v6"
+        set dstaddr6 "SRV-DMZ-v6"
+        set schedule "always"
+        set service "SSH" "DNS" "HTTP" "PING" "ECO-ICMPV6"
+        set logtraffic all
+        set comments "Unica zona autorizada para administrar el servidor"
+    next
+    edit 3
+        set name "DENY-A-LAN"
+        set uuid 2b7e7a40-cf74-51f1-8ff0-bb9de749bf41
+        set srcintf "port1" "port3"
+        set dstintf "port2"
+        set srcaddr "all"
+        set dstaddr "all"
+        set srcaddr6 "all"
+        set dstaddr6 "all"
+        set schedule "always"
+        set service "ALL"
+        set logtraffic all
+        set comments "La LAN no queda expuesta desde la WAN ni desde la DMZ (requisito central)"
+    next
+end
+
+FGT-01 # 

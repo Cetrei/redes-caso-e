@@ -320,8 +320,8 @@ def construir(inf):
             ["SRV-DMZ", "Contenedor Alpine", "DMZ", "DNS autoritativo (bind9), HTTP (nginx) y SSH: el servicio publicado"],
             ["PC-EXT", "Contenedor Alpine", "Externa", "Cliente de pruebas con dig, curl y nc"],
             ["PC-EXT-WEB", "Contenedor con navegador", "Externa", "Muestra la página por nombre desde afuera"],
-            ["PC-USER", "Contenedor Alpine", "LAN, VLAN 10", "Usuario interno: consume DNS y HTTP, prueba lo bloqueado"],
-            ["PC-ADMIN", "Contenedor con terminal y navegador", "LAN, VLAN 20", "Administra el servidor, R-LAN y el FortiGate; recibe el syslog"],
+            ["PC-USER", "Contenedor Debian con terminal y navegador", "LAN, VLAN 10", "Usuario interno: consume DNS y HTTP, prueba lo bloqueado"],
+            ["PC-ADMIN", "Contenedor Debian con terminal y navegador", "LAN, VLAN 20", "Administra el servidor, R-LAN y el FortiGate; recibe el syslog"],
         ],
         [2.3, 3.7, 2.7, 8.1],
     )
@@ -561,7 +561,7 @@ srcip=10.50.1.34 srcintf="port3" dstip=10.50.0.10 dstintf="port2"
         [1.6, 5.6, 2.4, 2.4, 4.8],
         tam=9,
     )
-    inf.marcador("CAP-03", "Forward Traffic del FortiGate por política.", "PC-ADMIN, navegador web, hacia la GUI de FGT-01 (https://10.50.1.49, IP de port2)", "Log & Report, Forward Traffic. Aplicar el filtro Policy ID = 1, luego 2, luego 3 y luego 0 (una captura o un montaje con las cuatro). Si no hay filas, repetir antes E01, E03, E04 y E09 de la matriz.", "Columnas Source, Destination, Policy ID, Policy Name y Action. Debe verse Accept para las políticas 1 y 2, y Deny para la 3 (DENY-A-LAN) y la 0.")
+    inf.marcador("CAP-03", "Forward Traffic del FortiGate por política.", "PC-ADMIN, Firefox en la consola gráfica (VNC) del nodo, hacia la GUI de FGT-01 (https://10.50.1.49, IP de port2)", "Log & Report, Forward Traffic. Aplicar el filtro Policy ID = 1, luego 2, luego 3 y luego 0 (una captura o un montaje con las cuatro). Si no hay filas, repetir antes E01, E03, E04 y E09 de la matriz.", "Columnas Source, Destination, Policy ID, Policy Name y Action. Debe verse Accept para las políticas 1 y 2, y Deny para la 3 (DENY-A-LAN) y la 0.")
     inf.h(2, "7.5 Pruebas específicas del caso E")
     inf.tabla(
         "Resultado observado en las pruebas de bloqueo y de acceso restringido.",
@@ -596,7 +596,7 @@ srcip=10.50.1.34 srcintf="port3" dstip=10.50.0.10 dstintf="port2"
         "<190>102: *Oct 25 00:11:49.055: %SEC-6-IPACCESSLOGDP: list ACL-SEG-USUARIOS denied icmp 10.50.0.10 -> 10.50.1.10 (8/0), 1 packet\n"
         "<190>103: *Oct 25 00:12:49.055: %SEC-6-IPACCESSLOGNP: list ACL-VTY-ADMIN denied 0 10.50.0.10 -> 0.0.0.0, 1 packet"
     )
-    inf.marcador("CAP-04", "GUI del FortiGate abierta desde PC-ADMIN.", "PC-ADMIN, navegador web; y consola de PC-USER para el segundo comando", "En PC-ADMIN abrir https://10.50.1.49 e iniciar sesión. En PC-USER correr: curl -k -s -m 5 -o /dev/null -w gui=%{http_code} https://10.50.1.49", "En PC-ADMIN, el Dashboard del FortiGate (gui=200). En PC-USER, la salida gui=000, que muestra el bloqueo por trusted hosts.")
+    inf.marcador("CAP-04", "GUI del FortiGate abierta desde PC-ADMIN.", "PC-ADMIN, Firefox en la consola gráfica (VNC) del nodo; y la consola auxiliar (terminal) de PC-USER para el segundo comando", "En PC-ADMIN abrir https://10.50.1.49 e iniciar sesión. En PC-USER correr: curl -k -s -m 5 -o /dev/null -w gui=%{http_code} https://10.50.1.49", "En PC-ADMIN, el Dashboard del FortiGate (gui=200). En PC-USER, la salida gui=000, que muestra el bloqueo por trusted hosts.")
     inf.h(2, "7.6 Fallas y cambios controlados")
     inf.p("**F01, desactivar la política 1.** Con la política desactivada, la publicación externa cae (`http4=000`) y el log muestra la denegación implícita; al reactivarla, vuelve a funcionar (`http4=200`) sin otro cambio. La prueba muestra que la publicación depende de esa única política y que la denegación por defecto protege el servicio mientras no esté permitido.")
     inf.p("**F02, apagar la interfaz de R-LAN hacia el FortiGate.** La vecindad OSPF cae, al instante en R-LAN y al vencer el dead interval en el FortiGate, y la LAN pierde la ruta por defecto y la DMZ: el HTTP de los usuarios pasa a `http4=000`. Desde afuera la publicación sigue funcionando (`http4=200`), porque no depende de R-LAN. Al levantar la interfaz, la vecindad vuelve a Full y el HTTP de los usuarios regresa a `http4=200`.")
@@ -608,11 +608,14 @@ srcip=10.50.1.34 srcintf="port3" dstip=10.50.0.10 dstintf="port2"
     inf.h(3, "Incidencia 2: la licencia solo admite tres políticas")
     inf.p("Al cargar el diseño de seis políticas, el FortiGate rechazó la cuarta con el mensaje de que se había alcanzado el máximo de entradas. Se midió el límite: acepta exactamente tres políticas, mientras que las rutas estáticas (cuatro) y las tres interfaces se aplicaron sin problema. Se rediseñó el conjunto fusionando políticas (sección 6.1). Al fusionarlas apareció una segunda restricción: FortiOS rechaza un VIP mezclado con un objeto normal en el destino de una política (\"entry not found in datasource\") y también un VIP con IP externa igual a la mapeada. La salida fue activar central NAT, de modo que el VIP solo traduzca y la política use la IP real. El cambio se verificó con las pruebas P01 a P07 y E01 a E16 sobre el plan B.")
     inf.h(3, "Incidencia 3: IPv4 desaparecía en PC-USER")
-    inf.p("Al configurar PC-USER con una dirección fija IPv4 y un bloque `inet6 auto` para SLAAC, el host quedaba sin IPv4. El `ifup` de BusyBox, que usa Alpine, no soporta `inet6 auto` y aborta todo el archivo de interfaces. Se quitó el bloque inet6: la dirección IPv6 llega igual por SLAAC porque el kernel acepta los anuncios del router (`accept_ra`).")
+    inf.p("Al configurar PC-USER, que entonces usaba una imagen Alpine, con una dirección fija IPv4 y un bloque `inet6 auto` para SLAAC, el host quedaba sin IPv4. El `ifup` de BusyBox, que usa Alpine, no soporta `inet6 auto` y aborta todo el archivo de interfaces. Se quitó el bloque inet6: la dirección IPv6 llega igual por SLAAC porque el kernel acepta los anuncios del router (`accept_ra`). Al pasar después PC-USER a una imagen Debian se conservó la configuración y SLAAC siguió funcionando.")
     inf.h(3, "Incidencia 4: disco de logs corrupto en el FortiGate")
     inf.p("El disco de logs del FortiGate resultó estar corrupto: la partición ext4 del disco de la plantilla tenía el sistema de archivos dañado. Se resolvió con `execute disk format 16`, que reinicia el equipo; la licencia siguió válida y la configuración persistió. La verificación posterior mostró 329 logs en el disco, entre ellos los de las pruebas.")
     inf.h(3, "Incidencia 5: nombres de interfaz distintos a los del diseño")
     inf.p("La imagen de router disponible es un c7200, y no el IOSv que suponía el diseño, y sus interfaces no se llaman Gi0/N sino Gi(N+1)/0, de modo que los nombres del diseño no coincidían con los del equipo al cargar las configuraciones. Se documentó la equivalencia (Gi0/0 es Gi1/0; las subinterfaces de R-LAN son Gi2/0.10 y Gi2/0.20). Los archivos de `configs/` conservan los nombres Gi0/N del diseño y el script `gns3ctl.py` los traduce al cargarlos; la cabecera de cada archivo lo explica, y quien pegue las configuraciones a mano debe usar el nombre real del equipo. La matriz anota el nombre real.")
+
+    inf.h(3, "Incidencia 6: PC-ADMIN no tenía navegador")
+    inf.p("El diseño pedía en PC-ADMIN un terminal y un navegador para abrir la GUI del FortiGate, pero la plantilla Ubuntu Docker Guest que se había elegido solo trae terminal. Como todas las pruebas automáticas usan curl y ssh, nadie lo notó hasta intentar abrir la GUI. Se construyó la imagen `caso-e/webterm`, que parte de gns3/webterm (Debian con Firefox por VNC) y le suma dnsutils y netcat para que las pruebas sigan corriendo; el terminal queda en la consola auxiliar del nodo. PC-ADMIN y PC-USER usan ahora esa imagen, con la misma red y las mismas direcciones, y la prueba E13 (GUI desde PC-ADMIN sí, desde PC-USER no) se repitió con el resultado anterior.")
 
     inf.h(1, "9. Conclusiones, recomendaciones y mejoras futuras")
     inf.h(2, "9.1 Conclusiones técnicas")

@@ -28,5 +28,5 @@ class ConstructorImagenes:
         existentes = self._gns3.plantillas()
         for im in self._p.imagenes:
             if im.plantilla not in existentes:
-                self._gns3.crear_plantilla_docker(im.plantilla, im.etiqueta)
+                self._gns3.crear_plantilla_docker(im.plantilla, im.etiqueta, im.consola)
                 self._salida(f"plantilla {im.plantilla} creada")

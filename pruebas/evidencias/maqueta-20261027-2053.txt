@@ -1,0 +1,253 @@
+[OK   ] P01   PC-EXT: dig +short +time=4 +tries=1 @203.0.113.20 www.g5.eif101o.test A
+        -> 203.0.113.20
+[OK   ] P02   PC-EXT: dig +short +time=4 +tries=1 @203.0.113.20 www.g5.eif101o.test AAAA
+        -> 2001:db8:105:30::10
+[OK   ] P03   PC-EXT: dig -4 +short +time=4 +tries=1 @203.0.113.20 www.g5.eif101o.test A
+        -> 203.0.113.20
+[OK   ] P04   PC-EXT: dig -6 +short +time=4 +tries=1 @2001:db8:105:30::10 www.g5.eif101o.test A
+        -> 203.0.113.20
+[OK   ] P05   PC-EXT: curl -4 -s -m 6 -o /dev/null -w 'http4=%{http_code}\n' http://www.g5.eif101o.test/
+        -> http4=200
+[OK   ] P06   PC-EXT: curl -6 -s -m 6 -o /dev/null -w 'http6=%{http_code}\n' http://www.g5.eif101o.test/
+        -> http6=200
+[OK   ] E01   PC-EXT: ping -6 -c1 -W2 2001:db8:105:10::1
+        -> PING 2001:db8:105:10::1 (2001:db8:105:10::1) 56 data bytes
+
+--- 2001:db8:105:10::1 ping statistics ---
+1 packets transmitted, 0 received, 100% packet loss, time 0ms
+[OK   ] E03   PC-EXT: nc -zv -w3 203.0.113.20 22 2>&1
+        -> nc: 203.0.113.20 (203.0.113.20:22): Operation timed out
+[OK   ] E04   PC-ADMIN: timeout 3 bash -c '</dev/tcp/10.50.1.34/22' && echo ssh_admin_abierto
+        -> ssh_admin_abierto
+[OK   ] E05   PC-USER: /usr/bin/nc -zv -w3 10.50.1.34 22 2>&1
+        -> nc: connect to 10.50.1.34 port 22 (tcp) timed out: Operation now in progress
+[OK   ] E06a  PC-USER: dig +short +time=4 +tries=1 @10.50.1.34 www.g5.eif101o.test A
+        -> 10.50.1.34
+[OK   ] E06b  PC-USER: curl -4 -s -m 6 -o /dev/null -w 'http4=%{http_code}\n' http://www.g5.eif101o.test/
+        -> http4=200
+[OK   ] E07   PC-USER: ping -c1 -W2 10.50.1.10
+        -> PING 10.50.1.10 (10.50.1.10): 56 data bytes
+
+--- 10.50.1.10 ping statistics ---
+1 packets transmitted, 0 packets received, 100% packet loss
+[OK   ] E08   PC-ADMIN: ping -c1 -W2 10.50.0.10
+        -> PING 10.50.0.10 (10.50.0.10): 56 data bytes
+64 bytes from 10.50.0.10: seq=0 ttl=63 time=21.044 ms
+
+--- 10.50.0.10 ping statistics ---
+1 packets transmitted, 1 packets received, 0% packet loss
+round-trip min/avg/max = 21.044/21.044/21.044 ms
+[OK   ] E02   PC-EXT: ping -c1 -W2 10.50.0.10 2>&1
+        -> PING 10.50.0.10 (10.50.0.10) 56(84) bytes of data.
+From 198.51.100.1 icmp_seq=1 Destination Host Unreachable
+
+--- 10.50.0.10 ping statistics ---
+1 packets transmitted, 0 received, +1 errors, 100% packet loss, time 0ms
+[OK   ] E09   SRV-DMZ: ping -c1 -W2 10.50.0.10 2>&1
+        -> PING 10.50.0.10 (10.50.0.10): 56 data bytes
+
+--- 10.50.0.10 ping statistics ---
+1 packets transmitted, 0 packets received, 100% packet loss
+[OK   ] E11   PC-EXT: curl -k -s -m 5 -o /dev/null -w 'https=%{http_code}\n' https://203.0.113.18/
+        -> https=000
+[OK   ] E12a  PC-USER: /usr/bin/nc -zv -w3 10.50.0.1 22 2>&1; echo rc=$?
+        -> nc: connect to 10.50.0.1 port 22 (tcp) failed: Connection refused
+rc=1
+[OK   ] E12b  PC-ADMIN: timeout 3 bash -c '</dev/tcp/10.50.1.1/22' && echo ssh_rlan_abierto
+        -> ssh_rlan_abierto
+[OK   ] E13a  PC-USER: curl -k -s -m 5 -o /dev/null -w 'gui=%{http_code}\n' https://10.50.1.49/
+        -> gui=000
+[OK   ] E13b  PC-ADMIN: curl -k -s -m 5 -o /dev/null -w 'gui=%{http_code}\n' https://10.50.1.49/
+        -> gui=200
+[OK   ] E14   SRV-DMZ: ping -c1 -W2 198.51.100.10 2>&1
+        -> PING 198.51.100.10 (198.51.100.10): 56 data bytes
+
+--- 198.51.100.10 ping statistics ---
+1 packets transmitted, 0 packets received, 100% packet loss
+[OK   ] E15a  PC-USER: ping -c1 -W2 10.50.99.9 2>&1
+        -> PING 10.50.99.9 (10.50.99.9): 56 data bytes
+
+--- 10.50.99.9 ping statistics ---
+1 packets transmitted, 0 packets received, 100% packet loss
+[OK   ] E15b  PC-USER: ping -6 -c1 -W2 2001:db8:105:99::9 2>&1
+        -> PING 2001:db8:105:99::9 (2001:db8:105:99::9): 56 data bytes
+
+--- 2001:db8:105:99::9 ping statistics ---
+1 packets transmitted, 0 packets received, 100% packet loss
+[OK   ] R01   vecinos OSPFv2 y OSPFv3 de FGT-01
+get router info ospf neighbor
+OSPF process 0, VRF 0:
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+5.5.5.2           1   Full/Backup     00:00:39    10.50.1.50      port2
+
+
+
+FGT-01 #
+get router info6 ospf neighbor
+OSPFv3 Process (root, VRF 0)
+Neighbor ID     Pri   State           Dead Time   Interface  Instance ID
+5.5.5.2           1   Full/Backup     00:00:33    port2      0
+
+
+
+FGT-01 #
+[OK   ] F01   politica 1 desactivada: http4=000 ; reactivada: http4=200
+[OK   ] F02   R-LAN Gi1/0 apagada: get router info ospf neighbor
+
+FGT-01 # ; publicacion externa http4=200 ; HTTP de usuarios http4=000
+        restaurada: 
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+5.5.5.2           1   Full/Backup     00:00:32    10.50.1.50      port2
+
+
+
+FGT-01 # ; HTTP de usuarios http4=200
+
+== Logs de trafico del FortiGate ==
+execute log filter device disk
+
+FGT-01 # 
+execute log filter category 0
+
+FGT-01 # 
+execute log display
+2941 logs found.
+5 logs returned.
+
+1: date=2026-10-27 time=19:52:47 eventtime=1793155967612783308 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=47076 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccountry="Reserved" dstcountry="Reserved" sessionid=495 proto=17 action="accept" policyid=1 policytype="policy" poluuid="7d096cbc-cdd5-51f1-3e1b-d760e2927278" policyname="DNS-HTTP-A-DMZ" service="DNS" trandisp="dnat" tranip=10.50.1.34 tranport=53 appcat="unscanned" duration=180 sentbyte=280 rcvdbyte=280 sentpkt=4 rcvdpkt=4
+
+2: date=2026-10-27 time=19:52:47 eventtime=1793155967512744950 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=32918 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfrole="dmz" sessionid=595 proto=17 action="accept" policyid=1 policytype="policy" poluuid="7d096cbc-cdd5-51f1-3e1b-d760e2927278" policyname="DNS-HTTP-A-DMZ" srccountry="Reserved" dstcountry="Reserved" service="DNS" trandisp="noop" appcat="unscanned" duration=180 sentbyte=360 rcvdbyte=360 sentpkt=4 rcvdpkt=4
+
+3: date=2026-10-27 time=19:52:47 eventtime=1793155967372742890 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=43057 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccountry="Reserved" dstcountry="Reserved" sessionid=493 proto=17 action="accept" policyid=1 policytype="policy" poluuid="7d096cbc-cdd5-51f1-3e1b-d760e2927278" policyname="DNS-HTTP-A-DMZ" service="DNS" trandisp="dnat" tranip=10.50.1.34 tranport=53 appcat="unscanned" duration=180 sentbyte=280 rcvdbyte=280 sentpkt=4 rcvdpkt=4
+
+4: date=2026-10-27 time=19:52:47 eventtime=1793155967262855645 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=50974 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfrole="dmz" sessionid=593 proto=17 action="accept" policyid=1 policytype="policy" poluuid="7d096cbc-cdd5-51f1-3e1b-d760e2927278" policyname="DNS-HTTP-A-DMZ" srccountry="Reserved" dstcountry="Reserved" service="DNS" trandisp="noop" appcat="unscanned" duration=180 sentbyte=360 rcvdbyte=360 sentpkt=4 rcvdpkt=4
+
+5: date=2026-10-27 time=19:52:47 eventtime=1793155967122868123 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=57603 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccountry="Reserved" dstcountry="Reserved" sessionid=491 proto=17 action="accept" policyid=1 policytype="policy" poluuid="7d096cbc-cdd5-51f1-3e1b-d760e2927278" policyname="DNS-HTTP-A-DMZ" service="DNS" trandisp="dnat" tranip=10.50.1.34 tranport=53 appcat="unscanned" duration=180 sentbyte=280 rcvdbyte=280 sentpkt=4 rcvdpkt=4
+
+
+FGT-01 # 
+
+== Politicas en el kernel (iprope) ==
+diagnose firewall iprope list 100004
+
+policy index=1 uuid_idx=24760 action=accept
+flag (8050d09): log redir nat d_r d_rm master use_src pol_stats 
+flag2 (6400): central_nat log_fail resolve_sso 
+flag3 (a0): link-local best-route 
+flag4 (200): port-preserve 
+schedule(always)
+cos_fwd=255  cos_rev=255 
+group=00100004 av=00004e20 au=00000000 split=00000000
+host=0 chk_client_info=0x0 app_list=0 ips_view=0
+misc=0
+zone(2): 3 4 -> zone(1): 5 
+source(1): 0.0.0.0-255.255.255.255, uuid_idx=24059, 
+dest(1): 10.50.1.34-10.50.1.34, uuid_idx=24083, 
+vip(1): 1
+service(3): 
+	[6:0x0:0/(1,65535)->(53,53)] flags:0 helper:auto  
+	[17:0x0:0/(1,65535)->(53,53)] flags:0 helper:auto  
+	[6:0x0:0/(1,65535)->(80,80)] flags:0 helper:auto  
+
+policy index=2 uuid_idx=24774 action=accept
+flag (8050d09): log redir nat d_r d_rm master use_src pol_stats 
+flag2 (6400): central_nat log_fail resolve_sso 
+flag3 (a0): link-local best-route 
+flag4 (200): port-preserve 
+schedule(always)
+cos_fwd=255  cos_rev=255 
+group=00100004 av=00004e20 au=00000000 split=00000000
+host=0 chk_client_info=0x0 app_list=0 ips_view=0
+misc=0
+zone(1): 4 -> zone(1): 5 
+source(1): 10.50.1.0-10.50.1.31, uuid_idx=24080, 
+dest(1): 10.50.1.34-10.50.1.34, uuid_idx=24083, 
+vip(1): 1
+service(6): 
+	[6:0x0:0/(1,65535)->(22,22)] flags:0 helper:auto  
+	[6:0x0:0/(1,65535)->(53,53)] flags:0 helper:auto  
+	[17:0x0:0/(1,65535)->(53,53)] flags:0 helper:auto  
+	[6:0x0:0/(1,65535)->(80,80)] flags:0 helper:auto  
+	[1:0x0:0/(0,65535)->(8,8)] flags:0 helper:auto  
+	[58:0x0:0/(0,65535)->(128,128)] flags:0 helper:auto  
+
+policy index=3 uuid_idx=24787 action=drop
+flag (8010c09): log redir d_r d_rm master pol_stats 
+flag2 (6000): log_fail resolve_sso 
+schedule(always)
+cos_fwd=255  cos_rev=255 
+group=00100004 av=00004e20 au=00000000 split=00000000
+host=0 chk_client_info=0x0 app_list=0 ips_view=0
+misc=0
+zone(2): 3 5 -> zone(1): 4 
+source(1): 0.0.0.0-255.255.255.255, uuid_idx=24059, 
+dest(1): 0.0.0.0-255.255.255.255, uuid_idx=24059, 
+vip(1): 1
+service(1): 
+	[0:0x0:0/(0,65535)->(0,65535)] flags:0 helper:auto  
+
+policy index=0 uuid_idx=1 action=drop
+flag (8010801): log d_rm master pol_stats 
+flag2 (4000): resolve_sso 
+flag3 (100): last-deny 
+schedule()
+cos_fwd=0  cos_rev=0 
+group=00100004 av=00000000 au=00000000 split=00000000
+host=0 chk_client_info=0x0 app_list=0 ips_view=0
+misc=0
+zone(1): 0 -> zone(1): 0 
+source(1): 0.0.0.0-255.255.255.255, uuid_idx=0, 
+dest(1): 0.0.0.0-255.255.255.255, uuid_idx=0, 
+service(1): 
+	[0:0x0:0/(0,0)->(0,0)] flags:0 helper:auto  
+
+FGT-01 # 
+
+== Estado del FortiGate ==
+get system status
+Version: FortiGate-VM64-KVM v8.0.0,build0167,260420 (GA.F)
+First GA patch build date: 260420
+Current Security Level: High
+Firmware Signature: certified
+Virus-DB: 1.00001(2026-04-02 13:48)
+Extended DB: 1.00001(2026-04-02 13:48)
+Extreme DB: 1.00001(2026-04-02 13:48)
+OCR DB: 0.00000(2001-01-01 00:00)
+AV AI/ML Model: 0.00000(2001-01-01 00:00)
+IPS-DB: 6.00741(2015-12-01 02:30)
+IPS-ETDB: 6.00741(2015-12-01 02:30)
+IPS-MLDB: 0.00000(2001-01-01 00:00)
+APP-DB: 6.00741(2015-12-01 02:30)
+AIAP-DB: 0.00000(2001-01-01 00:00)
+Proxy-IPS-DB: 6.00741(2015-12-01 02:30)
+Proxy-IPS-ETDB: 6.00741(2015-12-01 02:30)
+Proxy-APP-DB: 6.00741(2015-12-01 02:30)
+Proxy-AIAP-DB: 0.00000(2001-01-01 00:00)
+FMWP-DB: 0.00000(2001-01-01 00:00)
+IPS Malicious URL Database: 1.00001(2015-01-01 01:01)
+IoT-Detect: 0.00000(2022-08-17 17:31)
+OT-Detect-DB: 0.00000(2001-01-01 00:00)
+OT-Patch-DB: 0.00000(2001-01-01 00:00)
+OT-Threat-DB: 6.00741(2015-12-01 02:30)
+IPS-Engine: 8.00028(2026-04-06 22:53)
+Timezone DB Version: 1.003
+Timezone DB IANA Version: 2024a
+Serial-Number: FGVMEV7BMYYKTTAE
+License Status: Valid
+VM Resources: 1 CPU/1 allowed, 1994 MB RAM/2048 MB allowed
+Log hard disk: Available
+Hostname: FGT-01
+Operation Mode: NAT
+Current virtual domain: root
+Max number of virtual domains: 2
+Virtual domains status: 1 in NAT mode, 0 in TP mode
+Virtual domain configuration: disable
+FIPS-CC mode: disable
+Current HA mode: standalone
+Branch point: 0167
+Release Version Information: GA
+FortiOS x86-64: Yes
+System time: Tue Oct 27 19:53:25 2026
+Last reboot reason: power cycle
+
+FGT-01 # 

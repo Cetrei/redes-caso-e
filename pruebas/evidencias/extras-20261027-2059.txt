@@ -1,0 +1,301 @@
+[OK   ] R02    R-ISP ipv4: faltan []
+show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       + - replicated route, % - next hop override
+
+Gateway of last resort is not set
+
+      192.0.2.0/24 is variably subnetted, 2 subnets, 2 masks
+C        192.0.2.0/24 is directly connected, GigabitEthernet3/0
+L        192.0.2.1/32 is directly connected, GigabitEthernet3/0
+      198.51.100.0/24 is variably subnetted, 2 subnets, 2 masks
+C        198.51.100.0/24 is directly connected, GigabitEthernet2/0
+L        198.51.100.1/32 is directly connected, GigabitEthernet2/0
+      203.0.113.0/24 is variably subnetted, 3 subnets, 3 masks
+C        203.0.113.0/30 is directly connected, GigabitEthernet1/0
+L        203.0.113.1/32 is directly connected, GigabitEthernet1/0
+S        203.0.113.16/29 [1/0] via 203.0.113.2
+R-ISP#
+[OK   ] R02    R-ISP ipv6: faltan []
+show ipv6 route
+IPv6 Routing Table - default - 8 entries
+Codes: C - Connected, L - Local, S - Static, U - Per-user Static route
+       B - BGP, HA - Home Agent, MR - Mobile Router, R - RIP
+       H - NHRP, I1 - ISIS L1, I2 - ISIS L2, IA - ISIS interarea
+       IS - ISIS summary, D - EIGRP, EX - EIGRP external, NM - NEMO
+       ND - ND Default, NDp - ND Prefix, DCE - Destination, NDr - Redirect
+       O - OSPF Intra, OI - OSPF Inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2
+       ON1 - OSPF NSSA ext 1, ON2 - OSPF NSSA ext 2, l - LISP
+S   2001:DB8:105::/48 [1/0]
+     via 2001:DB8:FFFF:1::2
+C   2001:DB8:FFFF:1::/64 [0/0]
+     via GigabitEthernet1/0, directly connected
+L   2001:DB8:FFFF:1::1/128 [0/0]
+     via GigabitEthernet1/0, receive
+C   2001:DB8:FFFF:100::/64 [0/0]
+     via GigabitEthernet2/0, directly connected
+L   2001:DB8:FFFF:100::1/128 [0/0]
+     via GigabitEthernet2/0, receive
+C   2001:DB8:FFFF:200::/64 [0/0]
+     via GigabitEthernet3/0, directly connected
+L   2001:DB8:FFFF:200::1/128 [0/0]
+     via GigabitEthernet3/0, receive
+L   FF00::/8 [0/0]
+     via Null0, receive
+R-ISP#
+[OK   ] R02    R-EDGE ipv4: faltan []
+show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       + - replicated route, % - next hop override
+
+Gateway of last resort is 203.0.113.1 to network 0.0.0.0
+
+S*    0.0.0.0/0 [1/0] via 203.0.113.1
+      203.0.113.0/24 is variably subnetted, 4 subnets, 3 masks
+C        203.0.113.0/30 is directly connected, GigabitEthernet1/0
+L        203.0.113.2/32 is directly connected, GigabitEthernet1/0
+C        203.0.113.16/29 is directly connected, GigabitEthernet2/0
+L        203.0.113.17/32 is directly connected, GigabitEthernet2/0
+R-EDGE#
+[OK   ] R02    R-EDGE ipv6: faltan []
+show ipv6 route
+IPv6 Routing Table - default - 7 entries
+Codes: C - Connected, L - Local, S - Static, U - Per-user Static route
+       B - BGP, HA - Home Agent, MR - Mobile Router, R - RIP
+       H - NHRP, I1 - ISIS L1, I2 - ISIS L2, IA - ISIS interarea
+       IS - ISIS summary, D - EIGRP, EX - EIGRP external, NM - NEMO
+       ND - ND Default, NDp - ND Prefix, DCE - Destination, NDr - Redirect
+       O - OSPF Intra, OI - OSPF Inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2
+       ON1 - OSPF NSSA ext 1, ON2 - OSPF NSSA ext 2, l - LISP
+S   ::/0 [1/0]
+     via 2001:DB8:FFFF:1::1
+S   2001:DB8:105::/48 [1/0]
+     via 2001:DB8:105:FF01::2
+C   2001:DB8:105:FF01::/64 [0/0]
+     via GigabitEthernet2/0, directly connected
+L   2001:DB8:105:FF01::1/128 [0/0]
+     via GigabitEthernet2/0, receive
+C   2001:DB8:FFFF:1::/64 [0/0]
+     via GigabitEthernet1/0, directly connected
+L   2001:DB8:FFFF:1::2/128 [0/0]
+     via GigabitEthernet1/0, receive
+L   FF00::/8 [0/0]
+     via Null0, receive
+R-EDGE#
+[OK   ] R02    R-LAN ipv4: faltan []
+show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       + - replicated route, % - next hop override
+
+Gateway of last resort is 10.50.1.49 to network 0.0.0.0
+
+O*E2  0.0.0.0/0 [110/10] via 10.50.1.49, 00:02:58, GigabitEthernet1/0
+      10.0.0.0/8 is variably subnetted, 7 subnets, 5 masks
+C        10.50.0.0/24 is directly connected, GigabitEthernet2/0.10
+L        10.50.0.1/32 is directly connected, GigabitEthernet2/0.10
+C        10.50.1.0/27 is directly connected, GigabitEthernet2/0.20
+L        10.50.1.1/32 is directly connected, GigabitEthernet2/0.20
+O        10.50.1.32/28 [110/2] via 10.50.1.49, 00:02:58, GigabitEthernet1/0
+C        10.50.1.48/30 is directly connected, GigabitEthernet1/0
+L        10.50.1.50/32 is directly connected, GigabitEthernet1/0
+R-LAN#
+[OK   ] R02    R-LAN ipv6: faltan []
+show ipv6 route
+IPv6 Routing Table - default - 9 entries
+Codes: C - Connected, L - Local, S - Static, U - Per-user Static route
+       B - BGP, HA - Home Agent, MR - Mobile Router, R - RIP
+       H - NHRP, I1 - ISIS L1, I2 - ISIS L2, IA - ISIS interarea
+       IS - ISIS summary, D - EIGRP, EX - EIGRP external, NM - NEMO
+       ND - ND Default, NDp - ND Prefix, DCE - Destination, NDr - Redirect
+       O - OSPF Intra, OI - OSPF Inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2
+       ON1 - OSPF NSSA ext 1, ON2 - OSPF NSSA ext 2, l - LISP
+OE2 ::/0 [110/10]
+     via FE80::EC5:6BFF:FEAE:1, GigabitEthernet1/0
+C   2001:DB8:105:10::/64 [0/0]
+     via GigabitEthernet2/0.10, directly connected
+L   2001:DB8:105:10::1/128 [0/0]
+     via GigabitEthernet2/0.10, receive
+C   2001:DB8:105:20::/64 [0/0]
+     via GigabitEthernet2/0.20, directly connected
+L   2001:DB8:105:20::1/128 [0/0]
+     via GigabitEthernet2/0.20, receive
+O   2001:DB8:105:30::/64 [110/2]
+     via FE80::EC5:6BFF:FEAE:1, GigabitEthernet1/0
+C   2001:DB8:105:FF00::/64 [0/0]
+     via GigabitEthernet1/0, directly connected
+L   2001:DB8:105:FF00::2/128 [0/0]
+     via GigabitEthernet1/0, receive
+L   FF00::/8 [0/0]
+     via Null0, receive
+R-LAN#
+[OK   ] R02    FGT-01 ipv4: faltan []
+get router info routing-table all
+Codes: K - kernel, C - connected, S - static, R - RIP, B - BGP
+       O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+       V - BGP VPNv4, E - BGP EVPN, L - Leaked, D - Directly leaked
+       * - candidate default
+
+Routing table for VRF=0
+S*      0.0.0.0/0 [10/0] via 203.0.113.17, port1, [1/0]
+S       10.50.0.0/16 [254/0] is a summary, Null, [1/0]
+O       10.50.0.0/24 [110/2] via 10.50.1.50, port2, 00:03:02, [1/0]
+O       10.50.1.0/27 [110/2] via 10.50.1.50, port2, 00:03:02, [1/0]
+C       10.50.1.32/28 is directly connected, port3
+C       10.50.1.48/30 is directly connected, port2
+C       203.0.113.16/29 is directly connected, port1
+
+
+FGT-01 #
+[OK   ] R02    FGT-01 ipv6: faltan []
+get router info6 routing-table
+IPv6 Routing Table
+Codes: K - kernel route, C - connected, S - static, R - RIP, O - OSPF,
+       IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+       B - BGP, V - BGP VPNv6, L - Leaked, D - Directly leaked
+       * - candidate default
+
+Timers: Uptime
+
+Routing table for VRF=0
+S*      ::/0 [10/0] via 2001:db8:105:ff01::1, port1, 00:24:26, [1024/0]
+C       ::1/128 via ::, root, 00:24:27
+S       2001:db8:105::/48 [254/0] via ::, Null, 00:24:26, [1024/0]
+O       2001:db8:105:10::/64 [110/2] via fe80::2, port2, 00:03:09, [1024/0]
+O       2001:db8:105:20::/64 [110/2] via fe80::2, port2, 00:03:09, [1024/0]
+C       2001:db8:105:30::/64 via ::, port3, 00:24:27
+C       2001:db8:105:ff00::/64 via ::, port2, 00:24:27
+C       2001:db8:105:ff01::/64 via ::, port1, 00:24:27
+
+
+FGT-01 #
+[OK   ] E02b   ping con ruta filtrada: .0.10 ping statistics ---
+2 packets transmitted, 0 received, 100% packet loss, time 1017ms
+        log del FGT: denegado en port1
+[OK   ] E02c   rutas temporales retiradas: ng statistics ---
+1 packets transmitted, 0 received, +1 errors, 100% packet loss, time 0ms
+[OK   ] E10    ping desde 10.99.99.99: s of 10.99.99.99 
+U.U
+Success rate is 0 percent (0/3)
+R-ISP#
+        contador entrada 10 de ACL-BORDE-IN: 3
+*Oct 28 02:56:45.823: %SEC-6-IPACCESSLOGDP: list ACL-BORDE-IN denied icmp 10.99.99.99 -> 203.0.113.20 (8/0), 1 packet  
+R-EDGE#show ip access-lists ACL-BORDE-IN
+Extended IP access list ACL-BORDE-IN
+    10 deny ip 10.0.0.0 0.255.255.255 any log (3 matches)
+    11 deny ip 172.16.0.0 0.15.255.255 any log
+    12 deny ip 192.168.0.0 0.0.255.255 any log
+    13 deny ip 127.0.0.0 0.255.255.255 any log
+    20 deny ip 203.0.113.16 0.0.0.7 any log
+    30 deny tcp any host 203.0.113.2 eq 22 log
+    31 deny tcp any host 203.0.113.2 eq telnet log
+    32 deny tcp any host 203.0.113.17 eq 22 log
+    33 deny tcp any host 203.0.113.17 eq telnet log
+    40 permit ip any any (8 matches)
+R-EDGE#
+show logging | include IPACCESSLOGP
+R-EDGE#
+[OK   ] E16a   FGT-01: E01 denegado en el syslog de PC-ADMIN: 1 mensajes
+[OK   ] E16b   R-LAN: E07 ACL-SEG-USUARIOS en el syslog de PC-ADMIN: 1 mensajes
+[OK   ] E16c   R-LAN: E12 ACL-VTY-ADMIN en el syslog de PC-ADMIN: 1 mensajes
+
+== Syslog recibido en PC-ADMIN (/tmp/syslog-pcadmin.log) ==
+<189>date=2026-10-27 time=19:57:29 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156249014321392 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:100::10 identifier=3765 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:10::1 dstintf="port2" dstintfrole="lan
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156266622695969 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=51300 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfr
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156266692741058 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=52649 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156266792817124 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=35625 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfr
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156266872864528 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=50164 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccou
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156266912799577 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=60628 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstint
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156266932766777 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=51147 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267032902595 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=35160 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267092872867 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=57678 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstint
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267122812185 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=56365 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfr
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156266602819288 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=60739 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156266702728416 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=39676 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfr
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156266772794131 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=57093 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156266852710870 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=33132 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156266872874877 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=35612 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfr
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156266952645499 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=39032 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfr
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267042825348 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=50621 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccou
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267042834449 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=41223 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfr
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267102822630 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=56061 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267182823692 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=36377 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267202701936 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=37456 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstint
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267282780911 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=33333 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfr
+<189>date=2026-10-27 time=19:57:47 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267292806543 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=46514 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccou
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267182817092 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=43692 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccou
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267202711087 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=39845 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfr
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267262803394 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=60743 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267332763316 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=40692 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstint
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267342827393 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=57720 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267422781612 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=58352 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267442797668 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=35157 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstint
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267522755810 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=56812 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfr
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267532810057 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=55432 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccou
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267692737975 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=56028 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstint
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267782800897 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=45719 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccou
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267944105010 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=55112 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstint
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156268043212128 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=45507 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccou
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267362702450 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=34713 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfr
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267422775030 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=43868 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccou
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267442805286 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:20::10 srcport=42517 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstintfr
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267522746754 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.1.10 srcport=38709 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267572858990 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=51487 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstint
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267672807627 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=51122 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccou
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267823202588 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=50732 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstint
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156267922827024 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=52162 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccou
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156268062781065 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=43389 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstint
+<189>date=2026-10-27 time=19:57:48 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156268172734531 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=48470 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccou
+<189>date=2026-10-27 time=19:57:49 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156268192739459 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=39737 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstint
+<189>date=2026-10-27 time=19:57:49 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156268312877202 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=192.0.2.10 srcport=57954 srcintf="port1" srcintfrole="wan" dstip=203.0.113.20 dstport=53 dstintf="port3" dstintfrole="dmz" srccou
+<189>date=2026-10-27 time=19:57:49 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156268332822713 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:ffff:200::10 srcport=33766 srcintf="port1" srcintfrole="wan" dstip=2001:db8:105:30::10 dstport=53 dstintf="port3" dstint
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156272972885229 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.0.10 srcport=41029 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156272982753398 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:10:42:34ff:fe9a:1700 srcport=38322 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="p
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273112821489 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.0.10 srcport=55961 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273142783193 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:10:42:34ff:fe9a:1700 srcport=46501 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="p
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156272882939990 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.0.10 srcport=33277 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156272902885228 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:10:42:34ff:fe9a:1700 srcport=42386 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="p
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273062820436 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.0.10 srcport=52795 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273062831373 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:10:42:34ff:fe9a:1700 srcport=37124 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="p
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273202670437 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.0.10 srcport=37729 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273232764548 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:10:42:34ff:fe9a:1700 srcport=51796 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="p
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273302791239 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.0.10 srcport=46960 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273312841791 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:10:42:34ff:fe9a:1700 srcport=51090 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="p
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273462835935 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.0.10 srcport=47081 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273472837962 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:10:42:34ff:fe9a:1700 srcport=42799 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="p
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273632857985 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.0.10 srcport=51818 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273642758336 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:10:42:34ff:fe9a:1700 srcport=32999 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="p
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273782747663 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.0.10 srcport=56056 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:53 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273802767648 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:10:42:34ff:fe9a:1700 srcport=52405 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="p
+<189>date=2026-10-27 time=19:57:54 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273382783620 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.0.10 srcport=33150 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:54 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273392839522 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:10:42:34ff:fe9a:1700 srcport=53813 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="p
+<189>date=2026-10-27 time=19:57:54 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273532811013 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.0.10 srcport=35708 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:54 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273552723423 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:10:42:34ff:fe9a:1700 srcport=47602 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="p
+<189>date=2026-10-27 time=19:57:54 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273712778804 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=10.50.0.10 srcport=43084 srcintf="port2" srcintfrole="lan" dstip=10.50.1.34 dstport=53 dstintf="port3" dstintfrole="dmz" srccount
+<189>date=2026-10-27 time=19:57:54 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156273722842977 tz="-0700" logid="0000000013" type="traffic" subtype="forward" level="notice" vd="root" srcip=2001:db8:105:10:42:34ff:fe9a:1700 srcport=44067 srcintf="port2" srcintfrole="lan" dstip=2001:db8:105:30::10 dstport=53 dstintf="p
+<190>58: *Oct 28 02:58:19.071: %SEC-6-IPACCESSLOGNP: list ACL-VTY-ADMIN denied 0 10.50.0.10 -> 0.0.0.0, 1 packet  
+<190>59: *Oct 28 02:58:19.071: %SEC-6-IPACCESSLOGDP: list ACL-SEG-USUARIOS denied icmp 10.50.0.10 -> 10.50.1.10 (8/0), 1 packet  
+<190>date=2026-10-27 time=19:58:26 devname="FGT-01" devid="FGVMEV7BMYYKTTAE" eventtime=1793156307139701033 tz="-0700" logid="0100026003" type="event" subtype="system" level="information" vd="root" logdesc="DHCP statistics" interface="fortilink" total=253 used=0 msg="DHCP statistics"

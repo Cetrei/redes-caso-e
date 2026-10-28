@@ -96,6 +96,7 @@ class Imagen:
     etiqueta: str
     ruta: str
     plantilla: str
+    consola: str = "telnet"
 
 
 @dataclass(frozen=True)

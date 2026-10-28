@@ -32,6 +32,11 @@ class CargaDeTopologia(unittest.TestCase):
         self.assertEqual(p.ssh.puerto, 2222)
         self.assertEqual(p.imagenes[0].plantilla, "IMG")
 
+    def test_la_consola_de_la_imagen_es_telnet_salvo_que_diga_otra(self):
+        self.assertEqual(self.cargar().imagenes[0].consola, "telnet")
+        self.e.reemplazar("automatizacion/topologia/proyecto.yml", "plantilla: IMG}", "plantilla: IMG, consola: vnc}")
+        self.assertEqual(self.cargar().imagenes[0].consola, "vnc")
+
     def test_el_modelo_es_inmutable(self):
         p = self.cargar()
         with self.assertRaises(TypeError):

@@ -130,7 +130,7 @@ class Repositorio:
     def _imagen(d: Any) -> Imagen:
         if not isinstance(d, dict) or not {"etiqueta", "ruta", "plantilla"} <= d.keys():
             raise ErrorTopologia(f"proyecto.yml > imagenes: cada una necesita etiqueta, ruta y plantilla, no {d!r}")
-        return Imagen(str(d["etiqueta"]), str(d["ruta"]), str(d["plantilla"]))
+        return Imagen(str(d["etiqueta"]), str(d["ruta"]), str(d["plantilla"]), str(d.get("consola", "telnet")))
 
     def _nodos(self) -> list[Nodo]:
         return [self._nodo(f) for f in sorted((self._dir / "nodos").glob("*.yml"))]

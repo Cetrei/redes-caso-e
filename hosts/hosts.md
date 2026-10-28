@@ -10,6 +10,8 @@ Fuente: sección Plan de direccionamiento de `docs/especificacion.md`.
 | PC-USER | VLAN 10 | 10.50.0.10/24, gw 10.50.0.1 | SLAAC en 2001:db8:105:10::/64, gw por RA | 10.50.1.34 y 2001:db8:105:30::10 |
 | PC-ADMIN | VLAN 20 | 10.50.1.10/27, gw 10.50.1.1 | 2001:db8:105:20::10/64, gw fe80::1 | 10.50.1.34 y 2001:db8:105:30::10 |
 
+PC-USER y PC-ADMIN usan la imagen `caso-e/webterm` (plantilla `Webterm-caso-e`, consola VNC con Firefox). Su terminal es la consola auxiliar del nodo: clic derecho, Auxiliary console. PC-EXT-WEB usa la plantilla `webterm` de GNS3 tal cual.
+
 ## Configuración de red en GNS3
 
 En cada contenedor: clic derecho → Edit network configuration. Estado: **pendiente de probar en la maqueta**. Al confirmarlo, reemplazá cada bloque por el que realmente funcionó.
@@ -77,7 +79,7 @@ iface eth0 inet static
 	up printf 'nameserver 10.50.1.34\nnameserver 2001:db8:105:30::10\n' > /etc/resolv.conf
 ```
 
-Sin bloque inet6: el ifup de BusyBox (Alpine) no soporta `inet6 auto` y aborta todo el archivo, dejando sin IPv4 al host. La dirección IPv6 llega sola por SLAAC al recibir los RA del router (accept_ra del kernel).
+Sin bloque inet6: la dirección IPv6 llega sola por SLAAC al recibir los RA del router (accept_ra del kernel). Se evita `inet6 auto` porque el ifup de BusyBox, de la imagen Alpine que usaba PC-USER antes, no lo soportaba y abortaba todo el archivo, dejando sin IPv4 al host.
 
 Dirección SLAAC real (anotar con `ip -6 addr` antes de E01): `pendiente`
 

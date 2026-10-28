@@ -14,14 +14,15 @@ Funciona igual en Windows 11, Linux y macOS: es Python y se corre con `uv`. Los 
    | api | TCP | 3080 | 80 |
    | ssh | TCP | 2222 | 22 |
    | consolas | TCP | 5000 a 5039 | 5000 a 5039 |
+   | vnc | TCP | 5900 a 5919 | 5900 a 5919 |
 
-   VirtualBox pide una regla por puerto. Para crear las 40 de las consolas de una vez, en PowerShell (con la VM apagada y el nombre real de la VM en `$vm`):
+   VirtualBox pide una regla por puerto. Para crear las 60 de las consolas y del VNC de una vez, en PowerShell (con la VM apagada y el nombre real de la VM en `$vm`):
 
    ```
    $vm = "GNS3 VM 101O"
    & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vm --natpf1 "api,tcp,127.0.0.1,3080,,80"
    & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vm --natpf1 "ssh,tcp,127.0.0.1,2222,,22"
-   5000..5039 | ForEach-Object { & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vm --natpf1 "con$_,tcp,127.0.0.1,$_,,$_" }
+   (5000..5039) + (5900..5919) | ForEach-Object { & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vm --natpf1 "con$_,tcp,127.0.0.1,$_,,$_" }
    ```
 
 3. **Virtualización anidada** habilitada en la VM (el FortiGate corre dentro de ella con KVM): en Configuración, Sistema, Procesador, marcar Habilitar VT-x/AMD-V anidado, o `VBoxManage modifyvm $vm --nested-hw-virt on`. Asigna a la VM al menos 4 vCPU y 6 GB de RAM. Si el nodo del FortiGate se congela al iniciar, revisa que Hyper-V, Plataforma de máquina virtual y Aislamiento del núcleo (Integridad de memoria) estén desactivados en Windows, porque compiten con VirtualBox por la virtualización por hardware.
@@ -41,7 +42,7 @@ Todo se corre desde esta carpeta (`automatizacion`), en PowerShell o en cualquie
 
 ```
 uv run gns3ctl.py validar        # revisa topologia/ sin tocar GNS3
-uv run gns3ctl.py imagen         # solo la primera vez: construye las imágenes Docker en la VM
+uv run gns3ctl.py imagen         # solo la primera vez: construye las imágenes Docker en la VM (SRV-DMZ, cliente y webterm)
 uv run gns3ctl.py construir      # crea proyecto, equipos, configs y cables
 uv run gns3ctl.py iniciar        # enciende los nodos (el FortiGate tarda 2 a 3 minutos)
 uv run gns3ctl.py fortigate      # pega la config del FortiGate y avisa de cada línea que FortiOS rechace
@@ -60,6 +61,12 @@ uv run gns3ctl.py todo
 ```
 
 Sin argumentos corre `construir`, `iniciar` y `licenciar`. También acepta los pasos que le indiques, por ejemplo `uv run gns3ctl.py todo construir iniciar fortigate`. Se niega a correr `destruir` y, antes de tocar nada, comprueba que el `.env` esté lleno si vas a licenciar.
+
+## Consolas de los equipos con navegador
+
+PC-ADMIN, PC-USER y PC-EXT-WEB corren Firefox sobre VNC (la imagen `caso-e/webterm` para los dos primeros). Su consola principal es gráfica: doble clic en el nodo abre el cliente VNC. El terminal está en la consola auxiliar, con clic derecho y Auxiliary console. `estado` muestra la auxiliar como `consola` y el puerto VNC aparte, y las pruebas de `pruebas/` entran por esa auxiliar.
+
+Si GNS3 intenta abrir el terminal con `xterm` y falla, instala xterm o cambia el comando en Edit, Preferences, General, Console applications.
 
 ## Licenciar el FortiGate
 
